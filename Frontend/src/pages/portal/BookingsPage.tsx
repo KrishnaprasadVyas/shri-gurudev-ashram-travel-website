@@ -7,7 +7,17 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 
 export function BookingsPage() {
   usePageTitle('My Bookings')
-  const { data: bookings, isLoading } = useMyBookings()
+  const { data: bookings, isLoading, error } = useMyBookings()
+
+  // F.3: Error state
+  if (error) return (
+    <div className="text-center py-16 space-y-3">
+      <p className="text-[#f2f0eb]/50">Failed to load your bookings.</p>
+      <button onClick={() => window.location.reload()} className="text-sm text-amber-400 hover:text-amber-300 transition-colors">
+        Retry
+      </button>
+    </div>
+  )
 
   return (
     <div className="space-y-6">

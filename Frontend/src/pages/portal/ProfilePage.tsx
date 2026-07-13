@@ -1,13 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { CheckCircle, ShieldAlert, ShieldCheck, ShieldX, Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { QUERY_KEYS } from '@/lib/queryKeys'
-import apiClient from '@/lib/apiClient'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
-import type { UserRow } from '@/types/database.types'
 
 const statusConfig = {
   not_submitted: {
@@ -38,21 +35,12 @@ const statusConfig = {
 
 export function ProfilePage() {
   usePageTitle('My Profile')
-  const { user, userProfile, refreshProfile } = useAuth()
-  const queryClient = useQueryClient()
-
-  const { data: profile, isLoading } = useQuery<UserRow>({
-    queryKey: QUERY_KEYS.profile,
-    queryFn: async () => {
-      const { data } = await apiClient.get('/api/users/me')
-      return data.user
-    },
-    enabled: Boolean(user),
-  })
+  // F.5: Use userProfile from AuthContext directly — no redundant /api/users/me fetch
+  const { user, userProfile, refreshProfile, loading } = useAuth()
 
   const [form, setForm] = useState({
-    full_name: profile?.full_name ?? '',
-    phone: profile?.phone ?? '',
+    full_name: userProfile?.full_name ?? '',
+    phone: userProfile?.phone ?? '',
   })
 
   const [editing, setEditing] = useState(false)
@@ -67,7 +55,6 @@ export function ProfilePage() {
       if (error) throw error
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.profile })
       await refreshProfile()
       setEditing(false)
       toast.success('Profile updated!')
@@ -75,11 +62,11 @@ export function ProfilePage() {
     onError: () => toast.error('Failed to update profile'),
   })
 
-  const displayProfile = profile ?? userProfile
+  const displayProfile = userProfile
   const verStatus = displayProfile?.verification_status ?? 'not_submitted'
   const StatusInfo = statusConfig[verStatus]
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-amber-400" />

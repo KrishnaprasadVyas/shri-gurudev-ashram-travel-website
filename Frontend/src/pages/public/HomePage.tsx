@@ -4,11 +4,11 @@ import { AshramEthos } from '@/components/home/AshramEthos';
 import { SpiritualPaths } from '@/components/home/SpiritualPaths';
 import { QuoteSection } from '@/components/home/QuoteSection';
 import { Statistics } from '@/components/home/Statistics';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export const HomePage: React.FC = () => {
+  usePageTitle('Begin Your Sacred Journey');
   useEffect(() => {
-    document.title = 'Shri Gurudev Ashram | Begin Your Sacred Journey';
-    
     // Entrance animation logic
     const observerOptions = {
       threshold: 0.1

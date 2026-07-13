@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/', // G.2: explicit base for consistent asset paths in production
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

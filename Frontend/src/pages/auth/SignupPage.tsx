@@ -4,6 +4,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
 import { AuthSplitLayout } from '@/components/auth/AuthSplitLayout'
 
 export function SignupPage() {
@@ -46,8 +47,15 @@ export function SignupPage() {
     if (result.error) {
       setErrors({ form: result.error })
     } else {
-      toast.success('Account created! Submit your verification to book Yatras. 🙏')
-      navigate('/portal')
+      // D.7: Check if a session exists — email confirmation may be required
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        toast.success('Account created! Submit your verification to book Yatras. 🙏')
+        navigate('/portal')
+      } else {
+        toast.success('Account created! Please check your email to confirm your account.')
+        navigate('/login')
+      }
     }
   }
 

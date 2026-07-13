@@ -1,40 +1,39 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
-export const ContactQuote: React.FC = () => {
-  // Ornamental Divider SVG matching FAQ / Home Quote
-  const OrnamentalDivider = () => (
-    <svg width="340" height="24" viewBox="0 0 340 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto text-[#d09d43] my-4 opacity-90 drop-shadow-sm">
-      <path d="M0 12H130" stroke="currentColor" strokeWidth="1.5"/>
-      <circle cx="138" cy="12" r="2.5" fill="currentColor"/>
-      <circle cx="148" cy="12" r="1.5" fill="currentColor"/>
-      <path d="M170 1C173 7 177 10 182 12C177 14 173 17 170 23C167 17 163 14 158 12C163 10 167 7 170 1Z" fill="currentColor"/>
-      <circle cx="170" cy="12" r="2.5" fill="#fffdf8"/>
-      <circle cx="192" cy="12" r="1.5" fill="currentColor"/>
-      <circle cx="202" cy="12" r="2.5" fill="currentColor"/>
-      <path d="M210 12H340" stroke="currentColor" strokeWidth="1.5"/>
-    </svg>
-  );
+// Ornamental Divider SVG matching FAQ / Home Quote
+const OrnamentalDivider = () => (
+  <svg width="340" height="24" viewBox="0 0 340 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto text-[#d09d43] my-4 opacity-90 drop-shadow-sm">
+    <path d="M0 12H130" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="138" cy="12" r="2.5" fill="currentColor"/>
+    <circle cx="148" cy="12" r="1.5" fill="currentColor"/>
+    <path d="M170 1C173 7 177 10 182 12C177 14 173 17 170 23C167 17 163 14 158 12C163 10 167 7 170 1Z" fill="currentColor"/>
+    <circle cx="170" cy="12" r="2.5" fill="#fffdf8"/>
+    <circle cx="192" cy="12" r="1.5" fill="currentColor"/>
+    <circle cx="202" cy="12" r="2.5" fill="currentColor"/>
+    <path d="M210 12H340" stroke="currentColor" strokeWidth="1.5"/>
+  </svg>
+);
 
-  // Lotus SVG Line Art
-  const LotusOutline = ({ className }: { className?: string }) => (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" className={`text-[#d09d43] opacity-80 ${className}`}>
-      <path d="M16 28C16 28 8 18 11 10C13 5 16 3 16 3C16 3 19 5 21 10C24 18 16 28 16 28Z" />
-      <path d="M16 28C16 28 5 22 3 15C1 8 8 8 11 10" />
-      <path d="M16 28C16 28 27 22 29 15C31 8 24 8 21 10" />
-      <path d="M16 28C16 28 5 28 1 23" />
-      <path d="M16 28C16 28 27 28 31 23" />
-    </svg>
-  );
+// Lotus SVG Line Art
+const LotusOutline = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" className={`text-[#d09d43] opacity-80 ${className}`}>
+    <path d="M16 28C16 28 8 18 11 10C13 5 16 3 16 3C16 3 19 5 21 10C24 18 16 28 16 28Z" />
+    <path d="M16 28C16 28 5 22 3 15C1 8 8 8 11 10" />
+    <path d="M16 28C16 28 27 22 29 15C31 8 24 8 21 10" />
+    <path d="M16 28C16 28 5 28 1 23" />
+    <path d="M16 28C16 28 27 28 31 23" />
+  </svg>
+);
 
-  // Bottom Ornament
-  const BottomOrnament = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto text-[#d09d43] mt-8 opacity-90">
-      <path d="M12 2C13.5 6 18 10.5 22 12C18 13.5 13.5 18 12 22C10.5 18 6 13.5 2 12C6 10.5 10.5 6 12 2Z" stroke="currentColor" strokeWidth="1.5"/>
-      <circle cx="12" cy="12" r="2" fill="currentColor"/>
-    </svg>
-  );
+// Bottom Ornament
+const BottomOrnament = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto text-[#d09d43] mt-8 opacity-90">
+    <path d="M12 2C13.5 6 18 10.5 22 12C18 13.5 13.5 18 12 22C10.5 18 6 13.5 2 12C6 10.5 10.5 6 12 2Z" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+  </svg>
+);
 
+export const ContactQuote = () => {
   return (
     <section className="py-20 md:py-28 bg-[#fffdf8] flex flex-col items-center justify-center text-center px-4 sm:px-6 relative overflow-hidden border-t border-outline-variant/30 min-h-[55vh]">
       {/* Signature Sacred Background Reserved Exclusively Here */}

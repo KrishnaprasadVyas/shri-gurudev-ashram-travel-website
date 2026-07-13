@@ -1,9 +1,9 @@
 import crypto from 'crypto'
 import { Router } from 'express'
-import { HttpError } from '../errors'
-import { AuthenticatedRequest, requireAuth } from '../middleware/auth'
-import { razorpay, razorpayKeySecret } from '../services/razorpay'
-import { supabaseAdmin } from '../services/supabaseAdmin'
+import { HttpError } from '../errors.js'
+import { AuthenticatedRequest, requireAuth } from '../middleware/auth.js'
+import { razorpay, razorpayKeySecret } from '../services/razorpay.js'
+import { supabaseAdmin } from '../services/supabaseAdmin.js'
 
 export const paymentsRouter = Router()
 

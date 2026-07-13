@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { HttpError } from '../errors'
-import { AuthenticatedRequest, requireAuth } from '../middleware/auth'
-import { supabaseAdmin } from '../services/supabaseAdmin'
+import { HttpError } from '../errors.js'
+import { AuthenticatedRequest, requireAuth } from '../middleware/auth.js'
+import { supabaseAdmin } from '../services/supabaseAdmin.js'
 
 export const bookingsRouter = Router()
 
@@ -194,7 +194,7 @@ bookingsRouter.get('/', requireAuth, async (request, response, next) => {
 
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
-      .select('*')
+      .select('*, travel_packages(title)')
       .eq('user_id', authRequest.userId)
       .order('created_at', { ascending: false })
 
@@ -202,7 +202,14 @@ bookingsRouter.get('/', requireAuth, async (request, response, next) => {
       throw new HttpError(500, error.message)
     }
 
-    response.json({ bookings: bookings ?? [] })
+    // Include package title in each booking for display
+    const enriched = (bookings ?? []).map((b: Record<string, unknown>) => ({
+      ...b,
+      packageTitle: (b.travel_packages as { title?: string } | null)?.title ?? 'Yatra Booking',
+      travel_packages: undefined,
+    }))
+
+    response.json({ bookings: enriched })
   } catch (error) {
     next(error)
   }

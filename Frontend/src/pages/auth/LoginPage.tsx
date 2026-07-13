@@ -10,7 +10,8 @@ export function LoginPage() {
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname ?? '/portal'
+  const state = location.state as { from?: { pathname?: string }; redirectTo?: string } | null
+  const from = state?.redirectTo ?? state?.from?.pathname ?? '/portal'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

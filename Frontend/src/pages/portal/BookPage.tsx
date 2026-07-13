@@ -57,6 +57,7 @@ export function BookPage() {
     if (!form.dob) e.dob = 'Required'
     if (!form.address.trim()) e.address = 'Required'
     if (form.transportType === 'Train' && !form.busType) e.busType = 'Select train type'
+    if (pkg && form.travelerCount > pkg.remaining_seats) e.travelerCount = `Only ${pkg.remaining_seats} seat${pkg.remaining_seats !== 1 ? 's' : ''} available`
     return e
   }
 
@@ -214,9 +215,19 @@ export function BookPage() {
                 min={1}
                 max={pkg.remaining_seats}
                 value={form.travelerCount}
-                onChange={(e) => setForm({ ...form, travelerCount: Math.max(1, Number(e.target.value)) })}
+                onChange={(e) => {
+                  const count = Math.max(1, Number(e.target.value))
+                  setForm({ ...form, travelerCount: count })
+                  if (count > pkg.remaining_seats) {
+                    setErrors((prev) => ({ ...prev, travelerCount: `Only ${pkg.remaining_seats} seat${pkg.remaining_seats !== 1 ? 's' : ''} available` }))
+                  } else {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    setErrors((prev) => { const { travelerCount: _tc, ...rest } = prev; return rest })
+                  }
+                }}
                 className={inputClass('travelerCount')}
               />
+              {renderError('travelerCount')}
             </div>
             <div>
               <label className="block text-sm text-[#f2f0eb]/60 mb-1.5">Special Notes (optional)</label>
@@ -240,7 +251,7 @@ export function BookPage() {
 
           <button
             type="submit"
-            disabled={bookMutation.isPending}
+            disabled={bookMutation.isPending || form.travelerCount > pkg.remaining_seats}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold hover:from-amber-600 hover:to-orange-700 disabled:opacity-60 transition-all text-lg"
           >
             {bookMutation.isPending ? (

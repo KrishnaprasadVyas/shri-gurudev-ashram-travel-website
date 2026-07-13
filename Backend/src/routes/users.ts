@@ -1,10 +1,107 @@
+import crypto from "crypto";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { Router } from "express";
-import { HttpError } from "../errors";
-import { AuthenticatedRequest, requireAuth } from "../middleware/auth";
-import { upload } from "../middleware/upload";
-import { supabaseAdmin } from "../services/supabaseAdmin";
+import { HttpError } from "../errors.js";
+import { AuthenticatedRequest, requireAuth } from "../middleware/auth.js";
+import { upload } from "../middleware/upload.js";
+import { supabaseAdmin } from "../services/supabaseAdmin.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const UPLOAD_BASE_DIR = path.resolve(__dirname, "../../uploads/verifications");
+
+// Simple HMAC-based signed URL token generation
+const SIGNED_URL_SECRET = process.env.SIGNED_URL_SECRET ?? crypto.randomBytes(32).toString("hex");
+const SIGNED_URL_EXPIRY_SECONDS = 300; // 5 minutes
+
+function generateSignedToken(filePath: string, expiresAt: number): string {
+  return crypto
+    .createHmac("sha256", SIGNED_URL_SECRET)
+    .update(`${filePath}:${expiresAt}`)
+    .digest("hex");
+}
+
+function verifySignedToken(filePath: string, expiresAt: number, token: string): boolean {
+  const expected = generateSignedToken(filePath, expiresAt);
+  if (expected.length !== token.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(token));
+}
 
 export const usersRouter = Router();
+
+// GET /api/users/verification-file-url — generate a signed URL for the user's own verification file
+usersRouter.get("/verification-file-url", requireAuth, async (request, response, next) => {
+  try {
+    const authRequest = request as AuthenticatedRequest;
+    const filePath = String(request.query.path ?? "").trim();
+
+    if (!filePath) {
+      throw new HttpError(400, "path query parameter is required");
+    }
+
+    // Verify the file belongs to the requesting user
+    const expectedPrefix = `uploads/verifications/${authRequest.userId}/`;
+    if (!filePath.startsWith(expectedPrefix)) {
+      throw new HttpError(403, "File does not belong to the authenticated user");
+    }
+
+    const expiresAt = Math.floor(Date.now() / 1000) + SIGNED_URL_EXPIRY_SECONDS;
+    const token = generateSignedToken(filePath, expiresAt);
+
+    response.json({
+      url: `/api/users/verification-file?path=${encodeURIComponent(filePath)}&expires=${expiresAt}&token=${token}`,
+      expiresAt,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/users/verification-file — serve a verification file using a signed token (no auth needed, token is the auth)
+usersRouter.get("/verification-file", async (request, response, next) => {
+  try {
+    const filePath = String(request.query.path ?? "").trim();
+    const expiresAt = Number(request.query.expires ?? 0);
+    const token = String(request.query.token ?? "").trim();
+
+    if (!filePath || !expiresAt || !token) {
+      throw new HttpError(400, "Missing required parameters");
+    }
+
+    // Verify token hasn't expired
+    if (Math.floor(Date.now() / 1000) > expiresAt) {
+      throw new HttpError(403, "Signed URL has expired");
+    }
+
+    // Verify token is valid
+    if (!verifySignedToken(filePath, expiresAt, token)) {
+      throw new HttpError(403, "Invalid signed URL token");
+    }
+
+    // Resolve and validate the actual file path (prevent path traversal)
+    const absolutePath = path.resolve(
+      path.dirname(UPLOAD_BASE_DIR),
+      "..",
+      filePath,
+    );
+    if (!absolutePath.startsWith(UPLOAD_BASE_DIR)) {
+      throw new HttpError(403, "Invalid file path");
+    }
+
+    if (!fs.existsSync(absolutePath)) {
+      throw new HttpError(404, "File not found");
+    }
+
+    // Set cache headers to match expiry
+    response.set("Cache-Control", `private, max-age=${SIGNED_URL_EXPIRY_SECONDS}`);
+    response.sendFile(absolutePath);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 // GET /api/users/me — fetch own profile
 usersRouter.get("/me", requireAuth, async (request, response, next) => {
@@ -133,6 +230,21 @@ usersRouter.post(
       }
 
       const authRequest = request as AuthenticatedRequest;
+
+      // Validate that uploaded file paths belong to the authenticated user
+      const expectedPrefix = `uploads/verifications/${authRequest.userId}/`;
+      if (!aadhaarImagePath.startsWith(expectedPrefix)) {
+        throw new HttpError(
+          403,
+          "Aadhaar image path does not belong to the authenticated user",
+        );
+      }
+      if (!selfieImagePath.startsWith(expectedPrefix)) {
+        throw new HttpError(
+          403,
+          "Selfie image path does not belong to the authenticated user",
+        );
+      }
 
       // 2. Check that user hasn't already submitted verification
       const { data: existingUser, error: fetchError } = await supabaseAdmin

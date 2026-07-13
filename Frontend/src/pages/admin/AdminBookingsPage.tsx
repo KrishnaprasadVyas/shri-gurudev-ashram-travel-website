@@ -28,7 +28,7 @@ export function AdminBookingsPage() {
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState('')
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: QUERY_KEYS.adminBookings(page, statusFilter),
     queryFn: async () => {
       const { data } = await apiClient.get('/api/admin/bookings', {
@@ -41,6 +41,16 @@ export function AdminBookingsPage() {
   const bookings: AdminBooking[] = data?.bookings ?? []
   const total: number = data?.total ?? 0
   const totalPages = Math.ceil(total / 20)
+
+  // E.7: Error state
+  if (error) return (
+    <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+      <p className="text-[#f2f0eb]/50 text-sm">Failed to load bookings.</p>
+      <button onClick={() => window.location.reload()} className="text-xs text-amber-400 hover:underline">
+        Retry
+      </button>
+    </div>
+  )
 
   const exportCSV = async () => {
     const { data: all } = await apiClient.get('/api/admin/bookings', {

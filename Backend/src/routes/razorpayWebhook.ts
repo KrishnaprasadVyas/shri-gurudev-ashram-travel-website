@@ -1,8 +1,8 @@
 import crypto from 'crypto'
 import { Router } from 'express'
-import { HttpError } from '../errors'
-import { razorpayWebhookSecret } from '../services/razorpay'
-import { supabaseAdmin } from '../services/supabaseAdmin'
+import { HttpError } from '../errors.js'
+import { razorpayWebhookSecret } from '../services/razorpay.js'
+import { supabaseAdmin } from '../services/supabaseAdmin.js'
 
 export const razorpayWebhookRouter = Router()
 
@@ -24,27 +24,70 @@ razorpayWebhookRouter.post('/', async (request, response, next) => {
       throw new HttpError(400, 'Missing Razorpay webhook event id')
     }
 
-    const { error: eventError } = await supabaseAdmin
+    // Check if this event has already been fully processed
+    const { data: existingEvent } = await supabaseAdmin
       .from('razorpay_webhook_events')
-      .insert({ event_id: eventId })
+      .select('status')
+      .eq('event_id', eventId)
+      .maybeSingle()
 
-    if (eventError?.code === '23505') {
+    if (existingEvent?.status === 'done') {
       response.json({ received: true, duplicate: true })
       return
     }
 
-    if (eventError) {
-      throw new HttpError(500, eventError.message)
+    // Insert or update the event to 'processing' status
+    if (!existingEvent) {
+      const { error: insertError } = await supabaseAdmin
+        .from('razorpay_webhook_events')
+        .insert({ event_id: eventId, status: 'processing' })
+
+      // Handle race condition: another request inserted between our check and insert
+      if (insertError?.code === '23505') {
+        const { data: raceEvent } = await supabaseAdmin
+          .from('razorpay_webhook_events')
+          .select('status')
+          .eq('event_id', eventId)
+          .maybeSingle()
+
+        if (raceEvent?.status === 'done') {
+          response.json({ received: true, duplicate: true })
+          return
+        }
+      } else if (insertError) {
+        throw new HttpError(500, 'Failed to record webhook event')
+      }
+    } else {
+      // Re-process a 'failed' or 'processing' event
+      await supabaseAdmin
+        .from('razorpay_webhook_events')
+        .update({ status: 'processing' })
+        .eq('event_id', eventId)
     }
 
     const payload = JSON.parse(rawBody.toString('utf8'))
 
-    if (payload.event === 'payment.captured') {
-      await reconcileCapturedPayment(payload.payload?.payment?.entity)
-    }
+    try {
+      if (payload.event === 'payment.captured') {
+        await reconcileCapturedPayment(payload.payload?.payment?.entity)
+      }
 
-    if (payload.event === 'payment.failed') {
-      await reconcileFailedPayment(payload.payload?.payment?.entity)
+      if (payload.event === 'payment.failed') {
+        await reconcileFailedPayment(payload.payload?.payment?.entity)
+      }
+
+      // Mark as done only AFTER reconciliation succeeds
+      await supabaseAdmin
+        .from('razorpay_webhook_events')
+        .update({ status: 'done' })
+        .eq('event_id', eventId)
+    } catch (reconcileError) {
+      // Mark as failed so retries can reprocess
+      await supabaseAdmin
+        .from('razorpay_webhook_events')
+        .update({ status: 'failed' })
+        .eq('event_id', eventId)
+      throw reconcileError
     }
 
     response.json({ received: true })
@@ -52,6 +95,7 @@ razorpayWebhookRouter.post('/', async (request, response, next) => {
     next(error)
   }
 })
+
 
 function isValidWebhookSignature(rawBody: Buffer, signature: string) {
   const expectedSignature = crypto

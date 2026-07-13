@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError } from '../errors'
-import { supabaseAdmin } from '../services/supabaseAdmin'
-import { AuthenticatedRequest } from './auth'
+import { HttpError } from '../errors.js'
+import { supabaseAdmin } from '../services/supabaseAdmin.js'
+import { AuthenticatedRequest } from './auth.js'
 
 /**
  * Middleware that first runs requireAuth (validates Bearer token),

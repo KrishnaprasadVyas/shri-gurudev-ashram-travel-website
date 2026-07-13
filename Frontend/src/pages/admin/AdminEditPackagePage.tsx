@@ -15,7 +15,8 @@ export function AdminEditPackagePage() {
   const queryClient = useQueryClient()
 
   const { data: pkg, isLoading } = useQuery<TravelPackageRow>({
-    queryKey: QUERY_KEYS.package(id ?? ''),
+    // F.6: Use adminPackage key to avoid cache collision with public usePackage()
+    queryKey: QUERY_KEYS.adminPackage(id ?? ''),
     queryFn: async () => {
       const { data } = await apiClient.get(`/api/admin/packages/${id}`)
       return data.package
@@ -27,6 +28,7 @@ export function AdminEditPackagePage() {
     try {
       await apiClient.put(`/api/admin/packages/${id}`, formData)
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminPackages })
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminPackage(id ?? '') })
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.packages })
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.package(id ?? '') })
       toast.success('Package updated!')

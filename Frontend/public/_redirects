@@ -1,0 +1,7 @@
+/* Netlify SPA rewrite — sends all routes to index.html so React Router handles client-side navigation */
+/*  Vite places build output in dist/; Netlify serves from dist/ when publish = "dist" */
+/* ─────────────────────────────────────────────────────────────────── */
+/*  G.1: SPA catch-all redirect for React Router                       */
+/* ─────────────────────────────────────────────────────────────────── */
+/api/*  https://your-backend.railway.app/api/:splat  200
+/*      /index.html                                  200

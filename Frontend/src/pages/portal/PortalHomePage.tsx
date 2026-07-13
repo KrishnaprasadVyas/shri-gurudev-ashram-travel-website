@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { ShieldX, ShieldCheck, BookOpen, Map, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useMyBookings } from '@/hooks/useBookings'
@@ -8,9 +9,16 @@ export function PortalHomePage() {
   usePageTitle('My Portal')
   const { userProfile } = useAuth()
   const { data: bookings } = useMyBookings()
+  const navigate = useNavigate()
 
   const name = userProfile?.full_name?.split(' ')[0] ?? 'Devotee'
   const verStatus = userProfile?.verification_status ?? 'not_submitted'
+
+  useEffect(() => {
+    if (bookings && bookings.length > 0 && verStatus === 'verified') {
+      navigate('/portal/bookings', { replace: true })
+    }
+  }, [bookings, verStatus, navigate])
 
   return (
     <div className="space-y-8">

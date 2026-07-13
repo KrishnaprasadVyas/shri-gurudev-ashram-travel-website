@@ -1,8 +1,33 @@
+import crypto from 'crypto'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import { Router } from 'express'
-import { HttpError } from '../errors'
-import { AuthenticatedRequest, requireAuth } from '../middleware/auth'
-import { requireAdmin } from '../middleware/adminAuth'
-import { supabaseAdmin } from '../services/supabaseAdmin'
+import { HttpError } from '../errors.js'
+import { AuthenticatedRequest, requireAuth } from '../middleware/auth.js'
+import { requireAdmin } from '../middleware/adminAuth.js'
+import { supabaseAdmin } from '../services/supabaseAdmin.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const UPLOAD_BASE_DIR = path.resolve(__dirname, '../../uploads/verifications')
+
+// Signed URL utilities for admin file viewing
+const SIGNED_URL_SECRET = process.env.SIGNED_URL_SECRET ?? crypto.randomBytes(32).toString('hex')
+const SIGNED_URL_EXPIRY = 300
+
+function generateAdminSignedToken(filePath: string, expiresAt: number): string {
+  return crypto.createHmac('sha256', SIGNED_URL_SECRET).update(`${filePath}:${expiresAt}`).digest('hex')
+}
+
+/** Wraps a DB error so that raw messages are not leaked to the client. */
+function dbError(error: { message: string } | null, fallback: string): HttpError {
+  if (process.env.NODE_ENV === 'development') {
+    return new HttpError(500, error?.message ?? fallback)
+  }
+  console.error('[DB Error]', error?.message ?? fallback)
+  return new HttpError(500, fallback)
+}
 
 export const adminRouter = Router()
 
@@ -65,9 +90,13 @@ adminRouter.get('/users', ...protect, async (req, res, next) => {
     let query = supabaseAdmin.from('users').select('*', { count: 'exact' })
 
     if (search) {
-      query = query.or(
-        `full_name.ilike.%${search}%,phone.ilike.%${search}%,email.ilike.%${search}%`,
-      )
+      // B.6: Sanitize search input to prevent PostgREST operator injection
+      const sanitized = search.replace(/[,\.\(\)%\*]/g, '')
+      if (sanitized) {
+        query = query.or(
+          `full_name.ilike.%${sanitized}%,phone.ilike.%${sanitized}%,email.ilike.%${sanitized}%`,
+        )
+      }
     }
     if (status) {
       query = query.eq('verification_status', status)
@@ -77,7 +106,7 @@ adminRouter.get('/users', ...protect, async (req, res, next) => {
       .order('created_at', { ascending: false })
       .range(from, to)
 
-    if (error) throw new HttpError(500, error.message)
+    if (error) throw dbError(error, 'Failed to fetch users')
 
     // Fetch booking counts for each user
     const userIds = (users ?? []).map((u: { id: string }) => u.id)
@@ -149,7 +178,7 @@ adminRouter.put('/users/:id/verification', ...protect, async (req, res, next) =>
       .select('*')
       .single()
 
-    if (error || !user) throw new HttpError(500, error?.message ?? 'Update failed')
+    if (error || !user) throw dbError(error, 'Verification update failed')
 
     res.json({ user })
   } catch (error) {
@@ -180,7 +209,7 @@ adminRouter.get('/bookings', ...protect, async (req, res, next) => {
       .order('created_at', { ascending: false })
       .range(from, to)
 
-    if (error) throw new HttpError(500, error.message)
+    if (error) throw dbError(error, 'Failed to fetch bookings')
 
     const flat = (bookings ?? []).map((b: Record<string, unknown>) => ({
       ...b,
@@ -233,6 +262,166 @@ adminRouter.get('/bookings/:id', ...protect, async (req, res, next) => {
   }
 })
 
+// ─── PATCH /api/admin/bookings/:id ────────────────────────────────────────────
+// C.3: Update admin_notes on a booking
+adminRouter.patch('/bookings/:id', ...protect, async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { admin_notes } = req.body as { admin_notes?: string }
+
+    if (admin_notes === undefined) {
+      throw new HttpError(400, 'admin_notes field is required')
+    }
+
+    const authRequest = req as unknown as AuthenticatedRequest
+
+    const { data: booking, error } = await supabaseAdmin
+      .from('bookings')
+      .update({ admin_notes: admin_notes?.trim() || null })
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (error || !booking) throw dbError(error, 'Failed to update booking notes')
+
+    // Log the status event
+    await supabaseAdmin.from('booking_status_log').insert({
+      booking_id: id,
+      status: (booking as Record<string, unknown>).status as string,
+      changed_by: authRequest.userId,
+      note: 'Admin notes updated',
+    })
+
+    res.json({ booking })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── POST /api/admin/bookings/:id/reconcile ───────────────────────────────────
+// C.2: Manual payment reconciliation for failed/ambiguous webhooks
+adminRouter.post('/bookings/:id/reconcile', ...protect, async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { razorpay_payment_id, razorpay_order_id, action } = req.body as {
+      razorpay_payment_id?: string
+      razorpay_order_id?: string
+      action?: 'capture' | 'fail' | 'cancel'
+    }
+
+    if (!action || !['capture', 'fail', 'cancel'].includes(action)) {
+      throw new HttpError(400, "action must be 'capture', 'fail', or 'cancel'")
+    }
+
+    const authRequest = req as unknown as AuthenticatedRequest
+
+    // Load booking
+    const { data: booking, error: bookingError } = await supabaseAdmin
+      .from('bookings')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (bookingError || !booking) throw new HttpError(404, 'Booking not found')
+
+    if (action === 'capture') {
+      // Use the atomic RPC to capture payment
+      const { data: existingPayment } = await supabaseAdmin
+        .from('payments')
+        .select('*')
+        .eq('booking_id', id)
+        .maybeSingle()
+
+      const orderId = razorpay_order_id ?? (existingPayment as Record<string, unknown> | null)?.razorpay_order_id as string
+      const paymentId = razorpay_payment_id ?? (existingPayment as Record<string, unknown> | null)?.razorpay_payment_id as string
+
+      if (!orderId) throw new HttpError(400, 'razorpay_order_id is required for capture')
+      if (!paymentId) throw new HttpError(400, 'razorpay_payment_id is required for capture')
+
+      const { error: captureError } = await supabaseAdmin.rpc('capture_booking_payment' as never, {
+        p_booking_id: id,
+        p_razorpay_order_id: orderId,
+        p_razorpay_payment_id: paymentId,
+        p_razorpay_signature: null,
+        p_payment_method: 'razorpay',
+        p_gateway_fee: null,
+      } as never)
+
+      if (captureError) throw dbError(captureError, 'Failed to capture payment')
+
+      // Log reconciliation
+      await supabaseAdmin.from('booking_status_log').insert({
+        booking_id: id,
+        status: 'paid',
+        changed_by: authRequest.userId,
+        note: `Manual reconciliation: payment captured (${paymentId})`,
+      })
+    } else if (action === 'fail') {
+      // Mark payment as failed and booking as payment_failed
+      await supabaseAdmin
+        .from('payments')
+        .update({ status: 'failed' })
+        .eq('booking_id', id)
+        .neq('status', 'captured')
+
+      await supabaseAdmin
+        .from('bookings')
+        .update({ status: 'payment_failed' })
+        .eq('id', id)
+
+      await supabaseAdmin.from('booking_status_log').insert({
+        booking_id: id,
+        status: 'payment_failed',
+        changed_by: authRequest.userId,
+        note: 'Manual reconciliation: payment marked as failed',
+      })
+    } else if (action === 'cancel') {
+      await supabaseAdmin
+        .from('bookings')
+        .update({ status: 'cancelled' })
+        .eq('id', id)
+
+      await supabaseAdmin.from('booking_status_log').insert({
+        booking_id: id,
+        status: 'cancelled',
+        changed_by: authRequest.userId,
+        note: 'Manual reconciliation: booking cancelled by admin',
+      })
+    }
+
+    // Return updated booking
+    const { data: updatedBooking } = await supabaseAdmin
+      .from('bookings')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    res.json({ booking: updatedBooking })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── GET /api/admin/bookings/:id/history ──────────────────────────────────────
+// C.4: Read the booking status audit trail
+adminRouter.get('/bookings/:id/history', ...protect, async (req, res, next) => {
+  try {
+    const { id } = req.params
+
+    const { data: history, error } = await supabaseAdmin
+      .from('booking_status_log')
+      .select('*')
+      .eq('booking_id', id)
+      .order('created_at', { ascending: true })
+
+    if (error) throw dbError(error, 'Failed to fetch booking history')
+
+    res.json({ history: history ?? [] })
+  } catch (error) {
+    next(error)
+  }
+})
+
 // ─── GET /api/admin/packages ──────────────────────────────────────────────────
 adminRouter.get('/packages', ...protect, async (_req, res, next) => {
   try {
@@ -241,7 +430,7 @@ adminRouter.get('/packages', ...protect, async (_req, res, next) => {
       .select('*')
       .order('created_at', { ascending: false })
 
-    if (error) throw new HttpError(500, error.message)
+    if (error) throw dbError(error, 'Failed to fetch packages')
     res.json({ packages: packages ?? [] })
   } catch (error) {
     next(error)
@@ -267,8 +456,43 @@ adminRouter.get('/packages/:id', ...protect, async (req, res, next) => {
 
 
 // ─── POST /api/admin/packages ─────────────────────────────────────────────────
+// B.7: Complete package validation helper
+function validatePackageFields(body: Record<string, unknown>, isCreate: boolean) {
+  const errors: string[] = []
+  if (isCreate) {
+    if (!body.title || typeof body.title !== 'string' || !String(body.title).trim()) errors.push('title is required')
+    if (!body.description || typeof body.description !== 'string' || !String(body.description).trim()) errors.push('description is required')
+    if (body.price === undefined || body.price === null) errors.push('price is required')
+    if (!body.duration) errors.push('duration is required')
+    if (body.total_seats === undefined || body.total_seats === null) errors.push('total_seats is required')
+  }
+  if (body.description !== undefined && typeof body.description === 'string' && body.description.length > 5000) {
+    errors.push('description must be 5000 characters or fewer')
+  }
+  if (body.price !== undefined) {
+    const price = Number(body.price)
+    if (!Number.isFinite(price) || price <= 0) errors.push('price must be a positive number')
+  }
+  if (body.total_seats !== undefined) {
+    const seats = Number(body.total_seats)
+    if (!Number.isInteger(seats) || seats < 0) errors.push('total_seats must be a non-negative integer')
+  }
+  if (body.remaining_seats !== undefined) {
+    const rem = Number(body.remaining_seats)
+    if (!Number.isInteger(rem) || rem < 0) errors.push('remaining_seats must be a non-negative integer')
+  }
+  // Cross-field: remaining_seats <= total_seats
+  const total = body.total_seats !== undefined ? Number(body.total_seats) : undefined
+  const remaining = body.remaining_seats !== undefined ? Number(body.remaining_seats) : undefined
+  if (total !== undefined && remaining !== undefined && remaining > total) {
+    errors.push('remaining_seats cannot exceed total_seats')
+  }
+  if (errors.length > 0) throw new HttpError(400, errors.join('; '))
+}
+
 adminRouter.post('/packages', ...protect, async (req, res, next) => {
   try {
+    validatePackageFields(req.body, true)
     const {
       title,
       description,
@@ -280,15 +504,11 @@ adminRouter.post('/packages', ...protect, async (req, res, next) => {
       is_active,
     } = req.body
 
-    if (!title || !description || !price || !duration || !total_seats) {
-      throw new HttpError(400, 'Missing required fields')
-    }
-
     const { data: pkg, error } = await supabaseAdmin
       .from('travel_packages')
       .insert({
-        title,
-        description,
+        title: String(title).trim(),
+        description: String(description).trim(),
         price: Number(price),
         duration,
         total_seats: Number(total_seats),
@@ -299,7 +519,7 @@ adminRouter.post('/packages', ...protect, async (req, res, next) => {
       .select('*')
       .single()
 
-    if (error || !pkg) throw new HttpError(500, error?.message ?? 'Insert failed')
+    if (error || !pkg) throw dbError(error, 'Failed to create package')
     res.status(201).json({ package: pkg })
   } catch (error) {
     next(error)
@@ -307,16 +527,36 @@ adminRouter.post('/packages', ...protect, async (req, res, next) => {
 })
 
 // ─── PUT /api/admin/packages/:id ──────────────────────────────────────────────
+// B.5: Allowlist of editable package fields
+const PACKAGE_EDITABLE_FIELDS = [
+  'title', 'description', 'price', 'duration', 'total_seats',
+  'remaining_seats', 'image_url', 'is_active', 'start_date', 'end_date',
+  'departure_location', 'highlights', 'inclusions', 'exclusions',
+] as const
+
 adminRouter.put('/packages/:id', ...protect, async (req, res, next) => {
   try {
     const { id } = req.params
-    const updates = req.body as Record<string, unknown>
+    const body = req.body as Record<string, unknown>
+
+    // B.7: Validate fields
+    validatePackageFields(body, false)
+
+    // B.5: Only allow known editable fields
+    const updates: Record<string, unknown> = {}
+    for (const field of PACKAGE_EDITABLE_FIELDS) {
+      if (body[field] !== undefined) {
+        updates[field] = body[field]
+      }
+    }
+
+    if (Object.keys(updates).length === 0) {
+      throw new HttpError(400, 'No valid fields to update')
+    }
 
     if (updates.price !== undefined) updates.price = Number(updates.price)
-    if (updates.total_seats !== undefined)
-      updates.total_seats = Number(updates.total_seats)
-    if (updates.remaining_seats !== undefined)
-      updates.remaining_seats = Number(updates.remaining_seats)
+    if (updates.total_seats !== undefined) updates.total_seats = Number(updates.total_seats)
+    if (updates.remaining_seats !== undefined) updates.remaining_seats = Number(updates.remaining_seats)
 
     const { data: pkg, error } = await supabaseAdmin
       .from('travel_packages')
@@ -325,7 +565,7 @@ adminRouter.put('/packages/:id', ...protect, async (req, res, next) => {
       .select('*')
       .single()
 
-    if (error || !pkg) throw new HttpError(500, error?.message ?? 'Update failed')
+    if (error || !pkg) throw dbError(error, 'Failed to update package')
     res.json({ package: pkg })
   } catch (error) {
     next(error)
@@ -344,8 +584,37 @@ adminRouter.delete('/packages/:id', ...protect, async (req, res, next) => {
       .select('*')
       .single()
 
-    if (error || !pkg) throw new HttpError(500, error?.message ?? 'Update failed')
+    if (error || !pkg) throw dbError(error, 'Failed to deactivate package')
     res.json({ package: pkg })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── GET /api/admin/users/:id/verification-file-url ───────────────────────────
+// B.4: Admin endpoint to generate signed URLs for any user's verification files
+adminRouter.get('/users/:id/verification-file-url', ...protect, async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const filePath = String(req.query.path ?? '').trim()
+
+    if (!filePath) {
+      throw new HttpError(400, 'path query parameter is required')
+    }
+
+    // Verify the file path is scoped to the specified user
+    const expectedPrefix = `uploads/verifications/${id}/`
+    if (!filePath.startsWith(expectedPrefix)) {
+      throw new HttpError(400, 'File path does not match the specified user')
+    }
+
+    const expiresAt = Math.floor(Date.now() / 1000) + SIGNED_URL_EXPIRY
+    const token = generateAdminSignedToken(filePath, expiresAt)
+
+    res.json({
+      url: `/api/users/verification-file?path=${encodeURIComponent(filePath)}&expires=${expiresAt}&token=${token}`,
+      expiresAt,
+    })
   } catch (error) {
     next(error)
   }

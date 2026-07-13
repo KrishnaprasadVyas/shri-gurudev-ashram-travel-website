@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError } from '../errors'
-import { supabaseAdmin } from '../services/supabaseAdmin'
+import { HttpError } from '../errors.js'
+import { supabaseAdmin } from '../services/supabaseAdmin.js'
 
 export type AuthenticatedRequest = Request & {
   userId: string

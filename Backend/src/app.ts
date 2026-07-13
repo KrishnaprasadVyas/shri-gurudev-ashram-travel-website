@@ -3,14 +3,36 @@ loadEnv({ path: '.env.development' })
 
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
-import { HttpError } from './errors'
-import { adminRouter } from './routes/admin'
-import { bookingsRouter } from './routes/bookings'
-import { paymentsRouter } from './routes/payments'
-import { razorpayWebhookRouter } from './routes/razorpayWebhook'
-import { usersRouter } from './routes/users'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
+import { HttpError } from './errors.js'
+import { adminRouter } from './routes/admin.js'
+import { bookingsRouter } from './routes/bookings.js'
+import { paymentsRouter } from './routes/payments.js'
+import { razorpayWebhookRouter } from './routes/razorpayWebhook.js'
+import { usersRouter } from './routes/users.js'
 
 export const app = express()
+
+// Security headers
+app.use(helmet())
+
+// Rate limiters
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // 30 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later' },
+})
+
+const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20, // 20 payment requests per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many payment requests, please try again later' },
+})
 
 // CORS — allow Vite dev server and production frontend
 app.use(
@@ -31,14 +53,27 @@ app.use('/api/webhooks/razorpay', express.raw({ type: 'application/json' }), raz
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Apply rate limiters to sensitive routes
+app.use('/api/users', authLimiter, usersRouter)
 app.use('/api/bookings', bookingsRouter)
-app.use('/api/payments', paymentsRouter)
-app.use('/api/users', usersRouter)
+app.use('/api/payments', paymentLimiter, paymentsRouter)
 app.use('/api/admin', adminRouter)
+
 
 app.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
   const status = error instanceof HttpError ? error.status : 500
-  const message = error instanceof Error ? error.message : 'Internal server error'
+
+  // In production, don't leak raw error messages for 500s
+  let message: string
+  if (error instanceof HttpError) {
+    message = error.message
+  } else if (process.env.NODE_ENV === 'development') {
+    message = error instanceof Error ? error.message : 'Internal server error'
+  } else {
+    // Log the real error server-side, send generic message to client
+    console.error('[Unhandled Error]', error instanceof Error ? error.stack : error)
+    message = 'Internal server error'
+  }
 
   response.status(status).json({
     error: message,

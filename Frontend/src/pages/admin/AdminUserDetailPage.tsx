@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle, XCircle, Loader2, ImageOff } from 'lucide-react'
 import { QUERY_KEYS } from '@/lib/queryKeys'
 import apiClient from '@/lib/apiClient'
 import { usePageTitle } from '@/hooks/usePageTitle'
@@ -14,6 +15,44 @@ const statusBadge: Record<string, string> = {
   paid: 'bg-green-500/20 text-green-400 border-green-500/30',
   cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
   completed: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+}
+
+/** E.1: Fetches a signed URL for a verification file and renders it as an image. */
+function VerificationImage({ userId, filePath, label }: { userId: string; filePath: string; label: string }) {
+  const [imgError, setImgError] = useState(false)
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin', 'signed-url', userId, filePath],
+    queryFn: async () => {
+      const { data } = await apiClient.get(`/api/admin/users/${userId}/verification-file-url`, {
+        params: { path: filePath },
+      })
+      return data as { url: string; expiresAt: number }
+    },
+    staleTime: 4 * 60 * 1000, // 4 min (signed URLs expire in 5 min)
+  })
+
+  return (
+    <div className="mb-4">
+      <p className="text-xs text-[#f2f0eb]/40 mb-2 uppercase tracking-wider">{label}</p>
+      <div className="h-40 rounded-xl overflow-hidden bg-amber-900/10 border border-amber-900/20 flex items-center justify-center">
+        {isLoading ? (
+          <Loader2 className="h-5 w-5 animate-spin text-amber-500/40" />
+        ) : data?.url && !imgError ? (
+          <img
+            src={data.url}
+            alt={label}
+            className="w-full h-full object-contain"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="flex flex-col items-center gap-2 text-[#f2f0eb]/30">
+            <ImageOff className="h-6 w-6" />
+            <span className="text-xs">Unable to load image</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
 
 export function AdminUserDetailPage() {
@@ -90,13 +129,12 @@ export function AdminUserDetailPage() {
                 Aadhaar: <span className="font-mono text-[#f2f0eb]">{user.aadhaar_number}</span>
               </p>
             )}
-            {user.aadhaar_image_path && (
-              <div className="mb-3">
-                <p className="text-xs text-[#f2f0eb]/40 mb-1">Aadhaar Image</p>
-                <div className="h-24 rounded-lg bg-amber-900/20 flex items-center justify-center">
-                  <span className="text-xs text-[#f2f0eb]/40">Image uploaded: {user.aadhaar_image_path.split('/').pop()}</span>
-                </div>
-              </div>
+            {/* E.1: Real image previews via signed URL */}
+            {user.aadhaar_image_path && id && (
+              <VerificationImage userId={id} filePath={user.aadhaar_image_path} label="Aadhaar Card" />
+            )}
+            {user.selfie_image_path && id && (
+              <VerificationImage userId={id} filePath={user.selfie_image_path} label="Selfie" />
             )}
 
             {user.verification_status === 'submitted' && (

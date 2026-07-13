@@ -25,13 +25,21 @@ const statusConfig = {
 
 export function BookingDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { data, isLoading } = useBooking(id)
+  const { data, isLoading, error } = useBooking(id)
   const { initiatePayment } = usePayment()
 
   const booking: BookingRow | undefined = data?.booking
   usePageTitle(booking ? `Booking #${booking.booking_reference}` : 'Booking Detail')
 
   if (isLoading) return <LoadingState variant="detail" />
+  if (error) return (
+    <div className="text-center py-16 space-y-3">
+      <p className="text-[#f2f0eb]/50">Failed to load booking details.</p>
+      <Link to="/portal/bookings" className="text-amber-400 hover:text-amber-300 text-sm transition-colors">
+        Back to Bookings
+      </Link>
+    </div>
+  )
   if (!booking) return (
     <div className="text-center py-16 text-[#f2f0eb]/50">
       <p>Booking not found.</p>

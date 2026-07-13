@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, userProfile } = useAuth();
+  const isAdmin = userProfile?.role === 'admin';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +20,9 @@ export const Navbar: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close mobile menu on route change (via link clicks)
+  const closeMobile = () => setMobileOpen(false);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -61,24 +68,120 @@ export const Navbar: React.FC = () => {
             </NavLink>
           ))}
         </div>
+
+        {/* Desktop auth buttons */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            to="/login"
-            className="font-label-caps text-label-caps text-primary hover:text-secondary transition-colors"
-          >
-            LOGIN
-          </Link>
-          <Link
-            to="/signup"
-            className="bg-primary text-on-primary px-6 py-2 rounded-full font-label-caps text-label-caps hover:bg-secondary transition-all duration-300 shadow-sm active:scale-95"
-          >
-            REGISTER FREE
-          </Link>
+          {user ? (
+            <>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="font-label-caps text-label-caps text-amber-500 hover:text-amber-400 border border-amber-500/40 px-4 py-1.5 rounded-full transition-colors"
+                >
+                  ADMIN DASHBOARD
+                </Link>
+              )}
+              <Link
+                to="/portal"
+                className="bg-primary text-on-primary px-6 py-2 rounded-full font-label-caps text-label-caps hover:bg-secondary transition-all duration-300 shadow-sm active:scale-95"
+              >
+                MY PORTAL
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="font-label-caps text-label-caps text-primary hover:text-secondary transition-colors"
+              >
+                LOGIN
+              </Link>
+              <Link
+                to="/signup"
+                className="bg-primary text-on-primary px-6 py-2 rounded-full font-label-caps text-label-caps hover:bg-secondary transition-all duration-300 shadow-sm active:scale-95"
+              >
+                REGISTER FREE
+              </Link>
+            </>
+          )}
         </div>
-        <button className="md:hidden text-primary">
-          <span className="material-symbols-outlined">menu</span>
+
+        {/* Mobile hamburger / close button */}
+        <button
+          className="md:hidden text-primary p-2"
+          onClick={() => setMobileOpen((prev) => !prev)}
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+        >
+          <span className="material-symbols-outlined text-[28px]">
+            {mobileOpen ? 'close' : 'menu'}
+          </span>
         </button>
       </nav>
+
+      {/* Mobile menu panel */}
+      {mobileOpen && (
+        <div className="md:hidden bg-surface border-t border-outline-variant/30 shadow-lg animate-in slide-in-from-top duration-200">
+          <div className="flex flex-col px-6 py-4 gap-2">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                onClick={closeMobile}
+                className={({ isActive }) =>
+                  `font-body-md text-body-md py-3 px-2 rounded-lg transition-colors duration-200 ${
+                    isActive
+                      ? 'text-primary font-bold bg-primary/5'
+                      : 'text-on-surface-variant hover:text-secondary hover:bg-surface-container-low'
+                  }`
+                }
+              >
+                {link.name}
+              </NavLink>
+            ))}
+
+            {/* Mobile auth buttons */}
+            <div className="mt-4 pt-4 border-t border-outline-variant/30 flex flex-col gap-3">
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={closeMobile}
+                      className="border border-amber-500/40 text-amber-500 px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-amber-500/10 transition-all duration-300 text-center"
+                    >
+                      ADMIN DASHBOARD
+                    </Link>
+                  )}
+                  <Link
+                    to="/portal"
+                    onClick={closeMobile}
+                    className="bg-primary text-on-primary px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-secondary transition-all duration-300 shadow-sm text-center"
+                  >
+                    MY PORTAL
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={closeMobile}
+                    className="font-label-caps text-label-caps text-primary hover:text-secondary transition-colors py-3 px-2 text-center"
+                  >
+                    LOGIN
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={closeMobile}
+                    className="bg-primary text-on-primary px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-secondary transition-all duration-300 shadow-sm text-center"
+                  >
+                    REGISTER FREE
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

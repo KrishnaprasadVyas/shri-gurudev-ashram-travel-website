@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { usePageTitle } from '@/hooks/usePageTitle'
@@ -13,6 +13,14 @@ export function ResetPasswordPage() {
   const [showPw, setShowPw] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  // D.6: null = checking, true = valid, false = invalid/expired
+  const [sessionValid, setSessionValid] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSessionValid(session !== null)
+    })
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,6 +42,39 @@ export function ResetPasswordPage() {
       toast.success('Password updated! Please sign in with your new password.')
       navigate('/login')
     }
+  }
+
+  if (sessionValid === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (sessionValid === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface px-4 py-16 font-body-md text-on-surface">
+        <div className="w-full max-w-md text-center space-y-6">
+          <img
+            src="/assets/Ashram vector logo_2022_white-01.png"
+            alt="Shri Gurudev Ashram Logo"
+            className="w-14 h-14 object-contain mx-auto mb-4 drop-shadow-sm"
+          />
+          <div className="p-8 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm space-y-4">
+            <div className="px-5 py-4 rounded-xl bg-error-container text-on-error-container text-sm font-medium">
+              Invalid or expired recovery link. Please request a new password reset.
+            </div>
+            <Link
+              to="/forgot-password"
+              className="inline-block text-primary hover:text-secondary font-bold transition-colors"
+            >
+              Request New Password Reset →
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

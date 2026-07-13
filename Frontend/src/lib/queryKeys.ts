@@ -12,4 +12,7 @@ export const QUERY_KEYS = {
     ['admin', 'bookings', page, status] as const,
   adminBooking: (id: string) => ['admin', 'bookings', id] as const,
   adminPackages: ['admin', 'packages'] as const,
+  // F.6: Separate key for admin single-package fetch so it doesn't pollute
+  // the public usePackage() cache (different endpoints, different shapes)
+  adminPackage: (id: string) => ['admin', 'packages', id] as const,
 }
