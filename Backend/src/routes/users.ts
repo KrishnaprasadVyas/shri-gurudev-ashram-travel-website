@@ -292,3 +292,43 @@ usersRouter.post(
     }
   },
 );
+
+usersRouter.put(
+  "/profile",
+  requireAuth,
+  async (request, response, next) => {
+    try {
+      const authRequest = request as AuthenticatedRequest;
+      const { full_name, phone } = request.body;
+
+      if (!full_name || typeof full_name !== "string" || !full_name.trim()) {
+        throw new HttpError(400, "Full name is required");
+      }
+
+      if (!phone || typeof phone !== "string" || !/^\d{10}$/.test(phone)) {
+        throw new HttpError(400, "Mobile number must be exactly 10 digits");
+      }
+
+      const { data: updatedUser, error: updateError } = await supabaseAdmin
+        .from("users")
+        .update({
+          full_name: full_name.trim(),
+          phone: phone,
+        })
+        .eq("id", authRequest.userId)
+        .select("*")
+        .single();
+
+      if (updateError || !updatedUser) {
+        throw new HttpError(
+          500,
+          updateError?.message ?? "Failed to update profile",
+        );
+      }
+
+      response.status(200).json({ user: updatedUser });
+    } catch (error) {
+      next(error);
+    }
+  }
+);

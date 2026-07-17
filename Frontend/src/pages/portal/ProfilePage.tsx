@@ -47,12 +47,8 @@ export function ProfilePage() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: { full_name: string; phone: string }) => {
-      const { supabase } = await import('@/lib/supabase')
-      const { error } = await supabase
-        .from('users')
-        .update(data)
-        .eq('id', user!.id)
-      if (error) throw error
+      const { default: apiClient } = await import('@/lib/apiClient')
+      await apiClient.put('/api/users/profile', data)
     },
     onSuccess: async () => {
       await refreshProfile()

@@ -47,7 +47,8 @@ export interface Notification {
 
 export interface AuthUser {
   id: string
-  email: string
-  name: string
+  phone: string
+  email?: string
+  name?: string
   avatar?: string
 }

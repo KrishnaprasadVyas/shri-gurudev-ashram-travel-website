@@ -22,8 +22,6 @@ import { ContactPage } from './pages/public/ContactPage'
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage'
 import { SignupPage } from './pages/auth/SignupPage'
-import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage'
-import { ResetPasswordPage } from './pages/auth/ResetPasswordPage'
 
 // Portal Pages
 import { PortalHomePage } from './pages/portal/PortalHomePage'
@@ -78,11 +76,7 @@ export default function App() {
       <Route element={<GuestRoute />}>
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignupPage />} />
-        <Route path="forgot-password" element={<ForgotPasswordPage />} />
       </Route>
-
-      {/* Reset password doesn't need guest guard (Supabase sends user back from email) */}
-      <Route path="reset-password" element={<ResetPasswordPage />} />
 
       {/* ── User Portal (requires auth) ───────────────────── */}
       <Route element={<ProtectedRoute />}>
