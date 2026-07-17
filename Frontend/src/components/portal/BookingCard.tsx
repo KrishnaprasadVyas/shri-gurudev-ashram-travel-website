@@ -5,56 +5,58 @@ import type { BookingRow } from '@/types/database.types'
 type BookingWithTitle = BookingRow & { packageTitle?: string }
 
 const statusConfig = {
-  payment_pending: { label: 'Payment Pending', className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  paid: { label: 'Confirmed', className: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  cancelled: { label: 'Cancelled', className: 'bg-red-500/20 text-red-400 border-red-500/30' },
-  completed: { label: 'Completed', className: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+  payment_pending: { label: 'Payment Pending', className: 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30 font-bold' },
+  paid: { label: 'Confirmed', className: 'bg-[#2E7D32]/15 text-[#2E7D32] border-[#2E7D32]/30 font-bold' },
+  cancelled: { label: 'Cancelled', className: 'bg-[#C0392B]/15 text-[#C0392B] border-[#C0392B]/30 font-bold' },
+  completed: { label: 'Completed', className: 'bg-[#B8860B]/15 text-[#B8860B] border-[#B8860B]/30 font-bold' },
 }
 
 export function BookingCard({ booking }: { booking: BookingWithTitle }) {
   const status = statusConfig[booking.status] ?? statusConfig.payment_pending
 
   return (
-    <div className="p-5 rounded-2xl bg-[#121110] border border-amber-900/20 hover:border-amber-500/20 transition-all">
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-[#f2f0eb] truncate">
-            {booking.packageTitle ?? 'Yatra Booking'}
-          </p>
-          <p className="text-xs text-[#f2f0eb]/40 mt-0.5 font-mono">
-            #{booking.booking_reference}
+    <div className="group p-6 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B]/40 transition-all duration-300 shadow-[0_8px_30px_rgba(62,43,31,0.04)] hover:shadow-md">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex-1 min-w-0 space-y-2">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <p className="font-display text-base font-bold text-[#3E2B1F] truncate group-hover:text-[#B8860B] transition-colors">
+              {booking.packageTitle ?? 'Sacred Pilgrimage Package'}
+            </p>
+            <span className={`font-label-caps text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${status.className}`}>
+              {status.label}
+            </span>
+          </div>
+          <p className="text-[11px] text-[#6F5B47] font-mono font-bold">
+            Ref: #{booking.booking_reference}
           </p>
         </div>
-        <span className={`flex-shrink-0 text-xs font-medium px-2.5 py-1 rounded-full border ${status.className}`}>
-          {status.label}
-        </span>
-      </div>
 
-      <div className="flex flex-wrap gap-4 text-sm text-[#f2f0eb]/50 mb-4">
-        <span className="flex items-center gap-1.5">
-          <Users className="h-3.5 w-3.5 text-amber-500" />
-          {booking.traveler_count} traveler{booking.traveler_count !== 1 ? 's' : ''}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <IndianRupee className="h-3.5 w-3.5 text-amber-500" />
-          ₹{booking.total_amount.toLocaleString('en-IN')}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <Calendar className="h-3.5 w-3.5 text-amber-500" />
-          {new Date(booking.created_at).toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-          })}
-        </span>
-      </div>
+        <div className="flex flex-wrap items-center gap-5 text-[13px] text-[#6F5B47]">
+          <span className="flex items-center gap-1.5 font-medium">
+            <Users className="h-4 w-4 text-[#B8860B]" />
+            {booking.traveler_count} traveler{booking.traveler_count !== 1 ? 's' : ''}
+          </span>
+          <span className="flex items-center gap-1 font-bold text-[#3E2B1F]">
+            <IndianRupee className="h-4 w-4 text-[#B8860B]" />
+            ₹{booking.total_amount.toLocaleString('en-IN')}
+          </span>
+          <span className="flex items-center gap-1.5 font-medium">
+            <Calendar className="h-4 w-4 text-[#B8860B]" />
+            {new Date(booking.created_at).toLocaleDateString('en-IN', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+            })}
+          </span>
+        </div>
 
-      <Link
-        to={`/portal/bookings/${booking.id}`}
-        className="inline-flex items-center gap-1.5 text-sm text-amber-400 hover:text-amber-300 font-medium transition-colors"
-      >
-        View Details <ArrowRight className="h-3.5 w-3.5" />
-      </Link>
+        <Link
+          to={`/portal/bookings/${booking.id}`}
+          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#B8860B] hover:text-[#D4AF37] transition-colors shrink-0 px-4 py-2 rounded-full bg-[#F5EFE4] hover:bg-[#FFF7E8] border border-[#E9DCC5] shadow-2xs"
+        >
+          View Details <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform duration-200" />
+        </Link>
+      </div>
     </div>
   )
 }

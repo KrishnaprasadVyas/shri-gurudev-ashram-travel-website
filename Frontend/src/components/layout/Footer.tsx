@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import ashramlogo from '../../assets/ashramlogo.png';
 
 /* ─── Inline SVG Icons ─── */
 const LocationIcon = () => (
@@ -41,9 +42,10 @@ const ChevronIcon = () => (
 
 const AshramLogo = () => (
   <img
-    src="/assets/Ashram vector logo_2022_white-01.png"
+    src={ashramlogo}
     alt="Shri Gurudev Ashram Logo"
-    className="w-24 h-24 md:w-[105px] md:h-[105px] object-contain shrink-0 drop-shadow-md"
+    className="w-40 sm:w-44 md:w-52 lg:w-60 xl:w-[280px] h-auto object-contain drop-shadow-[0_6px_20px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:scale-105"
+    style={{ filter: 'brightness(1.15) contrast(1.15)' }}
   />
 );
 
@@ -113,30 +115,32 @@ export const Footer: React.FC = () => {
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#C98B1A]/40 to-transparent" />
 
       {/* ─── Main Grid ─── */}
-      <div className="relative max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-12 pb-10">
+      <div className="relative max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-8 pb-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
           viewport={{ once: true, amount: 0.15 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.1fr_1px_1.15fr_1px_0.8fr_1px_1.1fr_1px_1fr] gap-y-10 items-start"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.6fr_1px_1.1fr_1px_0.8fr_1px_1.1fr_1px_1fr] gap-y-6 md:gap-y-8 items-start"
         >
           {/* ── Col 1 : Ashram Info ── */}
-          <div className="flex flex-col pr-4 lg:pr-6">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="flex flex-col items-center text-center lg:pr-6">
+            <div className="flex flex-col items-center text-center mb-4">
               <AshramLogo />
-              <h3 className="font-display-lg text-[22px] text-[#F5EFE4] font-bold leading-tight tracking-wide">
-                Shri Gurudev<br />Ashram
+
+              <h3 className="mt-2.5 font-display-lg text-2xl lg:text-[26px] text-[#F5EFE4] font-bold leading-tight">
+                Shri Gurudev Ashram
               </h3>
             </div>
-            <p className="text-[13px] leading-[1.85] text-[#C9B79D] max-w-[220px]">
+
+            <p className="text-[13px] leading-[1.65] text-[#C9B79D] max-w-[350px] text-center mx-auto">
               Dedicated to Param Pujya Shri Swami
               Harichaitanyanand Saraswatiji Maharaj.
               Seeking the Divine within through
               tradition, service, and silence.
             </p>
             {/* Social */}
-            <div className="flex gap-3 mt-7">
+            <div className="flex justify-center gap-3 mt-4">
               <SocialBtn href="https://www.facebook.com/SwamiHarichaitanyanandS/" label="Facebook">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" /></svg>
               </SocialBtn>
@@ -157,11 +161,11 @@ export const Footer: React.FC = () => {
 
           {/* ── Col 2 : Contact ── */}
           <div className="flex flex-col lg:px-6">
-            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-6 tracking-wide">Contact Information</h4>
-            <ul className="space-y-5 text-[13px] text-[#C9B79D]">
+            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">Contact Information</h4>
+            <ul className="space-y-3.5 text-[13px] text-[#C9B79D]">
               <li className="flex items-start gap-3">
                 <LocationIcon />
-                <span className="leading-[1.75]">
+                <span className="leading-[1.7]">
                   Shri Gurudev Ashram, Palaskhed Sapkal,<br />
                   Tehsil Chikhli, District Buldhana,<br />
                   Maharashtra - 443001
@@ -189,8 +193,8 @@ export const Footer: React.FC = () => {
 
           {/* ── Col 3 : Quick Links ── */}
           <div className="flex flex-col lg:px-6">
-            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-6 tracking-wide">Quick Links</h4>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3.5">
+            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">Quick Links</h4>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-3">
               <QuickLink to="/" label="Home" />
               <QuickLink to="/faq" label="FAQ" />
               <QuickLink to="/about" label="About" />
@@ -207,10 +211,10 @@ export const Footer: React.FC = () => {
 
           {/* ── Col 4 : Temple Information ── */}
           <div className="flex flex-col lg:px-6">
-            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-6 tracking-wide">Temple Information</h4>
-            <h5 className="text-[11px] tracking-[0.15em] uppercase text-[#C98B1A] font-bold mb-4">Darshan Timings</h5>
+            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">Temple Information</h4>
+            <h5 className="text-[11px] tracking-[0.15em] uppercase text-[#C98B1A] font-bold mb-3">Darshan Timings</h5>
 
-            <div className="space-y-4 text-[13px]">
+            <div className="space-y-3 text-[13px]">
               {/* Morning */}
               <div className="flex items-start gap-2.5">
                 <SunIcon />
@@ -229,7 +233,7 @@ export const Footer: React.FC = () => {
               </div>
             </div>
 
-            <p className="text-[11px] text-[#C9B79D]/60 mt-5 leading-relaxed italic">
+            <p className="text-[11px] text-[#C9B79D]/60 mt-4 leading-relaxed italic">
               * Temple timings may be<br />changed on special occasions.
             </p>
           </div>
@@ -239,9 +243,9 @@ export const Footer: React.FC = () => {
 
           {/* ── Col 5 : Aartis & Discourses ── */}
           <div className="flex flex-col lg:pl-6">
-            <h4 className="font-display-lg text-[11px] tracking-[0.15em] uppercase text-[#C98B1A] font-bold mb-6">Aartis and Discourses</h4>
+            <h4 className="font-display-lg text-[11px] tracking-[0.15em] uppercase text-[#C98B1A] font-bold mb-4">Aartis and Discourses</h4>
 
-            <div className="space-y-4 text-[13px]">
+            <div className="space-y-3 text-[13px]">
               {[
                 { name: 'Kakda Aarti', time: '04:00 AM' },
                 { name: 'Daily Morning Aarti', time: '06:00 AM' },
@@ -262,7 +266,7 @@ export const Footer: React.FC = () => {
       {/* ─── Bottom Bar ─── */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#C98B1A]/25 to-transparent" />
 
-      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-3.5 flex flex-col md:flex-row justify-between items-center gap-2.5">
         <p className="text-[12px] text-[#C9B79D]/70 text-center md:text-left">
           © 2026 Shri Gurudev Ashram, Palaskhed Sapkal. All rights reserved.
         </p>
