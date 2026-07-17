@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import ashramlogo from '../../assets/ashramlogo.png';
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,14 +43,15 @@ export const Navbar: React.FC = () => {
       <nav className="flex justify-between items-center px-margin-desktop py-3 max-w-container-max mx-auto">
         <Link
           to="/"
-          className="flex items-center gap-3 font-headline-sm text-headline-sm text-primary tracking-tight cursor-pointer group"
+          className="flex items-center gap-3 font-headline-sm text-headline-sm text-primary tracking-tight cursor-pointer group py-1"
         >
           <img
-            src="/assets/Ashram vector logo_2022_white-01.png"
+            src={ashramlogo}
             alt="Shri Gurudev Ashram Logo"
-            className="w-14 h-14 md:w-[64px] md:h-[64px] object-contain shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] transition-transform group-hover:scale-105 duration-300"
+            style={{ filter: 'brightness(1.15) contrast(1.2)' }}
+            className="w-20 sm:w-24 md:w-28 lg:w-32 h-auto max-h-[80px] md:max-h-[96px] object-contain shrink-0 drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)] transition-transform group-hover:scale-105 duration-300"
           />
-          <span className="font-semibold tracking-wide text-primary">Shri Gurudev Ashram</span>
+          <span className="font-bold tracking-wide text-xl md:text-2xl text-primary font-display">Shri Gurudev Ashram</span>
         </Link>
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (

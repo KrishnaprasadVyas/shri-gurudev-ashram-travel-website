@@ -9,8 +9,8 @@ export const UpcomingPilgrimages: React.FC = () => {
   const { data: packages, isLoading, error } = usePackages();
 
   return (
-    <section id="upcoming" className="py-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto bg-surface">
-      <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
+    <section id="upcoming" className="pt-10 pb-16 md:pt-14 md:pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto bg-surface">
+      <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
         <span className="font-label-caps text-xs tracking-[0.2em] text-secondary mb-3 block uppercase font-semibold">
           DIVINE JOURNEYS
         </span>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ShieldX, Loader2, IndianRupee } from 'lucide-react'
+import { ShieldX, Loader2, IndianRupee, ArrowLeft, Clock, Users, Sparkles } from 'lucide-react'
 import { useMutation } from '@tanstack/react-query'
 import { useAuth } from '@/context/AuthContext'
 import { usePackage } from '@/hooks/usePackages'
@@ -72,17 +72,17 @@ export function BookPage() {
   // Verification check
   if (userProfile?.verification_status === 'not_submitted') {
     return (
-      <div className="max-w-lg text-center py-16 space-y-6">
-        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto">
-          <ShieldX className="h-8 w-8 text-red-400" />
+      <div className="max-w-lg text-center py-16 space-y-6 mx-auto animate-in fade-in duration-300">
+        <div className="w-16 h-16 rounded-2xl bg-[#C0392B]/15 border border-[#C0392B]/30 flex items-center justify-center mx-auto shadow-sm">
+          <ShieldX className="h-8 w-8 text-[#C0392B]" />
         </div>
-        <h1 className="font-display text-2xl font-bold text-[#f2f0eb]">Identity Verification Required</h1>
-        <p className="text-[#f2f0eb]/60">
-          You must submit your Aadhaar and selfie before booking a Yatra.
+        <h1 className="font-display text-2xl font-bold text-[#3E2B1F]">Identity Verification Required</h1>
+        <p className="text-[#6F5B47] text-sm leading-relaxed">
+          You must submit your Aadhaar and selfie before booking a sacred Yatra.
         </p>
         <Link
           to="/portal/verify"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 text-white font-medium hover:bg-amber-600 transition-colors"
+          className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#B8860B] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#D4AF37] transition-all shadow-sm"
         >
           Verify My Identity
         </Link>
@@ -96,74 +96,91 @@ export function BookPage() {
   const totalPrice = pkg.price * form.travelerCount
 
   const inputClass = (field: string) =>
-    `w-full px-4 py-3 rounded-xl bg-[#0a0908] border ${errors[field] ? 'border-red-500/50' : 'border-amber-900/30'} text-[#f2f0eb] focus:outline-none focus:border-amber-500/50 transition-colors`
+    `w-full px-4 py-3.5 rounded-xl bg-[#FAF7F2] border ${errors[field] ? 'border-[#C0392B]' : 'border-[#E9DCC5]'} text-[#3E2B1F] focus:outline-none focus:border-[#B8860B] focus:bg-[#FFFFFF] transition-all text-sm font-medium shadow-2xs`
 
   const renderError = (field: string) =>
-    errors[field] ? <p className="text-red-400 text-xs mt-1">{errors[field]}</p> : null
+    errors[field] ? <p className="text-[#C0392B] text-xs font-bold mt-1.5">{errors[field]}</p> : null
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <h1 className="font-display text-3xl font-bold text-[#f2f0eb]">Book Yatra</h1>
+    <div className="max-w-3xl space-y-8 animate-in fade-in duration-300">
+      {/* ── Header ───────────────────────────────────────── */}
+      <div className="flex items-center gap-3.5">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-2.5 rounded-xl bg-[#FFFFFF] border border-[#E9DCC5] text-[#6F5B47] hover:text-[#3E2B1F] hover:border-[#B8860B] transition-all cursor-pointer shadow-2xs"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
+        <div>
+          <h1 className="font-display text-3xl font-bold text-[#3E2B1F] tracking-tight">Book Yatra</h1>
+          <p className="text-sm text-[#6F5B47] font-normal mt-0.5">Complete your pilgrimage reservation</p>
+        </div>
+      </div>
 
-      {/* Package summary */}
-      <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-        <p className="font-semibold text-[#f2f0eb]">{pkg.title}</p>
-        <div className="flex gap-4 mt-2 text-sm text-amber-400">
-          <span>{pkg.duration}</span>
-          <span>₹{pkg.price.toLocaleString('en-IN')} / person</span>
-          <span>{pkg.remaining_seats} seats left</span>
+      {/* ── Package summary card ─────────────────────────── */}
+      <div className="p-6 sm:p-7 rounded-3xl bg-[#FFFFFF] border border-[#B8860B]/30 shadow-[0_8px_30px_rgba(62,43,31,0.05)]">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles className="h-4 w-4 text-[#B8860B]" />
+          <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">Selected Journey</span>
+        </div>
+        <p className="font-display text-xl font-bold text-[#3E2B1F] mb-3">{pkg.title}</p>
+        <div className="flex flex-wrap gap-5 text-sm text-[#6F5B47]">
+          <span className="flex items-center gap-1.5 font-medium"><Clock className="h-4 w-4 text-[#B8860B]" /> {pkg.duration}</span>
+          <span className="flex items-center gap-1.5 font-medium"><IndianRupee className="h-4 w-4 text-[#B8860B]" /> ₹{pkg.price.toLocaleString('en-IN')} / person</span>
+          <span className="flex items-center gap-1.5 font-medium"><Users className="h-4 w-4 text-[#B8860B]" /> {pkg.remaining_seats} seats left</span>
         </div>
         {pkg.remaining_seats === 0 && (
-          <p className="text-red-400 text-sm mt-2 font-medium">This Yatra is fully booked.</p>
+          <p className="text-[#C0392B] text-sm mt-3 font-bold">This Yatra is fully booked.</p>
         )}
       </div>
 
       {pkg.remaining_seats > 0 && (
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Section 1: Personal Info */}
-          <div className="p-6 rounded-2xl bg-[#121110] border border-amber-900/20 space-y-4">
-            <h2 className="font-semibold text-[#f2f0eb]">Personal Information</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] space-y-5 shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
+            <h2 className="font-display text-lg font-bold text-[#3E2B1F] pb-3 border-b border-[#E9DCC5]">Personal Information</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm text-[#f2f0eb]/60 mb-1.5">Full Name</label>
+                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">Full Name</label>
                 <input type="text" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} className={inputClass('fullName')} />
                 {renderError('fullName')}
               </div>
               <div>
-                <label className="block text-sm text-[#f2f0eb]/60 mb-1.5">Date of Birth</label>
+                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">Date of Birth</label>
                 <input type="date" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} className={inputClass('dob')} />
                 {renderError('dob')}
               </div>
               <div>
-                <label className="block text-sm text-[#f2f0eb]/60 mb-1.5">Phone Number</label>
+                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">Phone Number</label>
                 <input type="tel" maxLength={10} value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value.replace(/\D/g, '') })} placeholder="10-digit" className={inputClass('phoneNumber')} />
                 {renderError('phoneNumber')}
               </div>
               <div>
-                <label className="block text-sm text-[#f2f0eb]/60 mb-1.5">WhatsApp Number</label>
+                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">WhatsApp Number</label>
                 <input type="tel" maxLength={10} value={form.whatsappNumber} onChange={(e) => setForm({ ...form, whatsappNumber: e.target.value.replace(/\D/g, '') })} placeholder="10-digit" className={inputClass('whatsappNumber')} />
                 {renderError('whatsappNumber')}
               </div>
             </div>
             <div>
-              <label className="block text-sm text-[#f2f0eb]/60 mb-1.5">Address</label>
+              <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">Address</label>
               <textarea rows={3} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className={`${inputClass('address')} resize-none`} placeholder="Full address" />
               {renderError('address')}
             </div>
           </div>
 
           {/* Section 2: Travel Preferences */}
-          <div className="p-6 rounded-2xl bg-[#121110] border border-amber-900/20 space-y-4">
-            <h2 className="font-semibold text-[#f2f0eb]">Travel Preferences</h2>
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] space-y-5 shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
+            <h2 className="font-display text-lg font-bold text-[#3E2B1F] pb-3 border-b border-[#E9DCC5]">Travel Preferences</h2>
             <div>
-              <label className="block text-sm text-[#f2f0eb]/60 mb-2">Transport Type</label>
+              <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-3 uppercase tracking-wider">Transport Type</label>
               <div className="flex gap-3">
                 {(['Flight', 'Train'] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setForm({ ...form, transportType: t, busType: undefined })}
-                    className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-colors ${form.transportType === t ? 'bg-amber-500/20 border-amber-500 text-amber-400' : 'border-amber-900/30 text-[#f2f0eb]/50 hover:text-[#f2f0eb]'}`}
+                    className={`flex-1 py-3.5 rounded-xl border text-sm font-bold transition-all cursor-pointer shadow-2xs ${form.transportType === t ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B]' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47] hover:text-[#3E2B1F] hover:bg-[#FFFFFF]'}`}
                   >
                     {t === 'Flight' ? '✈️' : '🚂'} {t}
                   </button>
@@ -172,14 +189,14 @@ export function BookPage() {
             </div>
             {form.transportType === 'Train' && (
               <div>
-                <label className="block text-sm text-[#f2f0eb]/60 mb-2">Train Class</label>
+                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-3 uppercase tracking-wider">Train Class</label>
                 <div className="flex gap-3">
                   {(['AC Train', 'Non-AC Train'] as const).map((b) => (
                     <button
                       key={b}
                       type="button"
                       onClick={() => setForm({ ...form, busType: b })}
-                      className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-colors ${form.busType === b ? 'bg-amber-500/20 border-amber-500 text-amber-400' : 'border-amber-900/30 text-[#f2f0eb]/50 hover:text-[#f2f0eb]'}`}
+                      className={`flex-1 py-3.5 rounded-xl border text-sm font-bold transition-all cursor-pointer shadow-2xs ${form.busType === b ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B]' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47] hover:text-[#3E2B1F] hover:bg-[#FFFFFF]'}`}
                     >
                       {b}
                     </button>
@@ -189,14 +206,14 @@ export function BookPage() {
               </div>
             )}
             <div>
-              <label className="block text-sm text-[#f2f0eb]/60 mb-2">Room Type</label>
+              <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-3 uppercase tracking-wider">Room Type</label>
               <div className="flex gap-3">
                 {(['AC Room', 'Non-AC Room'] as const).map((r) => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setForm({ ...form, roomType: r })}
-                    className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-colors ${form.roomType === r ? 'bg-amber-500/20 border-amber-500 text-amber-400' : 'border-amber-900/30 text-[#f2f0eb]/50 hover:text-[#f2f0eb]'}`}
+                    className={`flex-1 py-3.5 rounded-xl border text-sm font-bold transition-all cursor-pointer shadow-2xs ${form.roomType === r ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B]' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47] hover:text-[#3E2B1F] hover:bg-[#FFFFFF]'}`}
                   >
                     {r}
                   </button>
@@ -206,10 +223,10 @@ export function BookPage() {
           </div>
 
           {/* Section 3: Booking Details */}
-          <div className="p-6 rounded-2xl bg-[#121110] border border-amber-900/20 space-y-4">
-            <h2 className="font-semibold text-[#f2f0eb]">Booking Details</h2>
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] space-y-5 shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
+            <h2 className="font-display text-lg font-bold text-[#3E2B1F] pb-3 border-b border-[#E9DCC5]">Booking Details</h2>
             <div>
-              <label className="block text-sm text-[#f2f0eb]/60 mb-1.5">Number of Travelers</label>
+              <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">Number of Travelers</label>
               <input
                 type="number"
                 min={1}
@@ -230,19 +247,19 @@ export function BookPage() {
               {renderError('travelerCount')}
             </div>
             <div>
-              <label className="block text-sm text-[#f2f0eb]/60 mb-1.5">Special Notes (optional)</label>
-              <textarea rows={3} value={form.specialNotes} onChange={(e) => setForm({ ...form, specialNotes: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-[#0a0908] border border-amber-900/30 text-[#f2f0eb] focus:outline-none focus:border-amber-500/50 transition-colors resize-none" placeholder="Any dietary requirements, mobility needs, etc." />
+              <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">Special Notes (optional)</label>
+              <textarea rows={3} value={form.specialNotes} onChange={(e) => setForm({ ...form, specialNotes: e.target.value })} className="w-full px-4 py-3.5 rounded-xl bg-[#FAF7F2] border border-[#E9DCC5] text-[#3E2B1F] focus:outline-none focus:border-[#B8860B] focus:bg-[#FFFFFF] transition-all text-sm font-medium resize-none shadow-2xs" placeholder="Any dietary requirements, mobility needs, etc." />
             </div>
           </div>
 
-          {/* Price summary */}
-          <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-            <div className="flex justify-between text-sm text-[#f2f0eb]/60 mb-2">
-              <span>₹{pkg.price.toLocaleString('en-IN')} × {form.travelerCount} traveler{form.travelerCount !== 1 ? 's' : ''}</span>
+          {/* ── Price summary ────────────────────────────── */}
+          <div className="p-6 sm:p-7 rounded-3xl bg-[#FFF7E8] border border-[#B8860B]/30 shadow-sm">
+            <div className="flex justify-between text-sm text-[#6F5B47] mb-3">
+              <span className="font-medium">₹{pkg.price.toLocaleString('en-IN')} × {form.travelerCount} traveler{form.travelerCount !== 1 ? 's' : ''}</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-[#f2f0eb]">Total Amount</span>
-              <div className="flex items-center gap-1 text-2xl font-bold text-amber-400">
+            <div className="flex items-center justify-between pt-3 border-t border-[#B8860B]/20">
+              <span className="font-display text-lg font-bold text-[#3E2B1F]">Total Amount</span>
+              <div className="flex items-center gap-1 text-2xl font-bold text-[#B8860B]">
                 <IndianRupee className="h-5 w-5" />
                 {totalPrice.toLocaleString('en-IN')}
               </div>
@@ -252,7 +269,7 @@ export function BookPage() {
           <button
             type="submit"
             disabled={bookMutation.isPending || form.travelerCount > pkg.remaining_seats}
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold hover:from-amber-600 hover:to-orange-700 disabled:opacity-60 transition-all text-lg"
+            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-full bg-[#B8860B] text-white font-bold hover:bg-[#D4AF37] disabled:opacity-50 transition-all text-sm tracking-wider uppercase cursor-pointer shadow-md hover:-translate-y-0.5"
           >
             {bookMutation.isPending ? (
               <><Loader2 className="h-5 w-5 animate-spin" /> Creating Booking...</>

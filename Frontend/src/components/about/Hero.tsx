@@ -22,11 +22,11 @@ export const Hero: React.FC = () => {
         <img
           src="/assets/Ashram vector logo_2022_white-01.png"
           alt="Shri Gurudev Ashram Official Logo"
-          width={160}
-          height={160}
+          width={320}
+          height={320}
           loading="eager"
           fetchPriority="high"
-          className="w-36 h-auto md:w-[160px] object-contain mx-auto mb-8 drop-shadow-[0_4px_20px_rgba(201,139,26,0.5)] select-none transition-transform duration-700 hover:scale-105"
+          className="w-64 sm:w-72 md:w-[320px] max-w-[80vw] h-auto max-h-[35vh] object-contain mx-auto mb-6 md:mb-8 drop-shadow-[0_4px_20px_rgba(201,139,26,0.5)] select-none transition-transform duration-700 hover:scale-105"
         />
 
         <span className="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-4 block font-semibold">

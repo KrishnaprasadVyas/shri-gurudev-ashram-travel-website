@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Loader2, Phone, KeyRound, ChevronLeft } from 'lucide-react'
+import { Loader2, Phone, KeyRound, ChevronLeft, Sparkles } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { AuthSplitLayout } from '@/components/auth/AuthSplitLayout'
@@ -53,7 +53,7 @@ export function LoginPage() {
       setStep(2)
       setTimer(60)
       setTimerActive(true)
-      toast.success('Verification code sent! 🙏')
+      toast.success('Verification code sent to your mobile number! 🙏')
     }
   }
 
@@ -96,20 +96,24 @@ export function LoginPage() {
 
   return (
     <AuthSplitLayout>
-      <div className="mb-10 text-center sm:text-left">
-        <h2 className="font-display-lg text-3xl sm:text-4xl text-primary font-bold tracking-tight mb-2">
+      <div className="mb-8 text-center sm:text-left space-y-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] text-[#B8860B] font-label-caps text-[11px] font-bold uppercase tracking-[0.2em] shadow-2xs">
+          <Sparkles className="h-3 w-3" />
+          <span>Devotee Portal</span>
+        </div>
+        <h2 className="font-display text-3xl sm:text-4xl text-[#3E2B1F] font-bold tracking-tight">
           Welcome Back
         </h2>
-        <p className="font-body-md text-sm sm:text-base text-on-surface-variant font-light">
-          Sign in using your mobile number to continue your spiritual journey.
+        <p className="font-body-md text-sm sm:text-base text-[#6F5B47] font-normal leading-relaxed">
+          Sign in using your registered 10-digit mobile number to access your pilgrimage account and administration dashboard.
         </p>
       </div>
 
       {step === 1 ? (
         <form onSubmit={handleSendOtp} className="space-y-6">
           <div>
-            <label className="block text-xs uppercase tracking-wider font-semibold text-secondary mb-2">
-              Mobile Number
+            <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
+              Registered Mobile Number *
             </label>
             <div className="relative">
               <input
@@ -118,16 +122,17 @@ export function LoginPage() {
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                placeholder="10-digit mobile number"
-                className="w-full px-5 py-4 pl-12 rounded-xl bg-[#FAF8F5] border border-outline-variant/50 text-on-surface placeholder:text-outline/70 focus:outline-none focus:border-[#C98B1A] focus:ring-1 focus:ring-[#C98B1A] transition-all shadow-inner text-sm sm:text-base font-light"
+                placeholder="Enter 10-digit mobile number"
+                className="w-full px-5 py-4 pl-12 rounded-[14px] bg-[#FFFFFF] border border-[#E9DCC5] text-[#3E2B1F] placeholder-[#9A8A78] focus:outline-none focus:border-[#B8860B] focus:ring-2 focus:ring-[#B8860B]/20 transition-all duration-200 shadow-2xs text-sm sm:text-base font-medium"
               />
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-outline" />
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#B8860B]" />
             </div>
           </div>
 
           {error && (
-            <div className="px-5 py-4 rounded-xl bg-error-container/80 border border-error/20 text-on-error-container text-xs sm:text-sm font-medium">
-              {error}
+            <div className="px-5 py-3.5 rounded-[14px] bg-[#B23A2F]/12 border border-[#B23A2F]/25 text-[#B23A2F] text-xs sm:text-sm font-bold flex items-center gap-2">
+              <span>⚠️</span>
+              <span>{error}</span>
             </div>
           )}
 
@@ -135,13 +140,13 @@ export function LoginPage() {
             type="submit"
             id="login-submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-xl bg-gradient-to-r from-[#E8A338] via-[#C98B1A] to-[#B87314] text-white font-label-caps text-xs sm:text-sm tracking-[0.2em] uppercase font-bold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-md active:scale-95 mt-4"
+            className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-full bg-[#B8860B] hover:bg-[#6F5200] text-[#FFFFFF] font-label-caps text-xs sm:text-sm tracking-[0.2em] uppercase font-bold shadow-[0_8px_24px_rgba(140,106,10,0.25)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Send OTP'}
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Request OTP Code'}
           </button>
         </form>
       ) : (
-        <form onSubmit={handleVerifyOtp} className="space-y-6">
+        <form onSubmit={handleVerifyOtp} className="space-y-6 animate-in fade-in duration-300">
           <button
             type="button"
             onClick={() => {
@@ -149,23 +154,23 @@ export function LoginPage() {
               setError('')
               setOtp('')
             }}
-            className="flex items-center gap-1 text-xs tracking-wider uppercase font-semibold text-secondary hover:text-[#C98B1A] transition-colors mb-4 focus:outline-none"
+            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6F5B47] hover:text-[#B8860B] transition-colors mb-2 focus:outline-none"
           >
-            <ChevronLeft className="h-4 w-4" /> Change Mobile Number
+            <ChevronLeft className="h-4 w-4" /> Change Mobile Number ({phone})
           </button>
 
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="block text-xs uppercase tracking-wider font-semibold text-secondary">
-                Verification Code (OTP)
+              <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B]">
+                Verification Code (OTP) *
               </label>
               <button
                 type="button"
                 onClick={handleResendOtp}
                 disabled={timerActive || loading}
-                className="text-xs tracking-wider uppercase font-semibold text-[#C98B1A] hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-xs font-bold uppercase tracking-wider text-[#B8860B] hover:text-[#6F5200] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {timerActive ? `Resend OTP in ${timer}s` : 'Resend OTP'}
+                {timerActive ? `Resend OTP in ${timer}s` : 'Resend OTP Now'}
               </button>
             </div>
             <div className="relative">
@@ -175,16 +180,17 @@ export function LoginPage() {
                 required
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="Enter 6-digit code"
-                className="w-full px-5 py-4 pl-12 rounded-xl bg-[#FAF8F5] border border-outline-variant/50 text-on-surface placeholder:text-outline/70 focus:outline-none focus:border-[#C98B1A] focus:ring-1 focus:ring-[#C98B1A] transition-all shadow-inner text-sm sm:text-base font-light"
+                placeholder="Enter 6-digit verification code"
+                className="w-full px-5 py-4 pl-12 rounded-[14px] bg-[#FFFFFF] border border-[#E9DCC5] text-[#3E2B1F] placeholder-[#9A8A78] focus:outline-none focus:border-[#B8860B] focus:ring-2 focus:ring-[#B8860B]/20 transition-all duration-200 shadow-2xs text-sm sm:text-base font-mono font-bold tracking-widest"
               />
-              <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-outline" />
+              <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#B8860B]" />
             </div>
           </div>
 
           {error && (
-            <div className="px-5 py-4 rounded-xl bg-error-container/80 border border-error/20 text-on-error-container text-xs sm:text-sm font-medium">
-              {error}
+            <div className="px-5 py-3.5 rounded-[14px] bg-[#B23A2F]/12 border border-[#B23A2F]/25 text-[#B23A2F] text-xs sm:text-sm font-bold flex items-center gap-2">
+              <span>⚠️</span>
+              <span>{error}</span>
             </div>
           )}
 
@@ -192,22 +198,22 @@ export function LoginPage() {
             type="submit"
             id="login-verify-submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-xl bg-gradient-to-r from-[#E8A338] via-[#C98B1A] to-[#B87314] text-white font-label-caps text-xs sm:text-sm tracking-[0.2em] uppercase font-bold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-md active:scale-95"
+            className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-full bg-[#B8860B] hover:bg-[#6F5200] text-[#FFFFFF] font-label-caps text-xs sm:text-sm tracking-[0.2em] uppercase font-bold shadow-[0_8px_24px_rgba(140,106,10,0.25)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Verify & Login'}
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Verify & Enter Portal'}
           </button>
         </form>
       )}
 
-      <div className="mt-10 pt-8 border-t border-outline-variant/30 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <span className="font-body-md text-sm text-on-surface-variant font-light">
-          Don't have an account?
+      <div className="mt-8 pt-6 border-t border-[#E9DCC5] text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <span className="text-sm text-[#6F5B47] font-normal">
+          Don't have a registered account?
         </span>
         <Link
           to="/signup"
-          className="font-label-caps text-xs tracking-widest uppercase font-bold text-primary hover:text-secondary transition-colors inline-flex items-center gap-1 group"
+          className="font-label-caps text-xs uppercase tracking-widest font-bold text-[#B8860B] hover:text-[#6F5200] transition-colors inline-flex items-center gap-1.5 group"
         >
-          Register Free{' '}
+          Register Free Account{' '}
           <span className="transform transition-transform group-hover:translate-x-1">→</span>
         </Link>
       </div>

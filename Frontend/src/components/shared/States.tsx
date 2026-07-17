@@ -1,4 +1,4 @@
-import { Loader2, AlertCircle, FileQuestion } from 'lucide-react'
+import { Loader2, AlertCircle, Sparkles, RefreshCw } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 // ─── LoadingState ─────────────────────────────────────────────────────────────
@@ -11,22 +11,35 @@ interface LoadingStateProps {
 export function LoadingState({ variant = 'full-page', count = 3 }: LoadingStateProps) {
   if (variant === 'full-page') {
     return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-amber-500" />
+      <div className="min-h-[380px] flex flex-col items-center justify-center gap-4 p-8 sm:p-12 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] max-w-xl mx-auto my-12 shadow-[0_8px_30px_rgba(62,43,31,0.04)] animate-in fade-in duration-300">
+        <div className="w-14 h-14 rounded-2xl bg-[#F5EFE4] border border-[#E9DCC5] flex items-center justify-center shadow-2xs">
+          <Loader2 className="h-6 w-6 animate-spin text-[#B8860B]" />
+        </div>
+        <div className="text-center space-y-1">
+          <p className="font-display text-xl font-bold text-[#3E2B1F]">Loading records...</p>
+          <p className="text-xs text-[#6F5B47]">Please wait while we retrieve sacred data.</p>
+        </div>
       </div>
     )
   }
 
   if (variant === 'cards') {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
-            <div className="h-48 bg-amber-900/20" />
-            <div className="p-5 space-y-3">
-              <div className="h-5 bg-amber-900/20 rounded w-3/4" />
-              <div className="h-4 bg-amber-900/20 rounded w-1/2" />
-              <div className="h-4 bg-amber-900/20 rounded w-1/3" />
+          <div
+            key={i}
+            className="rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] overflow-hidden animate-pulse flex flex-col justify-between shadow-2xs"
+          >
+            <div className="h-48 bg-[#F5EFE4]/80" />
+            <div className="p-6 space-y-4">
+              <div className="h-5 bg-[#F5EFE4] rounded-md w-3/4" />
+              <div className="h-3 bg-[#F5EFE4]/60 rounded-md w-full" />
+              <div className="h-3 bg-[#F5EFE4]/60 rounded-md w-2/3" />
+              <div className="pt-4 border-t border-[#E9DCC5]/60 flex items-center justify-between gap-3">
+                <div className="h-9 bg-[#F5EFE4] rounded-full flex-1" />
+                <div className="h-9 w-9 bg-[#F5EFE4] rounded-xl" />
+              </div>
             </div>
           </div>
         ))}
@@ -36,30 +49,43 @@ export function LoadingState({ variant = 'full-page', count = 3 }: LoadingStateP
 
   if (variant === 'table') {
     return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-12 bg-amber-900/20 rounded-lg animate-pulse" />
-        ))}
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] space-y-4 shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E9DCC5] animate-pulse">
+          <div className="h-5 bg-[#F5EFE4] rounded-md w-48" />
+          <div className="h-8 bg-[#F5EFE4] rounded-full w-32" />
+        </div>
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-14 bg-[#F5EFE4]/40 border border-[#E9DCC5]/60 rounded-2xl animate-pulse flex items-center px-6 gap-6">
+              <div className="w-16 h-3 bg-[#F5EFE4] rounded" />
+              <div className="w-40 h-3 bg-[#F5EFE4] rounded" />
+              <div className="w-28 h-3 bg-[#F5EFE4] rounded" />
+              <div className="w-20 h-5 bg-[#F5EFE4] rounded-full ml-auto" />
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
 
   if (variant === 'detail') {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-8 bg-amber-900/20 rounded w-1/3" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-16 bg-amber-900/20 rounded-xl" />
-            ))}
-          </div>
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-16 bg-amber-900/20 rounded-xl" />
-            ))}
+      <div className="space-y-6 animate-pulse max-w-3xl mx-auto">
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-[#FFFFFF] border border-[#E9DCC5]" />
+          <div className="space-y-2">
+            <div className="h-7 bg-[#F5EFE4] rounded-md w-48" />
+            <div className="h-3 bg-[#F5EFE4]/60 rounded w-64" />
           </div>
         </div>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] space-y-4 shadow-sm">
+            <div className="h-5 bg-[#F5EFE4] rounded w-40" />
+            {Array.from({ length: 4 }).map((_, j) => (
+              <div key={j} className="h-8 bg-[#F5EFE4]/50 rounded-xl" />
+            ))}
+          </div>
+        ))}
       </div>
     )
   }
@@ -74,22 +100,23 @@ interface ErrorStateProps {
   onRetry?: () => void
 }
 
-export function ErrorState({ message = 'Something went wrong', onRetry }: ErrorStateProps) {
+export function ErrorState({ message = 'We encountered an issue while retrieving data.', onRetry }: ErrorStateProps) {
   return (
-    <div className="min-h-[300px] flex flex-col items-center justify-center gap-4 text-center p-8">
-      <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center">
-        <AlertCircle className="h-8 w-8 text-red-400" />
+    <div className="min-h-[360px] flex flex-col items-center justify-center gap-5 text-center p-8 sm:p-12 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] max-w-lg mx-auto my-8 shadow-[0_8px_30px_rgba(62,43,31,0.04)] animate-in fade-in duration-300">
+      <div className="w-14 h-14 rounded-2xl bg-[#C0392B]/15 border border-[#C0392B]/30 flex items-center justify-center text-[#C0392B] shadow-2xs">
+        <AlertCircle className="h-7 w-7" />
       </div>
-      <div>
-        <p className="text-lg font-semibold text-foreground">Error</p>
-        <p className="text-sm text-muted-foreground mt-1">{message}</p>
+      <div className="space-y-1.5 max-w-md">
+        <h3 className="font-display text-xl font-bold text-[#3E2B1F]">Something went wrong</h3>
+        <p className="text-sm text-[#6F5B47] leading-relaxed font-normal">{message}</p>
       </div>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 transition-colors"
+          className="px-6 py-3 rounded-full bg-[#B8860B] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-[#D4AF37] transition-all duration-250 cursor-pointer shadow-sm"
         >
-          Try Again
+          <RefreshCw className="h-3.5 w-3.5" />
+          <span>Retry</span>
         </button>
       )}
     </div>
@@ -100,29 +127,35 @@ export function ErrorState({ message = 'Something went wrong', onRetry }: ErrorS
 
 interface EmptyStateProps {
   icon?: LucideIcon
-  title: string
+  title?: string
   description?: string
   action?: { label: string; href: string }
 }
 
-export function EmptyState({ icon: Icon = FileQuestion, title, description, action }: EmptyStateProps) {
+export function EmptyState({
+  icon: Icon,
+  title = 'Nothing here yet',
+  description = 'Content will appear here once records are available.',
+  action,
+}: EmptyStateProps) {
   return (
-    <div className="min-h-[300px] flex flex-col items-center justify-center gap-4 text-center p-8">
-      <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center">
-        <Icon className="h-8 w-8 text-amber-400" />
+    <div className="min-h-[360px] flex flex-col items-center justify-center gap-4 text-center p-8 sm:p-12 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] max-w-xl mx-auto my-8 shadow-[0_8px_30px_rgba(62,43,31,0.04)] animate-in fade-in duration-300">
+      <div className="w-16 h-16 rounded-2xl bg-[#F5EFE4] border border-[#E9DCC5] flex items-center justify-center text-3xl shadow-2xs">
+        {Icon ? <Icon className="h-8 w-8 text-[#B8860B]" /> : <span>🪷</span>}
       </div>
-      <div>
-        <p className="text-lg font-semibold text-foreground">{title}</p>
+      <div className="space-y-1.5 max-w-md">
+        <h3 className="font-display text-xl font-bold text-[#3E2B1F]">{title}</h3>
         {description && (
-          <p className="text-sm text-muted-foreground mt-1">{description}</p>
+          <p className="text-sm text-[#6F5B47] leading-relaxed font-normal">{description}</p>
         )}
       </div>
       {action && (
         <a
           href={action.href}
-          className="px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 transition-colors"
+          className="mt-2 px-7 py-3 rounded-full bg-[#B8860B] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#D4AF37] transition-all duration-250 inline-flex items-center gap-2 cursor-pointer shadow-sm hover:-translate-y-0.5"
         >
-          {action.label}
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>{action.label}</span>
         </a>
       )}
     </div>
