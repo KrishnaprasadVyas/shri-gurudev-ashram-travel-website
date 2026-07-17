@@ -11,7 +11,7 @@ const DecorativeDivider = () => (
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative min-h-[540px] md:h-[620px] flex items-center justify-center text-center px-4 sm:px-6 overflow-hidden py-16 md:py-0">
+    <section className="relative min-h-[640px] md:min-h-[720px] flex items-center justify-center text-center px-4 sm:px-6 overflow-hidden py-20 md:py-24">
       {/* Pilgrimage Background — Kedarnath */}
       <div className="absolute inset-0 z-0">
         <img
@@ -32,10 +32,7 @@ export const Hero: React.FC = () => {
         <img
           src="/assets/Ashram vector logo_2022_white-01.png"
           alt="Shri Gurudev Ashram Official Logo"
-          width={160}
-          height={160}
-          loading="eager"
-          className="w-36 h-auto md:w-[160px] object-contain mb-8 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] select-none transition-transform duration-700 hover:scale-105"
+          className="w-64 sm:w-72 md:w-[288px] lg:w-[320px] h-auto object-contain mb-6 md:mb-8 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] select-none transition-transform duration-700 hover:scale-105"
         />
 
         {/* Small Label */}

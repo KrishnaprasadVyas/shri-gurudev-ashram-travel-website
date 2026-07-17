@@ -33,21 +33,19 @@ export function PublicHeader() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between min-h-[96px] py-2">
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-3 group focus-ring rounded-lg"
+            className="flex items-center gap-3.5 group focus-ring rounded-lg"
           >
             <img
               src="/assets/Ashram vector logo_2022_white-01.png"
               alt="Shri Gurudev Ashram Logo"
-              width={64}
-              height={64}
-              className="w-14 h-auto md:w-[64px] object-contain shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] transition-transform group-hover:scale-105 duration-300"
+              className="w-24 sm:w-28 md:w-[120px] h-auto object-contain shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] transition-transform group-hover:scale-105 duration-300"
             />
             <div className="hidden sm:block">
-              <span className="font-display text-base font-bold text-gradient-saffron leading-tight">
+              <span className="font-display text-base sm:text-lg font-bold text-gradient-saffron leading-tight">
                 Shri Gurudev Ashram
               </span>
             </div>

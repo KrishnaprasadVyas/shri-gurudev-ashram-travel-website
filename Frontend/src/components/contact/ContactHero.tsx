@@ -23,7 +23,7 @@ const MinimalistGeometryTexture = () => (
 
 export const ContactHero: React.FC = () => {
   return (
-    <section className="relative min-h-[480px] md:h-[540px] flex items-center justify-center text-center px-6 overflow-hidden py-24 md:py-0 bg-surface border-b border-outline-variant/20">
+    <section className="relative min-h-[600px] md:min-h-[680px] flex items-center justify-center text-center px-6 overflow-hidden py-24 bg-surface border-b border-outline-variant/20">
       {/* Warm Ivory Background & Soft Saffron Radial Gradients */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[380px] bg-[radial-gradient(ellipse_at_center,rgba(201,139,26,0.12)_0%,rgba(232,163,56,0.03)_50%,transparent_75%)] blur-3xl"></div>
@@ -38,11 +38,7 @@ export const ContactHero: React.FC = () => {
         <img
           src="/assets/Ashram vector logo_2022_white-01.png"
           alt="Shri Gurudev Ashram Official Logo"
-          width={160}
-          height={160}
-          loading="eager"
-          fetchPriority="high"
-          className="w-36 h-auto md:w-[160px] object-contain mb-8 drop-shadow-[0_4px_20px_rgba(201,139,26,0.5)] select-none transition-transform duration-700 hover:scale-105"
+          className="w-64 sm:w-72 md:w-[288px] lg:w-[320px] h-auto object-contain mb-6 md:mb-8 drop-shadow-[0_4px_20px_rgba(201,139,26,0.5)] select-none transition-transform duration-700 hover:scale-105"
         />
 
         {/* Small Eyebrow */}

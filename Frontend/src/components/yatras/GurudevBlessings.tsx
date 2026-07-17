@@ -17,7 +17,8 @@ export const GurudevBlessings: React.FC = () => {
           
           <div className="w-full rounded-[2rem] overflow-hidden shadow-2xl relative z-10 aspect-[3/4] border border-outline-variant/30 bg-surface-container-lowest">
             <img 
-              className="w-full h-full object-cover object-top transition-transform duration-[1.5s] group-hover:scale-[1.03]" 
+              className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-[1.03]" 
+              style={{ objectPosition: '65% -38%' }}
               alt="Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj" 
               src="/assets/gurudev.jpg" 
               loading="lazy"

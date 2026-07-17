@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ashramLogo from '../../assets/ashramlogo.png';
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen pt-32 sm:pt-36 md:pt-40 pb-16 flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0 bg-black">
         <img
           className="w-full h-full object-cover opacity-80"
@@ -16,17 +17,19 @@ export const Hero: React.FC = () => {
         <div className="absolute inset-0 hero-gradient" aria-hidden="true"></div>
       </div>
       
-      <div className="relative z-10 text-center px-margin-mobile max-w-4xl mx-auto flex flex-col items-center">
+      <div className="relative z-10 text-center px-margin-mobile max-w-5xl mx-auto flex flex-col items-center">
         {/* Logo */}
         <img
-          src="/assets/Ashram vector logo_2022_white-01.png"
+          src={ashramLogo}
           alt="Shri Gurudev Ashram Official Logo"
-          width={160}
-          height={160}
-          className="w-36 h-auto md:w-[160px] object-contain mx-auto mb-8 drop-shadow-[0_4px_20px_rgba(201,139,26,0.6)] select-none transition-transform duration-700 hover:scale-105"
+          className="w-64 sm:w-72 md:w-[340px] lg:w-[400px] xl:w-[440px] h-auto object-contain mx-auto mb-6 md:mb-8 drop-shadow-[0_8px_30px_rgba(201,139,26,0.65)] select-none transition-transform duration-700 hover:scale-[1.03]"
+          style={{ filter: 'brightness(1.25) contrast(1.15)' }}
         />
 
-        <span className="section-eyebrow text-[#d48c29] animate-fade-in mb-4">
+        <span
+          className="section-eyebrow text-[#F4C430] animate-fade-in mb-4"
+          style={{ textShadow: '0 1px 3px rgba(0,0,0,0.35)' }}
+        >
           🙏 Under the Blessings of Gurudev
         </span>
         <h1 className="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white balance-text mb-6">

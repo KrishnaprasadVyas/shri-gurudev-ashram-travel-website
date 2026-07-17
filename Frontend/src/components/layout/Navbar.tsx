@@ -29,20 +29,20 @@ export const Navbar: React.FC = () => {
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 backdrop-blur-md border-b border-outline-variant/30 ${
-        isScrolled ? 'bg-surface shadow-md' : 'bg-surface/80'
+        isScrolled ? 'bg-surface shadow-md py-2' : 'bg-surface/80 py-3'
       }`}
     >
-      <nav className="flex justify-between items-center px-margin-desktop py-3 max-w-container-max mx-auto">
+      <nav className="flex justify-between items-center px-margin-desktop min-h-[96px] max-w-container-max mx-auto">
         <Link
           to="/"
-          className="flex items-center gap-3 font-headline-sm text-headline-sm text-primary tracking-tight cursor-pointer group"
+          className="flex items-center gap-3.5 font-headline-sm text-headline-sm text-primary tracking-tight cursor-pointer group"
         >
           <img
             src="/assets/Ashram vector logo_2022_white-01.png"
             alt="Shri Gurudev Ashram Logo"
-            className="w-14 h-14 md:w-[64px] md:h-[64px] object-contain shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] transition-transform group-hover:scale-105 duration-300"
+            className="w-24 sm:w-28 md:w-[120px] h-auto object-contain shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] transition-transform group-hover:scale-105 duration-300"
           />
-          <span className="font-semibold tracking-wide text-primary">Shri Gurudev Ashram</span>
+          <span className="font-semibold tracking-wide text-primary text-base sm:text-lg">Shri Gurudev Ashram</span>
         </Link>
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (

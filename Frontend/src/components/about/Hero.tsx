@@ -10,7 +10,7 @@ const SpiritualDivider = () => (
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative min-h-[640px] md:h-[680px] flex items-center justify-center text-center px-margin-mobile overflow-hidden bg-surface border-b border-outline-variant/20 py-20 md:py-0">
+    <section className="relative min-h-[640px] md:min-h-[720px] flex items-center justify-center text-center px-margin-mobile overflow-hidden bg-surface border-b border-outline-variant/20 py-20 md:py-24">
       {/* Editorial Ivory Background with Subtle Gradients */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(201,139,26,0.1)_0%,rgba(232,163,56,0.03)_50%,transparent_70%)] blur-2xl"></div>
@@ -22,11 +22,7 @@ export const Hero: React.FC = () => {
         <img
           src="/assets/Ashram vector logo_2022_white-01.png"
           alt="Shri Gurudev Ashram Official Logo"
-          width={160}
-          height={160}
-          loading="eager"
-          fetchPriority="high"
-          className="w-36 h-auto md:w-[160px] object-contain mx-auto mb-8 drop-shadow-[0_4px_20px_rgba(201,139,26,0.5)] select-none transition-transform duration-700 hover:scale-105"
+          className="w-64 sm:w-72 md:w-[288px] lg:w-[320px] h-auto object-contain mx-auto mb-6 md:mb-8 drop-shadow-[0_4px_20px_rgba(201,139,26,0.5)] select-none transition-transform duration-700 hover:scale-105"
         />
 
         <span className="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-4 block font-semibold">
