@@ -24,7 +24,7 @@ export const HomePage: React.FC = () => {
       });
     }, observerOptions);
 
-    document.querySelectorAll('section > div').forEach(el => {
+    document.querySelectorAll('section > div:not(.absolute)').forEach(el => {
       // In React, direct DOM manipulation for styles can sometimes conflict,
       // but for simple entrance animations it's okay if not overused.
       // Better way is to use a CSS class approach that we added in index.css
