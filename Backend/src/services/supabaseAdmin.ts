@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 
 // Load .env.development from the Backend directory (CWD when running `npm run dev`)
-dotenv.config({ path: '.env.development' })
+dotenv.config()
 import { createClient } from '@supabase/supabase-js'
 // console.log("SUPABASE_URL =", process.env.SUPABASE_URL)
 
