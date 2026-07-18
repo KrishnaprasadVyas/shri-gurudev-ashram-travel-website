@@ -1,5 +1,5 @@
 import { usePageTitle } from '@/hooks/usePageTitle'
-import { Hero } from '@/components/about/Hero'
+
 import { OurStory } from '@/components/about/OurStory'
 import { WhyYatras } from '@/components/about/WhyYatras'
 import { Values } from '@/components/about/Values'
@@ -12,8 +12,7 @@ export function AboutPage() {
   usePageTitle('About Us')
 
   return (
-    <div className="font-body-md text-body-md bg-surface text-on-surface w-full overflow-hidden">
-      <Hero />
+    <div className="font-body-md text-body-md bg-surface text-on-surface w-full ">
       <OurStory />
       <WhyYatras />
       <Values />
@@ -24,3 +23,5 @@ export function AboutPage() {
     </div>
   )
 }
+
+

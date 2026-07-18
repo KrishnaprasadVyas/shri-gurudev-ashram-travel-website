@@ -1,101 +1,60 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Heart, Sparkles, BookOpen, Compass } from 'lucide-react';
 
 export const OurStory: React.FC = () => {
   return (
-    <section className="py-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto bg-surface overflow-hidden">
+    <section className="relative pt-6 md:pt-8 pb-[120px] bg-[#FFFDF8] overflow-hidden flex flex-col items-center">
       
-      {/* Section 1: Gurudev Ji */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98] }}
-        viewport={{ once: true, amount: 0.1 }}
-        className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-28"
-      >
-        {/* Image Editorial Frame (Left) */}
-        <div className="order-1 lg:col-span-5 relative group flex flex-col items-center w-full max-w-[520px] mx-auto mb-10 lg:mb-0">
-          {/* Subtle Decorative Background Blob */}
-          <div className="absolute -inset-6 bg-primary/5 rounded-[3rem] blur-2xl transition-all duration-700 group-hover:bg-primary/10 pointer-events-none"></div>
-          
-          <div className="w-full rounded-[2rem] overflow-hidden shadow-2xl relative z-10 aspect-[3/4] border border-outline-variant/30 bg-surface-container-lowest">
-            <img 
-              className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-[1.03]" 
-              style={{ objectPosition: '65% -38%' }}
-              alt="Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj" 
-              src="/assets/gurudev.jpg" 
-              loading="lazy"
-            />
-            {/* Soft inner shadow for framing */}
-            <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.05)] pointer-events-none"></div>
-          </div>
-          
-          <div className="mt-5 text-center font-display-lg text-[22px] sm:text-[28px] md:text-[32px] lg:text-[34px] leading-[1.2] font-semibold text-primary z-10">
-            <p>Param Pujya Shri Swami</p>
-            <p>Harichaitanyanand Saraswatiji Maharaj</p>
-          </div>
+      {/* Background Soft Glow behind portrait */}
+      <div 
+        className="absolute top-[180px] left-1/2 -translate-x-1/2 w-[500px] md:w-[600px] h-[500px] md:h-[600px] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(rgba(255,215,120,0.18), transparent 70%)' }}
+      ></div>
+
+      <div className="relative z-10 w-full flex flex-col items-center text-center px-6">
+        
+        {/* GURUDEV Label */}
+        <div className="text-[#B8860B] text-[13px] md:text-[14px] font-semibold uppercase tracking-[0.35em] mb-6">
+          GURUDEV
         </div>
 
-        {/* Biography Content (Right) */}
-        <div className="order-2 lg:col-span-7 lg:pl-10">
-          <span className="font-label-caps text-xs tracking-[0.2em] text-secondary mb-4 block uppercase font-semibold">
-            Under the Blessings of Gurudev
-          </span>
-          <div className="space-y-6 text-on-surface-variant leading-relaxed font-body-md text-lg font-light">
-            <p>
-              Founder and spiritual guide of <strong className="font-medium text-on-surface">Shri Gurudev Ashram (Palaskhed Sapkal, Chikhli, Buldhana)</strong> and <strong className="font-medium text-on-surface">Swami Harichaitanya Shanti Ashram Trust (Datala, Malkapur)</strong>.
-            </p>
-            <p>
-              Gurudev Ji has guided countless devotees on the path of <span className="text-primary font-medium">Bhakti</span> (Devotion), <span className="text-primary font-medium">Gyan</span> (Wisdom), and Nishkam <span className="text-primary font-medium">Seva</span> (Selfless Service), inspiring a life rooted in spirituality, compassion, and discipline.
-            </p>
-            <p>
-              Through daily Satsang, Gita Path, Haripath, and various seva initiatives including <span className="text-primary font-medium">Annadan</span>, Education, Medical Service, <span className="text-primary font-medium">Gaushala</span>, Gurukulam, Adivasi Seva, Anath Ashram, and Seva Tirth Dham, the Ashram continues to serve society with dedication and humility.
-            </p>
-            <p>
-              Every seva undertaken at the Ashram is devoted to the purification of the mind, the welfare of society, and the spiritual upliftment of every individual.
-            </p>
-            <p>
-              Inspired by Gurudev Ji's teachings, the Ashram and its branches continue to connect devotees across different parts of India through faith, service, and <span className="text-primary font-medium">Sacred Yatras</span>.
-            </p>
-          </div>
+        {/* Circular Image */}
+        <div className="w-[300px] md:w-[350px] h-[300px] md:h-[350px] rounded-full overflow-hidden border-[5px] border-[#E3B341] shadow-[0_15px_40px_rgba(0,0,0,0.12)] mb-8 flex-shrink-0 relative">
+          <img 
+            src="/assets/gurudev.jpg"
+            alt="Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj"
+            className="w-full h-full object-cover object-[65%_-38%]"
+            loading="lazy"
+          />
         </div>
-      </motion.div>
 
-      {/* Section 2: About Our Ashram */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98] }}
-        viewport={{ once: true, amount: 0.2 }}
-        className="max-w-4xl mx-auto text-center font-body-md"
-      >
-        <h2 className="font-display-lg text-[38px] sm:text-[46px] md:text-[54px] text-primary mb-6 leading-tight font-bold">
-          About Shri Gurudev Ashram
+        {/* Name */}
+        <h2 className="font-display text-[#7A3F10] text-[28px] md:text-[32px] lg:text-[36px] leading-[1.1] font-bold mb-6 max-w-4xl">
+          Param Pujya Shri Swami<br />Harichaitanyanand Saraswatiji Maharaj
         </h2>
-        <p className="text-on-surface-variant leading-relaxed font-body-md text-lg font-light max-w-3xl mx-auto mb-12">
-          Shri Gurudev Ashram is dedicated to nurturing individual spiritual growth and societal well-being. Under the divine blessings of Gurudev Ji, the Ashram serves devotees through sacred satsangs, traditional teachings, and key social initiatives, alongside organizing sacred Yatras that offer pilgrims an immersive experience of devotion and community.
+
+        {/* Subtitle */}
+        <p className="font-body text-[#666666] text-[16px] md:text-[18px] max-w-[900px] leading-relaxed mb-8">
+          Founder and spiritual guide of Shri Gurudev Ashram<br />
+          (Palaskhed Sapkal, Chikhli, Buldhana)<br />
+          and Swami Harichaitanya Shanti Ashram Trust<br />
+          (Datala, Malkapur)
         </p>
 
-        {/* 4 Highlight Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-          {[
-            { title: 'Annadan', desc: 'Selfless food distribution for all seekers.', icon: Heart },
-            { title: 'Gau Seva', desc: 'Loving care for cows in our Gaushala.', icon: Sparkles },
-            { title: 'Education', desc: 'Gurukulam training and rural youth support.', icon: BookOpen },
-            { title: 'Sacred Yatras', desc: 'Devotional pilgrimages across holy nodes.', icon: Compass },
-          ].map((item) => (
-            <div key={item.title} className="bg-surface-container-low p-6 rounded-xl border border-outline-variant/30 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary mb-3">
-                <item.icon className="w-6 h-6" strokeWidth={1.5} />
-              </div>
-              <h4 className="font-bold text-primary mb-1 text-base">{item.title}</h4>
-              <p className="text-xs text-on-surface-variant leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </motion.div>
+        {/* Divider */}
+        <div className="w-[70px] h-[2px] bg-[#B8860B] mb-10"></div>
 
+        {/* Description */}
+        <div className="font-body text-[#3E2B1F] text-[18px] md:text-[22px] leading-[1.9] max-w-[900px] space-y-6">
+          <p>
+            Gurudev Ji has shown countless devotees the path of <strong>Bhakti</strong> (Devotion), <strong>Gyan</strong> (Wisdom), and Nishkam <strong>Seva</strong> (Selfless Service). Through daily Satsang, Gita Path, Haripath, Annadan, Education, Medical Service, Gaushala, Gurukulam, Adivasi Seva, Anath Ashram, and Seva Tirth Dham, the Ashram continues to serve society with compassion and dedication.
+          </p>
+          <p>
+            The purpose of every seva is the purification of the mind and the upliftment of society. Inspired by Gurudev Ji, the Ashram continues to connect devotees across India through spirituality, service, and sacred Yatras.
+          </p>
+        </div>
+
+      </div>
     </section>
   );
 };
+

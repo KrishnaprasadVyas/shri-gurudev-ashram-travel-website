@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { Hero } from '@/components/home/Hero';
+
 import { AshramEthos } from '@/components/home/AshramEthos';
 import { SpiritualPaths } from '@/components/home/SpiritualPaths';
 import { QuoteSection } from '@/components/home/QuoteSection';
 import { Statistics } from '@/components/home/Statistics';
+import { Hero as HomeHero } from '@/components/home/Hero';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 export const HomePage: React.FC = () => {
@@ -37,12 +38,12 @@ export const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <main>
-      <Hero />
+    <>
+      <HomeHero />
       <Statistics />
       <AshramEthos />
       <SpiritualPaths />
       <QuoteSection />
-    </main>
+    </>
   );
 };

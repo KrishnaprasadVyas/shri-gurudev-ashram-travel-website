@@ -10,7 +10,7 @@ export const AshramEthos: React.FC = () => {
             <span className="section-eyebrow">Founder & Spiritual Guide</span>
             <div className="w-12 h-1 bg-primary"></div>
           </div>
-          
+
           <div className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed space-y-6">
             <p>
               Founder and spiritual guide of <strong>Shri Gurudev Ashram (Palaskhed Sapkal, Chikhli, Buldhana)</strong> and <strong>Swami Harichaitanya Shanti Ashram Trust (Datala, Malkapur)</strong>.
@@ -34,9 +34,9 @@ export const AshramEthos: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="order-1 md:order-2 relative flex flex-col items-center mb-4 md:mb-0">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -44,12 +44,12 @@ export const AshramEthos: React.FC = () => {
             className="w-full flex flex-col items-center"
           >
             <div className="w-full aspect-[3/4] lg:aspect-[4/5] rounded-2xl overflow-hidden shadow-xl shadow-primary/5 border border-primary/20 group transform transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/10">
-              <img 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
-                style={{ objectPosition: '65% -38%' }}
-                alt="Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj" 
-                src="/assets/gurudev.jpg" 
-                loading="lazy" 
+              <img
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                style={{ objectPosition: 'center 20%' }}
+                alt="Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj"
+                src="/assets/gurudev.jpg"
+                loading="lazy"
               />
             </div>
             <div className="mt-5 text-center font-display-lg text-[22px] sm:text-[28px] md:text-[32px] lg:text-[34px] leading-[1.2] font-semibold text-primary">

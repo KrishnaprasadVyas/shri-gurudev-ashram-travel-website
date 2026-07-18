@@ -1,4 +1,5 @@
 import { usePageTitle } from '@/hooks/usePageTitle';
+
 import { ContactHero } from '@/components/contact/ContactHero';
 import { ContactSection } from '@/components/contact/ContactSection';
 import { VisitAshram } from '@/components/contact/VisitAshram';
@@ -11,7 +12,7 @@ export function ContactPage() {
   usePageTitle('Contact & Visit');
 
   return (
-    <div className="font-body-md text-body-md bg-surface text-on-surface w-full overflow-hidden">
+    <div className="font-body-md text-body-md bg-surface text-on-surface w-full ">
       <ContactHero />
       <ContactSection />
       <VisitAshram />

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { usePageTitle } from '@/hooks/usePageTitle'
+import { GalleryHero } from '@/components/gallery/GalleryHero'
 
 const photos = [
   'photo-1544620347-c4fd4a3d5957', // temple
@@ -86,22 +87,16 @@ export function GalleryPage() {
   const prev = () => setLightbox((i) => (i !== null ? (i - 1 + photos.length) % photos.length : 0))
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <p className="text-amber-400 text-sm font-medium mb-3 uppercase tracking-wider">Sacred Moments</p>
-        <h1 className="font-display text-4xl sm:text-5xl font-bold text-[#f2f0eb] mb-4">Gallery</h1>
-        <p className="text-[#f2f0eb]/60 max-w-xl mx-auto">
-          Glimpses of the divine journeys we've undertaken with our community of devotees.
-        </p>
-      </div>
+    <>
+      <GalleryHero />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 md:pt-8 pb-16 md:pb-24">
 
       {/* Masonry grid */}
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
         {photoUrls.map((src, i) => (
           <div
             key={i}
-            className={`relative ${heights[i % heights.length]} rounded-2xl overflow-hidden cursor-pointer group break-inside-avoid mb-4`}
+            className={`relative ${heights[i % heights.length]} rounded-2xl  cursor-pointer group break-inside-avoid mb-4`}
             onClick={() => openLightbox(i)}
           >
             <img
@@ -127,5 +122,6 @@ export function GalleryPage() {
         />
       )}
     </div>
+    </>
   )
 }
