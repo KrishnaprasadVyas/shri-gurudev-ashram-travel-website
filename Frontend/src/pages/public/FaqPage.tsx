@@ -1,4 +1,5 @@
 import { usePageTitle } from '@/hooks/usePageTitle';
+
 import { FaqHero } from '@/components/faq/FaqHero';
 import { FaqSection } from '@/components/faq/FaqSection';
 import { SpiritualGuidance } from '@/components/faq/SpiritualGuidance';
@@ -9,7 +10,7 @@ export function FaqPage() {
   usePageTitle('Frequently Asked Questions');
 
   return (
-    <div className="font-body-md text-body-md bg-surface text-on-surface w-full overflow-hidden">
+    <div className="font-body-md text-body-md bg-surface text-on-surface w-full ">
       <FaqHero />
       <FaqSection />
       <SpiritualGuidance />

@@ -19,8 +19,8 @@ const valueCards = [
   },
   {
     icon: Users,
-    title: 'Sangha',
-    desc: 'Building a supportive and loving community of seekers moving towards the same goal.',
+    title: 'Sanskar',
+    desc: 'Upholding righteous conduct, moral values, and traditional teachings in daily life.',
   },
 ];
 

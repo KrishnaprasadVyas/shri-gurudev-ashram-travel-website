@@ -1,9 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 
-// Layouts
 import { PublicLayout } from './components/layout/PublicLayout'
 import { PortalLayout } from './components/layout/PortalLayout'
 import { AdminLayout } from './components/layout/AdminLayout'
+import { AuthLayout } from './components/layout/AuthLayout'
 
 // Route Guards
 import { ProtectedRoute } from './components/shared/ProtectedRoute'
@@ -18,7 +18,6 @@ import { YatraDetailPage } from './pages/public/YatraDetailPage'
 import { GalleryPage } from './pages/public/GalleryPage'
 import { FaqPage } from './pages/public/FaqPage'
 import { ContactPage } from './pages/public/ContactPage'
-
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage'
 
@@ -28,7 +27,6 @@ import { BookingsPage } from './pages/portal/BookingsPage'
 import { BookingDetailPage } from './pages/portal/BookingDetailPage'
 import { BookPage } from './pages/portal/BookPage'
 import { ProfilePage } from './pages/portal/ProfilePage'
-
 
 // Admin Pages
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
@@ -71,10 +69,12 @@ export default function App() {
         <Route path="contact" element={<ContactPage />} />
       </Route>
 
-      {/* ── Auth pages ── */}
+      {/* ── Auth pages (guests only — redirect if logged in) ── */}
       <Route element={<GuestRoute />}>
-        <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<Navigate to="/login" replace />} />
+        <Route element={<AuthLayout />}>
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<Navigate to="/login" replace />} />
+        </Route>
       </Route>
 
       {/* ── User Portal (requires auth) ───────────────────── */}
@@ -85,7 +85,6 @@ export default function App() {
           <Route path="bookings/:id" element={<BookingDetailPage />} />
           <Route path="book/:packageId" element={<BookPage />} />
           <Route path="profile" element={<ProfilePage />} />
-
         </Route>
       </Route>
 

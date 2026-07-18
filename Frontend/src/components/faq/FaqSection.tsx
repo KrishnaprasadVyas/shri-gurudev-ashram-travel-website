@@ -219,7 +219,7 @@ export const FaqSection: React.FC = () => {
   };
 
   return (
-    <section className="py-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto bg-surface">
+    <section className="pt-0 pb-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto bg-surface">
       {/* ── Search Bar ── */}
       <div className="max-w-2xl mx-auto mb-12">
         <div className="relative group">

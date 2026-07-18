@@ -33,8 +33,9 @@ export function YatraDetailPage() {
   const isSoldOut = pkg.remaining_seats === 0
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Breadcrumb */}
+    <>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Breadcrumb */}
       <div className="mb-8">
         <Link
           to="/yatras"
@@ -160,5 +161,6 @@ export function YatraDetailPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }

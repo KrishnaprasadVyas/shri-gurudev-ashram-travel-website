@@ -10,10 +10,13 @@ import {
   Search,
   Filter,
   RotateCcw,
+  Calendar,
   Clock,
   Users,
+  Eye,
   ToggleLeft,
   ToggleRight,
+  CheckCircle,
 } from 'lucide-react'
 import { QUERY_KEYS } from '@/lib/queryKeys'
 import apiClient from '@/lib/apiClient'
@@ -139,6 +142,7 @@ export function AdminPackagesPage() {
     packages = packages.filter(
       (p) =>
         p.title?.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q) ||
         p.duration?.toLowerCase().includes(q)
     )
   }
@@ -347,7 +351,7 @@ export function AdminPackagesPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute bottom-3 left-4 right-4 text-white pointer-events-none">
                     <span className="font-label-caps text-[10px] uppercase tracking-widest text-amber-300 block font-bold">
-                      {pkg.title || 'Sacred Pilgrimage'}
+                      Sacred Pilgrimage
                     </span>
                     <h3 className="font-display text-xl font-bold line-clamp-1 leading-snug">
                       {pkg.title}
