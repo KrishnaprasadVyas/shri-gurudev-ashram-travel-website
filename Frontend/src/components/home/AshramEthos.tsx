@@ -46,7 +46,7 @@ export const AshramEthos: React.FC = () => {
             <div className="w-full aspect-[3/4] lg:aspect-[4/5] rounded-2xl overflow-hidden shadow-xl shadow-primary/5 border border-primary/20 group transform transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/10">
               <img
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                style={{ objectPosition: 'center 20%' }}
+                style={{ objectPosition: '65% -38%' }}
                 alt="Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj"
                 src="/assets/gurudev.jpg"
                 loading="lazy"

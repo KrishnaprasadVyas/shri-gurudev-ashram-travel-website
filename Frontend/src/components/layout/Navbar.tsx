@@ -25,6 +25,29 @@ export const Navbar: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // If scrolling up or at the very top, show navbar
+      if (currentScrollY < lastScrollY || currentScrollY <= 50) {
+        setIsVisible(true);
+      } 
+      // If scrolling down and past the threshold, hide navbar
+      else if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   const languages = [
     { code: 'en', label: 'English 🇬🇧' },
     { code: 'hi', label: 'हिन्दी 🇮🇳' },
@@ -40,8 +63,25 @@ export const Navbar: React.FC = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const updateNavHeight = () => {
+      if (headerRef.current) {
+        document.documentElement.style.setProperty('--app-nav-height', `${headerRef.current.offsetHeight}px`);
+      }
+    };
+    // Allow slight delay for fonts/images to render
+    setTimeout(updateNavHeight, 100);
+    window.addEventListener('resize', updateNavHeight);
+    return () => window.removeEventListener('resize', updateNavHeight);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-[100] w-full bg-[#F8F3EA] border-b border-[#D6B36A] shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition-all duration-300">
+    <header 
+      ref={headerRef}
+      className={`fixed top-0 z-[100] w-full bg-[#F8F3EA] border-b border-[#D6B36A] shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
+    >
       <nav className="flex justify-between items-center px-6 md:px-10 lg:px-16 py-4 md:py-5 max-w-[1600px] mx-auto w-full gap-4">
         
         {/* Left Side: Navigation Links (Desktop) */}

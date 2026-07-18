@@ -88,7 +88,19 @@ export function ProfilePage() {
     <div className="max-w-4xl space-y-8 animate-in fade-in duration-300">
       {/* ── Page Header ──────────────────────────────────── */}
       <div>
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#3E2B1F] tracking-tight">Profile</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#3E2B1F] tracking-tight">Profile</h1>
+          <button
+            onClick={() => {
+              setForm({ full_name: displayProfile?.full_name ?? '', phone: displayProfile?.phone ?? '' })
+              setEditing(true)
+            }}
+            className="text-[#B8860B] hover:text-[#9A7009] transition-all duration-300 hover:scale-105 cursor-pointer"
+            title="Edit Profile"
+          >
+            <Edit3 className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
+          </button>
+        </div>
         <p className="text-sm text-[#6F5B47] mt-1 font-normal">Manage your devotee information and account security</p>
       </div>
 
@@ -297,40 +309,7 @@ export function ProfilePage() {
         </div>
       </div>
 
-      {/* ── Account Settings ─────────────────────────────── */}
-      <div>
-        <h3 className="font-display text-xl font-bold text-[#3E2B1F] mb-4">Account Settings</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            { icon: Edit3, title: 'Edit Profile', description: 'Update your name, phone & details', href: '#' },
-            { icon: Bell, title: 'Notifications', description: 'Manage email & push alerts', href: '#' },
-            { icon: Lock, title: 'Security', description: 'Password & two-factor authentication', href: '#' },
-            { icon: Settings, title: 'Preferences', description: 'Language, timezone & display', href: '#' },
-          ].map((card) => (
-            <button
-              key={card.title}
-              type="button"
-              onClick={() => {
-                if (card.title === 'Edit Profile') {
-                  setForm({ full_name: displayProfile?.full_name ?? '', phone: displayProfile?.phone ?? '' })
-                  setEditing(true)
-                  window.scrollTo({ top: 0, behavior: 'smooth' })
-                }
-              }}
-              className="group flex items-center gap-4 p-6 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B]/40 hover:bg-[#FFF7E8]/30 transition-all duration-300 text-left cursor-pointer w-full shadow-[0_8px_30px_rgba(62,43,31,0.04)]"
-            >
-              <div className="w-11 h-11 rounded-2xl bg-[#F5EFE4] border border-[#E9DCC5] flex items-center justify-center shrink-0 group-hover:bg-[#FFF7E8] group-hover:border-[#B8860B]/30 transition-colors duration-300 shadow-2xs">
-                <card.icon className="h-5 w-5 text-[#B8860B] group-hover:scale-110 transition-transform duration-300" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-display text-base font-bold text-[#3E2B1F] group-hover:text-[#B8860B] transition-colors">{card.title}</p>
-                <p className="text-xs text-[#6F5B47] mt-0.5">{card.description}</p>
-              </div>
-              <ChevronRight className="h-4 w-4 text-[#6F5B47]/40 group-hover:text-[#B8860B] group-hover:translate-x-1 transition-all duration-200 shrink-0" />
-            </button>
-          ))}
-        </div>
-      </div>
+
     </div>
   )
 }

@@ -115,10 +115,10 @@ export const UpcomingPilgrimages: React.FC = () => {
                   </span>
                   
                   <Link
-                    to={`/yatras/${pkg.id}`}
+                    to={`/portal/book/${pkg.id}`}
                     className="inline-flex items-center gap-1.5 bg-[#f5efe4] group-hover:bg-[#C98B1A] text-[#3a2d00] group-hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all duration-300 shadow-sm hover:shadow shrink-0"
                   >
-                    <span>Know More</span>
+                    <span>Book Now</span>
                     <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                   </Link>
                 </div>
