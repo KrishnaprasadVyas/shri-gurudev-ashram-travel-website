@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Edit, Sparkles } from 'lucide-react'
+import { ArrowLeft, Edit } from 'lucide-react'
 import { PackageForm } from '@/components/admin/PackageForm'
 import { QUERY_KEYS } from '@/lib/queryKeys'
 import apiClient from '@/lib/apiClient'

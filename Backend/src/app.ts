@@ -10,7 +10,9 @@ import { adminRouter } from './routes/admin.js'
 import { bookingsRouter } from './routes/bookings.js'
 import { paymentsRouter } from './routes/payments.js'
 import { razorpayWebhookRouter } from './routes/razorpayWebhook.js'
+import { passengersRouter } from './routes/passengers.js'
 import { usersRouter } from './routes/users.js'
+import { supabaseAdmin } from './services/supabaseAdmin.js'
 
 export const app = express()
 
@@ -56,6 +58,7 @@ app.use(express.urlencoded({ extended: true }))
 // Apply rate limiters to sensitive routes
 app.use('/api/users', authLimiter, usersRouter)
 app.use('/api/bookings', bookingsRouter)
+app.use('/api/bookings/:bookingId/passengers', passengersRouter)
 app.use('/api/payments', paymentLimiter, paymentsRouter)
 app.use('/api/admin', adminRouter)
 
@@ -80,6 +83,8 @@ app.use((error: unknown, _request: Request, response: Response, _next: NextFunct
   })
 })
 
+
+
 export function startServer() {
   const port = Number(process.env.PORT ?? 3000)
 
@@ -87,7 +92,30 @@ export function startServer() {
     throw new Error('Missing or invalid environment variable: PORT')
   }
 
-  return app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Backend server listening on port ${port}`)
   })
+
+  // Start cron job to expire stale bookings every 5 minutes
+  const CRON_INTERVAL_MS = 5 * 60 * 1000
+  const expireJob = setInterval(async () => {
+    try {
+      const { data, error } = await supabaseAdmin.rpc('expire_stale_bookings' as never)
+      if (error) {
+        console.error('[CRON] Error expiring stale bookings:', error.message)
+      } else if (typeof data === 'number' && data > 0) {
+        console.log(`[CRON] Expired ${data} stale booking(s)`)
+      }
+    } catch (err) {
+      console.error('[CRON] Exception in expire_stale_bookings job:', err)
+    }
+  }, CRON_INTERVAL_MS)
+
+  // Ensure process exits cleanly
+  process.on('SIGINT', () => {
+    clearInterval(expireJob)
+    server.close()
+  })
+
+  return server
 }

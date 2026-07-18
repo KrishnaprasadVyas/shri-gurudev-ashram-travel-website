@@ -8,7 +8,6 @@ const navItems = [
   { to: '/portal/bookings', label: 'My Bookings', icon: BookOpen, end: false },
   { to: '/yatras', label: 'Browse Yatras', icon: Map, end: false },
   { to: '/portal/profile', label: 'My Profile', icon: User, end: false },
-  { to: '/portal/verify', label: 'Verify Identity', icon: ShieldCheck, end: false },
 ]
 
 const statusConfig = {
@@ -35,7 +34,7 @@ export function PortalSidebar() {
       {/* ── Branding ─────────────────────────────────────── */}
       <div className="px-7 py-8 border-b border-[#E9DCC5] flex items-center gap-4 shrink-0 bg-[#FFFFFF]">
         <div
-          onClick={() => navigate('/portal')}
+          onClick={() => navigate('/')}
           className="w-11 h-11 rounded-2xl bg-[#F5EFE4] border border-[#E9DCC5] flex items-center justify-center p-2 cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-[#FFF7E8] shrink-0 shadow-sm"
           title="Return to Portal Dashboard"
           role="button"
@@ -57,25 +56,7 @@ export function PortalSidebar() {
         </div>
       </div>
 
-      {/* ── Verification Alert ───────────────────────────── */}
-      {(verStatus === 'not_submitted' || verStatus === 'rejected') && (
-        <NavLink
-          to="/portal/verify"
-          className="mx-5 mt-5 flex items-start gap-3 p-3.5 rounded-2xl bg-[#C68A00]/10 border border-[#C68A00]/30 hover:bg-[#FFF7E8] transition-all duration-250 shadow-sm group"
-        >
-          <AlertTriangle className="h-4 w-4 text-[#C68A00] mt-0.5 shrink-0 group-hover:scale-110 transition-transform duration-250" />
-          <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-bold text-[#3E2B1F] leading-snug">
-              {verStatus === 'rejected' ? 'Verification Rejected' : 'Action Required'}
-            </p>
-            <p className="text-[10px] text-[#6F5B47] mt-0.5 leading-snug">
-              {verStatus === 'rejected'
-                ? 'Resubmit identity documents.'
-                : 'Complete identity verification.'}
-            </p>
-          </div>
-        </NavLink>
-      )}
+
 
       {/* ── Navigation ───────────────────────────────────── */}
       <nav className="flex-1 px-5 py-6 space-y-1.5" aria-label="Portal navigation">

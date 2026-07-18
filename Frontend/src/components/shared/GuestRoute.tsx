@@ -15,7 +15,7 @@ export function GuestRoute() {
   }
 
   if (user) {
-    return <Navigate to="/portal" replace />
+    return <Navigate to="/" replace />
   }
 
   return <Outlet />

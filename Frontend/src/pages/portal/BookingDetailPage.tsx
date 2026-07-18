@@ -4,6 +4,9 @@ import { useBooking } from '@/hooks/useBookings'
 import { usePayment } from '@/hooks/usePayment'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { LoadingState } from '@/components/shared/States'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import apiClient from '@/lib/apiClient'
+import { toast } from 'sonner'
 import type { BookingRow } from '@/types/database.types'
 
 function InfoRow({ label, value }: { label: string; value?: string | null }) {
@@ -16,9 +19,13 @@ function InfoRow({ label, value }: { label: string; value?: string | null }) {
   )
 }
 
-const statusConfig = {
+const statusConfig: Record<string, { label: string, icon: any, className: string }> = {
+  draft: { label: 'Draft', icon: AlertCircle, className: 'text-[#6F5B47] bg-[#6F5B47]/15 border-[#6F5B47]/30' },
+  documents_pending: { label: 'Action Required', icon: AlertCircle, className: 'text-[#C68A00] bg-[#C68A00]/15 border-[#C68A00]/30' },
   payment_pending: { label: 'Payment Pending', icon: AlertCircle, className: 'text-[#C68A00] bg-[#C68A00]/15 border-[#C68A00]/30' },
   paid: { label: 'Confirmed', icon: CheckCircle, className: 'text-[#2E7D32] bg-[#2E7D32]/15 border-[#2E7D32]/30' },
+  verification_pending: { label: 'Under Review', icon: AlertCircle, className: 'text-[#C68A00] bg-[#C68A00]/15 border-[#C68A00]/30' },
+  verified: { label: 'Verified', icon: CheckCircle, className: 'text-[#2E7D32] bg-[#2E7D32]/15 border-[#2E7D32]/30' },
   cancelled: { label: 'Cancelled', icon: XCircle, className: 'text-[#C0392B] bg-[#C0392B]/15 border-[#C0392B]/30' },
   completed: { label: 'Completed', icon: CheckCircle, className: 'text-[#B8860B] bg-[#B8860B]/15 border-[#B8860B]/30' },
 }
@@ -27,8 +34,23 @@ export function BookingDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { data, isLoading, error } = useBooking(id)
   const { initiatePayment } = usePayment()
+  const queryClient = useQueryClient()
 
-  const booking: BookingRow | undefined = data?.booking
+  const cancelMutation = useMutation({
+    mutationFn: async () => {
+      await apiClient.delete(`/api/bookings/${id}`)
+    },
+    onSuccess: () => {
+      toast.success('Booking cancelled successfully')
+      queryClient.invalidateQueries({ queryKey: ['booking', id] })
+      queryClient.invalidateQueries({ queryKey: ['bookings'] })
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.error ?? 'Failed to cancel booking')
+    }
+  })
+
+  const booking: BookingRow & { booking_passengers?: any[] } = data?.booking as any
   usePageTitle(booking ? `Booking #${booking.booking_reference}` : 'Booking Detail')
 
   if (isLoading) return <LoadingState variant="detail" />
@@ -82,16 +104,32 @@ export function BookingDetailPage() {
             )}
           </div>
         </div>
-        {booking.status === 'payment_pending' && (
-          <button
-            type="button"
-            onClick={() => initiatePayment(booking.id, booking.booking_reference)}
-            className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#B8860B] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#D4AF37] transition-all duration-250 shrink-0 cursor-pointer shadow-sm hover:-translate-y-0.5"
-          >
-            <IndianRupee className="h-4 w-4" />
-            Pay ₹{booking.total_amount.toLocaleString('en-IN')}
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {['draft', 'documents_pending', 'payment_pending'].includes(booking.status) && (
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
+                  cancelMutation.mutate()
+                }
+              }}
+              disabled={cancelMutation.isPending}
+              className="px-5 py-3.5 rounded-full bg-[#FFFFFF]/50 text-[#C0392B] border border-[#C0392B]/20 font-bold text-xs uppercase tracking-wider hover:bg-[#C0392B]/10 hover:border-[#C0392B]/40 transition-all shadow-2xs"
+            >
+              Cancel Booking
+            </button>
+          )}
+          {booking.status === 'payment_pending' && (
+            <button
+              type="button"
+              onClick={() => initiatePayment(booking.id, booking.booking_reference)}
+              className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#B8860B] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#D4AF37] transition-all duration-250 shrink-0 cursor-pointer shadow-sm hover:-translate-y-0.5"
+            >
+              <IndianRupee className="h-4 w-4" />
+              Pay ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* ── Traveler Information ─────────────────────────── */}
@@ -99,11 +137,26 @@ export function BookingDetailPage() {
         <h2 className="font-display text-lg font-bold text-[#3E2B1F] mb-4 pb-3 border-b border-[#E9DCC5]">
           Traveler Information
         </h2>
-        <InfoRow label="Full Name" value={booking.full_name} />
-        <InfoRow label="Phone" value={booking.phone_number} />
-        <InfoRow label="WhatsApp" value={booking.whatsapp_number} />
-        <InfoRow label="Date of Birth" value={booking.dob} />
-        <InfoRow label="Address" value={booking.address} />
+        <div className="divide-y divide-[#E9DCC5]/60">
+          {booking.booking_passengers && booking.booking_passengers.length > 0 ? (
+            booking.booking_passengers.map((p: any, idx: number) => (
+              <div key={p.id} className="py-4 first:pt-0 last:pb-0">
+                <p className="font-bold text-[#3E2B1F] mb-2 text-sm flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#B8860B] text-white flex items-center justify-center text-xs">
+                    {idx + 1}
+                  </span>
+                  Traveler {idx + 1} {p.is_primary ? '(Primary)' : ''}
+                </p>
+                <InfoRow label="Name" value={p.full_name} />
+                <InfoRow label="Gender/Age" value={`${p.gender} • ${new Date().getFullYear() - new Date(p.dob).getFullYear()} yrs`} />
+                <InfoRow label="Phone" value={p.phone} />
+                <InfoRow label="Aadhaar" value={p.aadhaar_number} />
+              </div>
+            ))
+          ) : (
+            <div className="text-sm text-[#9A8A78]">Legacy booking format.</div>
+          )}
+        </div>
       </div>
 
       {/* ── Travel Preferences ──────────────────────────── */}
@@ -126,7 +179,7 @@ export function BookingDetailPage() {
         <div className="flex items-center justify-between py-3">
           <span className="font-label-caps text-xs font-bold uppercase tracking-wider text-[#6F5B47]">Total Amount</span>
           <span className="font-display text-3xl font-bold text-[#B8860B]">
-            ₹{booking.total_amount.toLocaleString('en-IN')}
+            ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
           </span>
         </div>
         <InfoRow label="Booked On" value={new Date(booking.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })} />

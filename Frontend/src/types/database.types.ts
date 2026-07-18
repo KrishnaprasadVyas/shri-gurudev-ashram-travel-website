@@ -1,7 +1,7 @@
 // ─── Database Row Types (mirrors Supabase schema exactly) ────────────────────
 
 export type VerificationStatus = 'not_submitted' | 'submitted' | 'verified' | 'rejected'
-export type BookingStatus = 'payment_pending' | 'paid' | 'cancelled' | 'completed'
+export type BookingStatus = 'draft' | 'documents_pending' | 'payment_pending' | 'paid' | 'verification_pending' | 'verified' | 'cancelled' | 'completed'
 
 export interface UserRow {
   id: string
@@ -31,6 +31,11 @@ export interface TravelPackageRow {
   remaining_seats: number
   image_url: string | null
   is_active: boolean
+  flight_price?: number
+  train_ac_price?: number
+  train_non_ac_price?: number
+  room_ac_price?: number
+  room_non_ac_price?: number
 }
 
 export interface BookingRow {
@@ -53,6 +58,13 @@ export interface BookingRow {
   bus_type: string | null
   room_type: string | null
   admin_notes: string | null
+  emergency_contact_name?: string | null
+  emergency_contact_phone?: string | null
+  emergency_contact_relationship?: string | null
+  base_amount?: number | null
+  gateway_fee?: number | null
+  payable_amount?: number | null
+  expires_at?: string | null
 }
 
 export interface PaymentRow {

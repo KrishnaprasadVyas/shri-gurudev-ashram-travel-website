@@ -12,7 +12,6 @@ import {
   Sparkles,
   PlusCircle,
   Clock,
-  Compass,
 } from 'lucide-react'
 import { StatsCard } from '@/components/admin/StatsCard'
 import { QUERY_KEYS } from '@/lib/queryKeys'
@@ -21,7 +20,7 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 import { LoadingState } from '@/components/shared/States'
 import { useAuth } from '@/context/AuthContext'
 import type { AdminStats, AdminBooking, AdminUser } from '@/types/admin'
-import type { YatraPackage } from '@/types/travel'
+import type { TravelPackage } from '@/types/travel'
 
 const statusStyles: Record<string, string> = {
   payment_pending: 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30 font-bold',
@@ -63,7 +62,7 @@ export function AdminDashboardPage() {
   })
 
   // Live packages for widget (#6)
-  const { data: packagesData } = useQuery<YatraPackage[]>({
+  const { data: packagesData } = useQuery<TravelPackage[]>({
     queryKey: ['admin-dashboard-widget-packages'],
     queryFn: async () => {
       const { data } = await apiClient.get('/api/admin/packages')
@@ -369,9 +368,9 @@ export function AdminDashboardPage() {
 
               <div className="divide-y divide-[#F1E9D8] pt-2">
                 {(packagesData && packagesData.length > 0 ? packagesData : [
-                  { id: '1', title: 'Ayodhya Shri Ram Mandir Yatra', available_slots: 12, start_date: '12 July' },
-                  { id: '2', title: 'Kashi Vishwanath Sacred Tour', available_slots: 8, start_date: '24 Aug' },
-                  { id: '3', title: 'Char Dham Divine Pilgrimage', available_slots: 15, start_date: '10 Sept' },
+                  { id: '1', title: 'Ayodhya Shri Ram Mandir Yatra', remaining_seats: 12, created_at: '2026-07-12' },
+                  { id: '2', title: 'Kashi Vishwanath Sacred Tour', remaining_seats: 8, created_at: '2026-08-24' },
+                  { id: '3', title: 'Char Dham Divine Pilgrimage', remaining_seats: 15, created_at: '2026-09-10' },
                 ]).map((pkg: any, idx: number) => (
                   <div key={pkg.id ?? idx} className="py-3 flex items-center justify-between gap-3 group">
                     <div className="min-w-0 flex-1">
@@ -379,12 +378,12 @@ export function AdminDashboardPage() {
                         {pkg.title}
                       </p>
                       <p className="text-xs text-[#B8860B] font-semibold mt-0.5">
-                        {pkg.available_slots ?? 12} Seats Left
+                        {pkg.remaining_seats ?? 12} Seats Left
                       </p>
                     </div>
                     <div className="flex items-center gap-1 text-xs text-[#9A8A78] font-mono bg-[#FFFFFF] px-2.5 py-1 rounded-full border border-[#E9DCC5] shrink-0">
                       <Calendar className="h-3 w-3 text-[#B8860B]" />
-                      <span>{typeof pkg.start_date === 'string' ? pkg.start_date : new Date(pkg.start_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                      <span>{typeof pkg.created_at === 'string' ? new Date(pkg.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Soon'}</span>
                     </div>
                   </div>
                 ))}
@@ -418,7 +417,7 @@ export function AdminDashboardPage() {
                   { id: 'u1', full_name: 'Krishna Sharma', created_at: new Date().toISOString(), is_verified: true },
                   { id: 'u2', full_name: 'Meera Deshmukh', created_at: new Date().toISOString(), is_verified: true },
                   { id: 'u3', full_name: 'Anand Verma', created_at: new Date().toISOString(), is_verified: false },
-                ]).map((u: any, idx: number) => (
+                ]).map((u: { id?: string; full_name?: string; created_at: string; is_verified?: boolean }, idx: number) => (
                   <div key={u.id ?? idx} className="py-3 flex items-center justify-between gap-3 group">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className="w-8 h-8 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] flex items-center justify-center text-[#B8860B] font-bold text-xs shrink-0">

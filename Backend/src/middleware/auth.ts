@@ -128,7 +128,7 @@ export async function requireAuth(request: Request, _response: Response, next: N
         const { error: insertError } = await supabaseAdmin.from('users').insert({
           id: newId,
           phone: phoneDigits,
-          full_name: decoded.name ?? `User ${phoneDigits.slice(-4)}`,
+          full_name: decoded.name ?? '',
           email: decoded.email ?? null,
           role: 'user',
           verification_status: 'not_submitted',

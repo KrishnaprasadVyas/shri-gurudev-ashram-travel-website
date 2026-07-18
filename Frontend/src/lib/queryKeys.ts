@@ -15,4 +15,6 @@ export const QUERY_KEYS = {
   // F.6: Separate key for admin single-package fetch so it doesn't pollute
   // the public usePackage() cache (different endpoints, different shapes)
   adminPackage: (id: string) => ['admin', 'packages', id] as const,
+  adminVerifications: (page: number, status: string) => 
+    ['admin', 'verifications', page, status] as const,
 }

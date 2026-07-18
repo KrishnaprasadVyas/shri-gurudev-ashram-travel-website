@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const UPLOAD_BASE_DIR = path.resolve(__dirname, '../../uploads/verifications')
-
+const VERIFICATIONS_DIR = path.resolve(__dirname, '../../uploads/verifications')
+const BOOKINGS_DIR = path.resolve(__dirname, '../../uploads/bookings')
 
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -20,19 +20,27 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
 
 const storage = multer.diskStorage({
   destination: (request, _file, callback) => {
+    const { bookingId, passengerId } = request.params as Record<string, string>
     const userId = (request as { userId?: string }).userId
-    if (!userId) {
-      callback(new Error('userId is required'), UPLOAD_BASE_DIR)
-      return
+
+    if (bookingId && passengerId) {
+      const dir = path.join(BOOKINGS_DIR, bookingId, passengerId)
+      fs.mkdirSync(dir, { recursive: true })
+      callback(null, dir)
+    } else if (userId) {
+      const userDir = path.join(VERIFICATIONS_DIR, userId)
+      fs.mkdirSync(userDir, { recursive: true })
+      callback(null, userDir)
+    } else {
+      callback(new Error('Missing identification parameters for upload'), VERIFICATIONS_DIR)
     }
-    const userDir = path.join(UPLOAD_BASE_DIR, userId)
-    fs.mkdirSync(userDir, { recursive: true })
-    callback(null, userDir)
   },
   filename: (request, file, callback) => {
+    const { bookingId, passengerId } = request.params as Record<string, string>
     const userId = (request as { userId?: string }).userId
-    if (!userId) {
-      callback(new Error('userId is required'), `${file.fieldname}-unknown`)
+
+    if (!userId && (!bookingId || !passengerId)) {
+      callback(new Error('Missing identification parameters for upload'), `${file.fieldname}-unknown`)
       return
     }
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)

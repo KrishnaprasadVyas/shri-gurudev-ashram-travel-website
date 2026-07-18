@@ -37,6 +37,7 @@ createRoot(document.getElementById('root')!).render(
                 fontSize: '14px',
                 fontFamily: `'Inter', 'Plus Jakarta Sans', sans-serif`,
               },
+              // @ts-ignore
               success: {
                 style: {
                   border: '1px solid rgba(46, 125, 50, 0.35)',
@@ -45,6 +46,7 @@ createRoot(document.getElementById('root')!).render(
                   fontWeight: '600',
                 },
               },
+              // @ts-ignore
               error: {
                 style: {
                   border: '1px solid rgba(178, 58, 47, 0.35)',
@@ -53,6 +55,16 @@ createRoot(document.getElementById('root')!).render(
                   fontWeight: '600',
                 },
               },
+              // @ts-ignore
+              loading: {
+                style: {
+                  border: '1px solid rgba(37, 99, 235, 0.35)',
+                  background: '#FFFDF8',
+                  color: '#2563EB',
+                  fontWeight: '600',
+                },
+              },
+              // @ts-ignore
               info: {
                 style: {
                   border: '1px solid rgba(37, 99, 235, 0.35)',

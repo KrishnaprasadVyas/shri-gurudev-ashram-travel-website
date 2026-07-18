@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
-  Users,
   Filter,
 } from 'lucide-react'
 import { QUERY_KEYS } from '@/lib/queryKeys'
@@ -78,7 +77,7 @@ export function AdminUsersPage() {
   })
 
   let users: AdminUser[] = data?.users ?? []
-  if (roleFilter && !data?.users?.some((u: any) => u.role === roleFilter)) {
+  if (roleFilter && !data?.users?.some((u: AdminUser) => u.role === roleFilter)) {
     users = users.filter((u) => u.role === roleFilter)
   }
 
@@ -316,9 +315,9 @@ export function AdminUsersPage() {
                       {/* 6. User Avatar & Name */}
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3.5">
-                          {u.profile_image ? (
+                          {u.profile_image_url ? (
                             <img
-                              src={u.profile_image}
+                              src={u.profile_image_url}
                               alt={u.full_name}
                               className="w-10 h-10 rounded-full object-cover ring-2 ring-[#B8860B]/20 border border-[#E9DCC5] shrink-0 shadow-sm"
                             />
@@ -459,9 +458,9 @@ export function AdminUsersPage() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3.5 min-w-0">
-                      {u.profile_image ? (
+                      {u.profile_image_url ? (
                         <img
-                          src={u.profile_image}
+                          src={u.profile_image_url}
                           alt={u.full_name}
                           className="w-12 h-12 rounded-full object-cover ring-2 ring-[#B8860B]/20 border border-[#E9DCC5] shrink-0 shadow-sm"
                         />

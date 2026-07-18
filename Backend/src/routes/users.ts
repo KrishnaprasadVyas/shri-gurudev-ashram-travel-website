@@ -7,13 +7,13 @@ import { HttpError } from "../errors.js";
 import { AuthenticatedRequest, requireAuth } from "../middleware/auth.js";
 import { upload } from "../middleware/upload.js";
 import { supabaseAdmin } from "../services/supabaseAdmin.js";
+import { SIGNED_URL_SECRET } from "../config.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const UPLOAD_BASE_DIR = path.resolve(__dirname, "../../uploads/verifications");
 
 // Simple HMAC-based signed URL token generation
-const SIGNED_URL_SECRET = process.env.SIGNED_URL_SECRET ?? crypto.randomBytes(32).toString("hex");
 const SIGNED_URL_EXPIRY_SECONDS = 300; // 5 minutes
 
 function generateSignedToken(filePath: string, expiresAt: number): string {
@@ -332,3 +332,60 @@ usersRouter.put(
     }
   }
 );
+
+// GET /api/users/notifications — fetch notifications for the user
+usersRouter.get("/notifications", requireAuth, async (request, response, next) => {
+  try {
+    const authRequest = request as AuthenticatedRequest;
+    
+    const { data: notifications, error } = await supabaseAdmin
+      .from("notifications")
+      .select("*")
+      .eq("user_id", authRequest.userId)
+      .order("created_at", { ascending: false });
+      
+    if (error) {
+      throw new HttpError(500, error.message);
+    }
+    
+    response.json({ notifications });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PATCH /api/users/notifications/:id/read — mark a notification as read
+usersRouter.patch("/notifications/:id/read", requireAuth, async (request, response, next) => {
+  try {
+    const authRequest = request as AuthenticatedRequest;
+    const { id } = request.params;
+
+    // First check if it belongs to user
+    const { data: notification, error: fetchError } = await supabaseAdmin
+      .from("notifications")
+      .select("user_id")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !notification) {
+      throw new HttpError(404, "Notification not found");
+    }
+
+    if (notification.user_id !== authRequest.userId) {
+      throw new HttpError(403, "Unauthorized");
+    }
+
+    const { error: updateError } = await supabaseAdmin
+      .from("notifications")
+      .update({ is_read: true })
+      .eq("id", id);
+
+    if (updateError) {
+      throw new HttpError(500, updateError.message);
+    }
+
+    response.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});

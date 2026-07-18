@@ -7,13 +7,13 @@ import { HttpError } from '../errors.js'
 import { AuthenticatedRequest, requireAuth } from '../middleware/auth.js'
 import { requireAdmin } from '../middleware/adminAuth.js'
 import { supabaseAdmin } from '../services/supabaseAdmin.js'
+import { SIGNED_URL_SECRET } from '../config.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const UPLOAD_BASE_DIR = path.resolve(__dirname, '../../uploads/verifications')
 
 // Signed URL utilities for admin file viewing
-const SIGNED_URL_SECRET = process.env.SIGNED_URL_SECRET ?? crypto.randomBytes(32).toString('hex')
 const SIGNED_URL_EXPIRY = 300
 
 function generateAdminSignedToken(filePath: string, expiresAt: number): string {
@@ -47,7 +47,7 @@ adminRouter.get('/stats', ...protect, async (_req, res, next) => {
       supabaseAdmin.from('users').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('bookings').select('*', { count: 'exact', head: true }),
       supabaseAdmin
-        .from('users')
+        .from('booking_passengers')
         .select('*', { count: 'exact', head: true })
         .eq('verification_status', 'submitted'),
       supabaseAdmin
@@ -186,6 +186,118 @@ adminRouter.put('/users/:id/verification', ...protect, async (req, res, next) =>
   }
 })
 
+// ─── GET /api/admin/verifications (New per-passenger queue) ────────────────────
+adminRouter.get('/verifications', ...protect, async (req, res, next) => {
+  try {
+    const page = Math.max(1, Number(req.query.page ?? 1))
+    const limit = Math.min(100, Math.max(1, Number(req.query.limit ?? 20)))
+    const status = String(req.query.status ?? 'submitted').trim()
+    const from = (page - 1) * limit
+    const to = from + limit - 1
+
+    let query = supabaseAdmin
+      .from('booking_passengers')
+      .select(`
+        *,
+        bookings (
+          booking_reference,
+          status,
+          user_id,
+          users (full_name, email, phone)
+        ),
+        passenger_documents (*)
+      `, { count: 'exact' })
+
+    if (status) query = query.eq('verification_status', status)
+
+    const { data, error, count } = await query
+      .order('created_at', { ascending: false })
+      .range(from, to)
+
+    if (error) throw dbError(error, 'Failed to fetch verifications')
+
+    res.json({ verifications: data ?? [], total: count ?? 0, page, limit })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── PUT /api/admin/passengers/:id/verification ───────────────────────────────
+adminRouter.put('/passengers/:id/verification', ...protect, async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { status, notes } = req.body as { status: string; notes?: string }
+
+    if (!['verified', 'rejected'].includes(status)) {
+      throw new HttpError(400, 'status must be "verified" or "rejected"')
+    }
+
+    if (status === 'rejected' && (!notes || !notes.trim())) {
+      throw new HttpError(400, 'Admin notes are required when rejecting a passenger')
+    }
+
+    // 1. Update passenger
+    const { data: passenger, error: passError } = await supabaseAdmin
+      .from('booking_passengers')
+      .update({
+        verification_status: status,
+        admin_notes: status === 'rejected' ? notes!.trim() : null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select('*, bookings (id, status, user_id, booking_reference)')
+      .single()
+
+    if (passError || !passenger) throw dbError(passError, 'Failed to update passenger verification')
+
+    const booking = passenger.bookings as { id: string, status: string, user_id: string, booking_reference: string }
+
+    // 2. Fetch all passengers for this booking to check overall status
+    const { data: allPassengers, error: allPassError } = await supabaseAdmin
+      .from('booking_passengers')
+      .select('verification_status, full_name')
+      .eq('booking_id', booking.id)
+
+    if (allPassError) throw dbError(allPassError, 'Failed to fetch siblings')
+
+    const allVerified = allPassengers.every(p => p.verification_status === 'verified')
+    const anyRejected = allPassengers.some(p => p.verification_status === 'rejected')
+
+    let bookingUpdatePromise: PromiseLike<unknown> = Promise.resolve()
+    if (allVerified && booking.status === 'verification_pending') {
+      // Transition booking to verified!
+      bookingUpdatePromise = supabaseAdmin
+        .from('bookings')
+        .update({ status: 'verified', updated_at: new Date().toISOString() })
+        .eq('id', booking.id)
+        .then(() => {})
+    }
+
+    // 3. Create Notification
+    const notifType = status === 'verified' ? 'verification_approved' : 'verification_rejected'
+    const notifTitle = status === 'verified' 
+      ? `Verification Approved: ${passenger.full_name}`
+      : `Verification Rejected: ${passenger.full_name}`
+    const notifMessage = status === 'verified'
+      ? `Documents verified for passenger ${passenger.full_name}.`
+      : `Issues found with documents for ${passenger.full_name}: ${notes}`
+
+    const notifPromise = supabaseAdmin.from('notifications').insert({
+      user_id: booking.user_id,
+      type: notifType,
+      title: notifTitle,
+      message: notifMessage,
+      metadata: { bookingId: booking.id, passengerId: passenger.id }
+    })
+
+    await Promise.all([bookingUpdatePromise, notifPromise])
+
+    res.json({ passenger })
+  } catch (error) {
+    next(error)
+  }
+})
+
 // ─── GET /api/admin/bookings ──────────────────────────────────────────────────
 adminRouter.get('/bookings', ...protect, async (req, res, next) => {
   try {
@@ -231,7 +343,7 @@ adminRouter.get('/bookings/:id', ...protect, async (req, res, next) => {
     const [bookingResult, paymentsResult] = await Promise.all([
       supabaseAdmin
         .from('bookings')
-        .select('*, users(*), travel_packages(*)')
+        .select('*, users(*), travel_packages(*), booking_passengers(*)')
         .eq('id', id)
         .single(),
       supabaseAdmin
@@ -255,6 +367,7 @@ adminRouter.get('/bookings/:id', ...protect, async (req, res, next) => {
       },
       user: booking.users,
       package: booking.travel_packages,
+      passengers: booking.booking_passengers ?? [],
       payments: paymentsResult.data ?? [],
     })
   } catch (error) {
@@ -473,6 +586,15 @@ function validatePackageFields(body: Record<string, unknown>, isCreate: boolean)
     const price = Number(body.price)
     if (!Number.isFinite(price) || price <= 0) errors.push('price must be a positive number')
   }
+  
+  // Validate optional preference pricing
+  const prefFields = ['flight_price', 'train_ac_price', 'train_non_ac_price', 'room_ac_price', 'room_non_ac_price']
+  for (const field of prefFields) {
+    if (body[field] !== undefined) {
+      const val = Number(body[field])
+      if (!Number.isFinite(val) || val < 0) errors.push(`${field} must be a non-negative number`)
+    }
+  }
   if (body.total_seats !== undefined) {
     const seats = Number(body.total_seats)
     if (!Number.isInteger(seats) || seats < 0) errors.push('total_seats must be a non-negative integer')
@@ -502,6 +624,11 @@ adminRouter.post('/packages', ...protect, async (req, res, next) => {
       remaining_seats,
       image_url,
       is_active,
+      flight_price,
+      train_ac_price,
+      train_non_ac_price,
+      room_ac_price,
+      room_non_ac_price,
     } = req.body
 
     const { data: pkg, error } = await supabaseAdmin
@@ -515,6 +642,11 @@ adminRouter.post('/packages', ...protect, async (req, res, next) => {
         remaining_seats: Number(remaining_seats ?? total_seats),
         image_url: image_url ?? null,
         is_active: is_active !== false,
+        flight_price: flight_price !== undefined ? Number(flight_price) : 0,
+        train_ac_price: train_ac_price !== undefined ? Number(train_ac_price) : 0,
+        train_non_ac_price: train_non_ac_price !== undefined ? Number(train_non_ac_price) : 0,
+        room_ac_price: room_ac_price !== undefined ? Number(room_ac_price) : 0,
+        room_non_ac_price: room_non_ac_price !== undefined ? Number(room_non_ac_price) : 0,
       })
       .select('*')
       .single()
@@ -532,6 +664,7 @@ const PACKAGE_EDITABLE_FIELDS = [
   'title', 'description', 'price', 'duration', 'total_seats',
   'remaining_seats', 'image_url', 'is_active', 'start_date', 'end_date',
   'departure_location', 'highlights', 'inclusions', 'exclusions',
+  'flight_price', 'train_ac_price', 'train_non_ac_price', 'room_ac_price', 'room_non_ac_price'
 ] as const
 
 adminRouter.put('/packages/:id', ...protect, async (req, res, next) => {
@@ -606,6 +739,32 @@ adminRouter.get('/users/:id/verification-file-url', ...protect, async (req, res,
     const expectedPrefix = `uploads/verifications/${id}/`
     if (!filePath.startsWith(expectedPrefix)) {
       throw new HttpError(400, 'File path does not match the specified user')
+    }
+
+    const expiresAt = Math.floor(Date.now() / 1000) + SIGNED_URL_EXPIRY
+    const token = generateAdminSignedToken(filePath, expiresAt)
+
+    res.json({
+      url: `/api/users/verification-file?path=${encodeURIComponent(filePath)}&expires=${expiresAt}&token=${token}`,
+      expiresAt,
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── GET /api/admin/passengers/:passengerId/document-url ──────────────────────
+adminRouter.get('/passengers/:passengerId/document-url', ...protect, async (req, res, next) => {
+  try {
+    const { passengerId } = req.params
+    const filePath = String(req.query.path ?? '').trim()
+
+    if (!filePath) {
+      throw new HttpError(400, 'path query parameter is required')
+    }
+
+    if (!filePath.startsWith('uploads/bookings/') || !filePath.includes(`/${passengerId}/`)) {
+      throw new HttpError(400, 'File path does not match the specified passenger')
     }
 
     const expiresAt = Math.floor(Date.now() / 1000) + SIGNED_URL_EXPIRY

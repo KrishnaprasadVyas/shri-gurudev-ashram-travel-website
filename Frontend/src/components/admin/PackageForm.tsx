@@ -11,6 +11,11 @@ interface PackageFormData {
   remaining_seats: number
   image_url: string
   is_active: boolean
+  flight_price: number
+  train_ac_price: number
+  train_non_ac_price: number
+  room_ac_price: number
+  room_non_ac_price: number
 }
 
 interface PackageFormProps {
@@ -29,6 +34,11 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
     remaining_seats: initialData?.remaining_seats ?? 30,
     image_url: initialData?.image_url ?? '',
     is_active: initialData?.is_active ?? true,
+    flight_price: initialData?.flight_price ?? 0,
+    train_ac_price: initialData?.train_ac_price ?? 0,
+    train_non_ac_price: initialData?.train_non_ac_price ?? 0,
+    room_ac_price: initialData?.room_ac_price ?? 0,
+    room_non_ac_price: initialData?.room_non_ac_price ?? 0,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -167,6 +177,57 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
               className={inputClass('duration')}
             />
             {renderError('duration')}
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-[#E9DCC5]">
+          <h4 className="text-sm font-bold text-[#3E2B1F] mb-4">Travel Preference Surcharges (Optional Add-ons)</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div>
+              <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
+                Flight (+₹)
+              </label>
+              <div className="relative">
+                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
+                <input type="number" min={0} value={form.flight_price || ''} onChange={(e) => setForm({ ...form, flight_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('flight_price')} pl-8 py-2 text-xs`} />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
+                AC Train (+₹)
+              </label>
+              <div className="relative">
+                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
+                <input type="number" min={0} value={form.train_ac_price || ''} onChange={(e) => setForm({ ...form, train_ac_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('train_ac_price')} pl-8 py-2 text-xs`} />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
+                Non-AC Train (+₹)
+              </label>
+              <div className="relative">
+                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
+                <input type="number" min={0} value={form.train_non_ac_price || ''} onChange={(e) => setForm({ ...form, train_non_ac_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('train_non_ac_price')} pl-8 py-2 text-xs`} />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
+                AC Room (+₹)
+              </label>
+              <div className="relative">
+                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
+                <input type="number" min={0} value={form.room_ac_price || ''} onChange={(e) => setForm({ ...form, room_ac_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('room_ac_price')} pl-8 py-2 text-xs`} />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
+                Non-AC Room (+₹)
+              </label>
+              <div className="relative">
+                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
+                <input type="number" min={0} value={form.room_non_ac_price || ''} onChange={(e) => setForm({ ...form, room_non_ac_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('room_non_ac_price')} pl-8 py-2 text-xs`} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

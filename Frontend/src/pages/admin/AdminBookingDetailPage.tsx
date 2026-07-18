@@ -6,11 +6,7 @@ import {
   BookOpen,
   MapPin,
   CreditCard,
-  Calendar,
-  Phone,
-  Mail,
   ShieldCheck,
-  CheckCircle,
   FileText,
 } from 'lucide-react'
 import { QUERY_KEYS } from '@/lib/queryKeys'
@@ -44,6 +40,7 @@ export function AdminBookingDetailPage() {
     booking: BookingRow
     user: UserRow
     package: TravelPackageRow
+    passengers: any[]
     payments: PaymentRow[]
   }>({
     queryKey: QUERY_KEYS.adminBooking(id ?? ''),
@@ -59,7 +56,7 @@ export function AdminBookingDetailPage() {
   if (isLoading) return <LoadingState variant="detail" />
   if (!data) return null
 
-  const { booking, user, package: pkg, payments } = data
+  const { booking, user, package: pkg, passengers, payments } = data
 
   return (
     <div className="space-y-8 text-[#3E2B1F]">
@@ -102,7 +99,7 @@ export function AdminBookingDetailPage() {
         <div className="flex items-center gap-2 self-end sm:self-auto relative z-10">
           <span className="text-xs text-[#6F5B47] font-semibold">Total Amount:</span>
           <span className="font-display text-2xl font-bold text-[#B8860B]">
-            ₹{booking.total_amount.toLocaleString('en-IN')}
+            ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
           </span>
         </div>
       </div>
@@ -116,13 +113,22 @@ export function AdminBookingDetailPage() {
               <span>Devotee & Traveler Details</span>
             </h2>
             <div className="divide-y divide-[#F1E9D8]">
-              <InfoRow label="Primary Seeker Name" value={booking.full_name} />
-              <InfoRow label="Phone Contact" value={booking.phone_number} />
-              <InfoRow label="WhatsApp Number" value={booking.whatsapp_number} />
-              <InfoRow label="Date of Birth" value={booking.dob} />
-              <InfoRow label="Residential Address" value={booking.address} />
-              <InfoRow label="Reserved Travelers" value={`${booking.traveler_count} Seeker(s)`} />
-              <InfoRow label="Special Requests / Notes" value={booking.special_notes} />
+              {passengers?.length > 0 ? (
+                passengers.map((p, idx) => (
+                  <div key={p.id} className="py-4">
+                    <p className="font-bold text-[#3E2B1F] mb-2 text-sm">
+                      Traveler {idx + 1} {p.is_primary ? '(Primary)' : ''}
+                    </p>
+                    <InfoRow label="Name" value={p.full_name} />
+                    <InfoRow label="Gender/Age" value={`${p.gender} • ${new Date().getFullYear() - new Date(p.dob).getFullYear()} yrs`} />
+                    <InfoRow label="Phone" value={p.phone} />
+                    <InfoRow label="Aadhaar" value={p.aadhaar_number} />
+                    <InfoRow label="Address" value={p.address} />
+                  </div>
+                ))
+              ) : (
+                <div className="py-4 text-sm text-[#9A8A78]">Legacy booking format (details on user profile).</div>
+              )}
             </div>
           </div>
 
@@ -135,6 +141,8 @@ export function AdminBookingDetailPage() {
               <InfoRow label="Transport Preference" value={booking.transport_type} />
               <InfoRow label="Train / Bus Class" value={booking.bus_type} />
               <InfoRow label="Room & Lodging Type" value={booking.room_type} />
+              <InfoRow label="Emergency Contact" value={booking.emergency_contact_name ? `${booking.emergency_contact_name} (${booking.emergency_contact_relationship}) - ${booking.emergency_contact_phone}` : null} />
+              <InfoRow label="Special Requests / Notes" value={booking.special_notes} />
             </div>
           </div>
         </div>
@@ -194,7 +202,7 @@ export function AdminBookingDetailPage() {
                 <span>Financial Ledger</span>
               </h2>
               <span className="font-mono text-xs font-bold text-[#B8860B]">
-                ₹{booking.total_amount.toLocaleString('en-IN')}
+                ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
               </span>
             </div>
 

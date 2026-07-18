@@ -80,8 +80,8 @@ export function ProfilePage() {
     )
   }
 
-  const memberSince = user?.created_at
-    ? new Date(user.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+  const memberSince = userProfile?.created_at
+    ? new Date(userProfile.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
     : 'Recently joined'
 
   return (

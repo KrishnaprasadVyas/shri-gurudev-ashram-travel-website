@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 // Layouts
 import { PublicLayout } from './components/layout/PublicLayout'
@@ -21,7 +21,6 @@ import { ContactPage } from './pages/public/ContactPage'
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage'
-import { SignupPage } from './pages/auth/SignupPage'
 
 // Portal Pages
 import { PortalHomePage } from './pages/portal/PortalHomePage'
@@ -29,7 +28,7 @@ import { BookingsPage } from './pages/portal/BookingsPage'
 import { BookingDetailPage } from './pages/portal/BookingDetailPage'
 import { BookPage } from './pages/portal/BookPage'
 import { ProfilePage } from './pages/portal/ProfilePage'
-import { VerifyPage } from './pages/portal/VerifyPage'
+
 
 // Admin Pages
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
@@ -72,10 +71,10 @@ export default function App() {
         <Route path="contact" element={<ContactPage />} />
       </Route>
 
-      {/* ── Auth pages (guests only — redirect if logged in) ── */}
+      {/* ── Auth pages ── */}
       <Route element={<GuestRoute />}>
         <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<SignupPage />} />
+        <Route path="signup" element={<Navigate to="/login" replace />} />
       </Route>
 
       {/* ── User Portal (requires auth) ───────────────────── */}
@@ -86,7 +85,7 @@ export default function App() {
           <Route path="bookings/:id" element={<BookingDetailPage />} />
           <Route path="book/:packageId" element={<BookPage />} />
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="verify" element={<VerifyPage />} />
+
         </Route>
       </Route>
 

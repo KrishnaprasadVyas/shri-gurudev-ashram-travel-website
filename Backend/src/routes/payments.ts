@@ -48,7 +48,10 @@ paymentsRouter.post('/create-order', requireAuth, async (request, response, next
       throw new HttpError(400, 'Not enough seats available')
     }
 
-    const amount = calculateAmount(travelPackage.price, booking.traveler_count)
+    const amount = Number(booking.payable_amount || booking.total_amount)
+    if (!Number.isFinite(amount) || amount <= 0) {
+      throw new HttpError(400, 'Invalid payable amount on booking')
+    }
     const amountInPaise = Math.round(amount * 100)
 
     const { data: existingPayment, error: existingError } = await supabaseAdmin
@@ -179,7 +182,6 @@ paymentsRouter.post('/verify', requireAuth, async (request, response, next) => {
     }
 
     const travelPackage = await loadPackage(booking.package_id)
-    const amount = calculateAmount(travelPackage.price, booking.traveler_count)
 
     if (travelPackage.remaining_seats < booking.traveler_count) {
       throw new HttpError(400, 'Not enough seats available')
@@ -191,6 +193,7 @@ paymentsRouter.post('/verify', requireAuth, async (request, response, next) => {
       razorpayPaymentId: razorpay_payment_id,
       razorpaySignature: razorpay_signature,
       paymentMethod: 'razorpay',
+      gatewayFee: Number(booking.gateway_fee || 0),
     })
 
     response.json({ success: true })
@@ -236,15 +239,6 @@ async function loadPackage(packageId: string) {
   return travelPackage
 }
 
-function calculateAmount(packagePrice: number, travelerCount: number) {
-  const amount = Number(packagePrice) * travelerCount
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new HttpError(400, 'Invalid payable amount')
-  }
-
-  return amount
-}
 
 function assertBookingOwner(bookingUserId: string, requestUserId: string) {
   if (bookingUserId !== requestUserId) {

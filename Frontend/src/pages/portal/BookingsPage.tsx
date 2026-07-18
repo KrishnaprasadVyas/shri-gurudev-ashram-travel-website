@@ -87,24 +87,6 @@ export function BookingsPage() {
         </Link>
       </div>
 
-      {/* ── Verification alert ───────────────────────────── */}
-      {userProfile?.verification_status !== 'verified' && (
-        <div className="p-5 rounded-2xl bg-[#C68A00]/10 border border-[#C68A00]/30 flex items-center justify-between gap-4 shadow-2xs">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="text-[#C68A00] text-lg shrink-0">⚠️</span>
-            <p className="text-xs sm:text-sm text-[#3E2B1F] truncate font-medium">
-              Complete verification to confirm boarding passes for upcoming Yatras.
-            </p>
-          </div>
-          <Link
-            to="/portal/verify"
-            className="text-xs font-bold uppercase tracking-wider text-[#B8860B] hover:text-[#D4AF37] transition-colors shrink-0 whitespace-nowrap"
-          >
-            Verify Now →
-          </Link>
-        </div>
-      )}
-
       {/* ── Filter Tabs ──────────────────────────────────── */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         {filterTabs.map((tab) => {

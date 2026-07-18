@@ -80,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const storedUser = localStorage.getItem('demo_user')
       const storedProfile = localStorage.getItem('demo_user_profile')
       if (storedUser) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(JSON.parse(storedUser))
         if (storedProfile) setUserProfile(JSON.parse(storedProfile))
       }

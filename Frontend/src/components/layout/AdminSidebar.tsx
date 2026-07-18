@@ -50,7 +50,7 @@ export function AdminSidebar({ isCollapsed = false }: AdminSidebarProps) {
       {/* Branding Section */}
       <div className={`px-6 py-8 border-b border-[#E9DCC5] flex flex-col items-center text-center bg-[#FFFFFF] shrink-0 transition-all duration-300 ${isCollapsed ? 'px-3 py-6' : ''}`}>
         <div
-          onClick={() => navigate('/admin')}
+          onClick={() => navigate('/')}
           className={`rounded-2xl bg-[#F5EFE4] border border-[#E9DCC5] shadow-sm flex items-center justify-center p-3 mb-3.5 group cursor-pointer transition-transform duration-300 hover:scale-105 hover:bg-[#FFF7E8] ${
             isCollapsed ? 'w-12 h-12 p-2 mb-1' : 'w-22 h-22 sm:w-24 sm:h-24'
           }`}

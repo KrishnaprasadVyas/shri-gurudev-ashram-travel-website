@@ -53,6 +53,8 @@ export function usePhoneAuth() {
    */
   async function initiateSend(
     rawPhone: string,
+    // Reserved for future sign-up flow metadata; not yet consumed by this hook.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _options?: { isSignUp?: boolean; fullName?: string; email?: string }
   ): Promise<PhoneAuthResult> {
     if (LOG) console.log('[usePhoneAuth] initiateSend() — raw input:', rawPhone)

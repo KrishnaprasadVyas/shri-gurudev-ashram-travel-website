@@ -13,7 +13,6 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  TrendingUp,
 } from 'lucide-react'
 import { QUERY_KEYS } from '@/lib/queryKeys'
 import apiClient from '@/lib/apiClient'
@@ -215,7 +214,7 @@ export function AdminBookingsPage() {
             </div>
           </div>
           <p className="font-display text-3xl font-bold text-[#B8860B] mt-3">
-            {stats?.activeYatras ?? 4}
+            {stats?.activePackages ?? 4}
           </p>
           <span className="text-[11px] text-[#9A8A78] font-normal mt-1">Open for booking right now</span>
         </div>

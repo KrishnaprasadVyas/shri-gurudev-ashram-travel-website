@@ -5,115 +5,24 @@ import { supabaseAdmin } from '../services/supabaseAdmin.js'
 
 export const bookingsRouter = Router()
 
-type CreateBookingBody = {
-  packageId?: string
-  travelerCount?: number
-  specialNotes?: string
-  fullName?: string
-  phoneNumber?: string
-  whatsappNumber?: string
-  dob?: string
-  address?: string
-  transportType?: string
-  busType?: string
-  roomType?: string
+function generateBookingReference() {
+  const d = new Date()
+  const yyyymmdd = d.toISOString().split('T')[0].replace(/-/g, '')
+  const random4 = Math.floor(1000 + Math.random() * 9000)
+  return `YAT-${yyyymmdd}-${random4}`
 }
 
-bookingsRouter.post('/', requireAuth, async (request, response, next) => {
+const DRAFT_TTL_MINUTES = Number(process.env.DRAFT_TTL_MINUTES) || 120
+const PAYMENT_TTL_MINUTES = Number(process.env.PAYMENT_TTL_MINUTES) || 30
+
+// POST /api/bookings/draft
+bookingsRouter.post('/draft', requireAuth, async (request, response, next) => {
   try {
-    const {
-      packageId,
-      travelerCount,
-      specialNotes,
-      fullName,
-      phoneNumber,
-      whatsappNumber,
-      dob,
-      address,
-      transportType,
-      busType,
-      roomType,
-    } = request.body as CreateBookingBody
-
-    // 1. Required fields and empty value checks
-    if (!packageId || typeof packageId !== 'string' || !packageId.trim()) {
-      throw new HttpError(400, 'packageId is required and cannot be empty')
+    const { packageId } = request.body
+    if (!packageId || typeof packageId !== 'string') {
+      throw new HttpError(400, 'packageId is required')
     }
 
-    if (travelerCount === undefined || typeof travelerCount !== 'number' || !Number.isInteger(travelerCount) || travelerCount < 1) {
-      throw new HttpError(400, 'travelerCount must be a positive integer')
-    }
-
-    if (!fullName || typeof fullName !== 'string' || !fullName.trim()) {
-      throw new HttpError(400, 'fullName is required and cannot be empty')
-    }
-
-    if (!phoneNumber || typeof phoneNumber !== 'string' || !phoneNumber.trim()) {
-      throw new HttpError(400, 'phoneNumber is required and cannot be empty')
-    }
-
-    if (!whatsappNumber || typeof whatsappNumber !== 'string' || !whatsappNumber.trim()) {
-      throw new HttpError(400, 'whatsappNumber is required and cannot be empty')
-    }
-
-    if (!dob || typeof dob !== 'string' || !dob.trim()) {
-      throw new HttpError(400, 'dob (date of birth) is required and cannot be empty')
-    }
-
-    if (!address || typeof address !== 'string' || !address.trim()) {
-      throw new HttpError(400, 'address is required and cannot be empty')
-    }
-
-    if (!transportType || typeof transportType !== 'string' || !transportType.trim()) {
-      throw new HttpError(400, 'transportType is required and cannot be empty')
-    }
-
-    if (!roomType || typeof roomType !== 'string' || !roomType.trim()) {
-      throw new HttpError(400, 'roomType is required and cannot be empty')
-    }
-
-    // 2. Validate format of contact numbers (10-digit numeric)
-    const phoneRegex = /^\d{10}$/
-    if (!phoneRegex.test(phoneNumber)) {
-      throw new HttpError(400, 'phoneNumber must be a valid 10-digit number')
-    }
-    if (!phoneRegex.test(whatsappNumber)) {
-      throw new HttpError(400, 'whatsappNumber must be a valid 10-digit number')
-    }
-
-    // 3. Validate age calculation from DOB
-    const birthDate = new Date(dob)
-    if (Number.isNaN(birthDate.getTime())) {
-      throw new HttpError(400, 'dob must be a valid date')
-    }
-
-    const today = new Date()
-    let calculatedAge = today.getFullYear() - birthDate.getFullYear()
-    const monthDelta = today.getMonth() - birthDate.getMonth()
-    if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < birthDate.getDate())) {
-      calculatedAge -= 1
-    }
-
-    if (calculatedAge < 0 || calculatedAge > 120) {
-      throw new HttpError(400, 'dob corresponds to an invalid age (must be between 0 and 120)')
-    }
-
-    // 4. Validate transport options and constraints
-    if (transportType !== 'Flight' && transportType !== 'Train') {
-      throw new HttpError(400, "transportType must be either 'Flight' or 'Train'")
-    }
-
-    if (transportType === 'Train') {
-      if (!busType || (busType !== 'AC Train' && busType !== 'Non-AC Train')) {
-        throw new HttpError(400, "busType is required when transportType is 'Train', and must be 'AC Train' or 'Non-AC Train'")
-      }
-    }
-
-    if (roomType !== 'AC Room' && roomType !== 'Non-AC Room') {
-      throw new HttpError(400, "roomType must be either 'AC Room' or 'Non-AC Room'")
-    }
-
-    // 5. Package information validation
     const { data: travelPackage, error: packageError } = await supabaseAdmin
       .from('travel_packages')
       .select('id, price, is_active, remaining_seats')
@@ -123,63 +32,30 @@ bookingsRouter.post('/', requireAuth, async (request, response, next) => {
     if (packageError || !travelPackage) {
       throw new HttpError(404, 'Travel package not found')
     }
-
     if (!travelPackage.is_active) {
       throw new HttpError(400, 'Travel package is not active')
     }
 
-    if (travelPackage.remaining_seats < travelerCount) {
-      throw new HttpError(400, 'Not enough seats available')
-    }
-
-    const totalAmount = Number(travelPackage.price) * travelerCount
-
-    if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
-      throw new HttpError(400, 'Travel package has an invalid price')
-    }
-
-    const bookingReference = `BK${Date.now()}${Math.floor(Math.random() * 1000)}`
+    const bookingReference = generateBookingReference()
+    const expiresAt = new Date(Date.now() + DRAFT_TTL_MINUTES * 60 * 1000).toISOString()
     const authRequest = request as AuthenticatedRequest
-
-    // Check user verification status before allowing bookings
-    const { data: userProfile, error: profileError } = await supabaseAdmin
-      .from('users')
-      .select('verification_status')
-      .eq('id', authRequest.userId)
-      .maybeSingle()
-
-    if (profileError) {
-      throw new HttpError(500, 'Failed to load user profile')
-    }
-
-    if (!userProfile || userProfile.verification_status === 'not_submitted') {
-      throw new HttpError(403, 'Identity verification must be completed before booking.')
-    }
 
     const { data: booking, error: bookingError } = await supabaseAdmin
       .from('bookings')
       .insert({
         user_id: authRequest.userId,
         package_id: packageId,
-        status: 'payment_pending',
-        total_amount: totalAmount,
-        traveler_count: travelerCount,
-        special_notes: specialNotes?.trim() || null,
+        status: 'draft',
+        traveler_count: 1, // Default, updated later
+        total_amount: travelPackage.price, // Will be recalculated at submit
         booking_reference: bookingReference,
-        full_name: fullName.trim(),
-        phone_number: phoneNumber.trim(),
-        whatsapp_number: whatsappNumber.trim(),
-        dob: birthDate,
-        address: address.trim(),
-        transport_type: transportType,
-        bus_type: transportType === 'Train' ? busType : null,
-        room_type: roomType,
+        expires_at: expiresAt,
       })
       .select('*')
       .single()
 
     if (bookingError || !booking) {
-      throw new HttpError(500, bookingError?.message ?? 'Failed to create booking')
+      throw new HttpError(500, bookingError?.message ?? 'Failed to create draft booking')
     }
 
     response.status(201).json({ booking })
@@ -188,26 +64,208 @@ bookingsRouter.post('/', requireAuth, async (request, response, next) => {
   }
 })
 
+// PATCH /api/bookings/:id/travellers
+bookingsRouter.patch('/:id/travellers', requireAuth, async (request, response, next) => {
+  try {
+    const { id } = request.params
+    const { travelerCount } = request.body
+    const authRequest = request as AuthenticatedRequest
+
+    if (travelerCount === undefined || typeof travelerCount !== 'number' || !Number.isInteger(travelerCount) || travelerCount < 1) {
+      throw new HttpError(400, 'travelerCount must be a positive integer')
+    }
+
+    const { data: booking, error: fetchError } = await supabaseAdmin
+      .from('bookings')
+      .select('user_id, status')
+      .eq('id', id)
+      .single()
+
+    if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
+    if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
+    if (!['draft', 'documents_pending'].includes(booking.status)) {
+      throw new HttpError(400, 'Cannot change traveller count for a booking in this state')
+    }
+
+    const { data: updatedBooking, error: updateError } = await supabaseAdmin
+      .from('bookings')
+      .update({ traveler_count: travelerCount, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (updateError || !updatedBooking) {
+      throw new HttpError(500, 'Failed to update traveler count')
+    }
+
+    response.json({ booking: updatedBooking })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// PATCH /api/bookings/:id/preferences
+bookingsRouter.patch('/:id/preferences', requireAuth, async (request, response, next) => {
+  try {
+    const { id } = request.params
+    const {
+      specialNotes,
+      transportType,
+      busType,
+      roomType,
+      emergencyContactName,
+      emergencyContactPhone,
+      emergencyContactRelationship,
+    } = request.body
+    const authRequest = request as AuthenticatedRequest
+
+    const { data: booking, error: fetchError } = await supabaseAdmin
+      .from('bookings')
+      .select('user_id, status')
+      .eq('id', id)
+      .single()
+
+    if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
+    if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
+    if (!['draft', 'documents_pending'].includes(booking.status)) {
+      throw new HttpError(400, 'Cannot update preferences in this state')
+    }
+
+    const { data: updatedBooking, error: updateError } = await supabaseAdmin
+      .from('bookings')
+      .update({
+        special_notes: specialNotes?.trim() || null,
+        transport_type: transportType?.trim() || null,
+        bus_type: busType?.trim() || null,
+        room_type: roomType?.trim() || null,
+        emergency_contact_name: emergencyContactName?.trim() || null,
+        emergency_contact_phone: emergencyContactPhone?.trim() || null,
+        emergency_contact_relationship: emergencyContactRelationship?.trim() || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (updateError || !updatedBooking) {
+      throw new HttpError(500, 'Failed to update preferences')
+    }
+
+    response.json({ booking: updatedBooking })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// POST /api/bookings/:id/submit
+bookingsRouter.post('/:id/submit', requireAuth, async (request, response, next) => {
+  try {
+    const { id } = request.params
+    const authRequest = request as AuthenticatedRequest
+
+    const { data: booking, error: fetchError } = await supabaseAdmin
+      .from('bookings')
+      .select('*, travel_packages(price, remaining_seats, flight_price, train_ac_price, train_non_ac_price, room_ac_price, room_non_ac_price)')
+      .eq('id', id)
+      .single()
+
+    if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
+    if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
+    if (!['draft', 'documents_pending'].includes(booking.status)) {
+      throw new HttpError(400, 'Booking is already submitted or in an invalid state')
+    }
+
+    // Check passengers
+    const { data: passengers, error: passengersError } = await supabaseAdmin
+      .from('booking_passengers')
+      .select('id, passenger_index, verification_status')
+      .eq('booking_id', id)
+
+    if (passengersError) throw new HttpError(500, 'Failed to fetch passengers')
+
+    if (passengers.length !== booking.traveler_count) {
+      throw new HttpError(400, `Expected ${booking.traveler_count} passengers, but found ${passengers.length}`)
+    }
+
+    // Check seats against soft reservation view? 
+    // We can do this implicitly or just rely on the RPC for hard check.
+    // For good UX, let's check soft availability first
+    const { data: availability, error: availError } = await supabaseAdmin
+      .from('package_seat_availability')
+      .select('truly_available_seats')
+      .eq('package_id', booking.package_id)
+      .single()
+
+    if (availError || !availability) throw new HttpError(500, 'Failed to check seat availability')
+    if (availability.truly_available_seats < booking.traveler_count) {
+      throw new HttpError(400, 'Not enough seats available at this time')
+    }
+
+    type PackagePrices = { price: number; flight_price?: number; train_ac_price?: number; train_non_ac_price?: number; room_ac_price?: number; room_non_ac_price?: number }
+    const pkg = booking.travel_packages as PackagePrices
+    const price = Number(pkg.price)
+    
+    // Add surcharges based on preferences
+    const flightSurcharge = booking.transport_type === 'Flight' ? Number(pkg.flight_price || 0) : 0
+    const trainAcSurcharge = (booking.transport_type === 'Train' && booking.bus_type === 'AC Train') ? Number(pkg.train_ac_price || 0) : 0
+    const trainNonAcSurcharge = (booking.transport_type === 'Train' && booking.bus_type === 'Non-AC Train') ? Number(pkg.train_non_ac_price || 0) : 0
+    const transportSurcharge = flightSurcharge + trainAcSurcharge + trainNonAcSurcharge
+
+    const acRoomSurcharge = booking.room_type === 'AC Room' ? Number(pkg.room_ac_price || 0) : 0
+    const nonAcRoomSurcharge = booking.room_type === 'Non-AC Room' ? Number(pkg.room_non_ac_price || 0) : 0
+    const roomSurcharge = acRoomSurcharge + nonAcRoomSurcharge
+    
+    const pricePerPerson = price + transportSurcharge + roomSurcharge
+    const baseAmount = pricePerPerson * booking.traveler_count
+    const gatewayFee = baseAmount * 0.0236
+    const payableAmount = baseAmount + gatewayFee
+    const expiresAt = new Date(Date.now() + PAYMENT_TTL_MINUTES * 60 * 1000).toISOString()
+
+    const { data: submittedBooking, error: submitError } = await supabaseAdmin
+      .from('bookings')
+      .update({
+        status: 'payment_pending',
+        base_amount: baseAmount,
+        gateway_fee: gatewayFee,
+        payable_amount: payableAmount,
+        total_amount: payableAmount, // Fallback for old clients
+        expires_at: expiresAt,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (submitError || !submittedBooking) throw new HttpError(500, 'Failed to submit booking')
+
+    response.json({ booking: submittedBooking })
+  } catch (error) {
+    next(error)
+  }
+})
+
 bookingsRouter.get('/', requireAuth, async (request, response, next) => {
   try {
     const authRequest = request as AuthenticatedRequest
-
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
-      .select('*, travel_packages(title)')
+      .select('*, travel_packages(title, image_url, start_date, duration)')
       .eq('user_id', authRequest.userId)
       .order('created_at', { ascending: false })
 
-    if (error) {
-      throw new HttpError(500, error.message)
-    }
+    if (error) throw new HttpError(500, error.message)
 
-    // Include package title in each booking for display
-    const enriched = (bookings ?? []).map((b: Record<string, unknown>) => ({
-      ...b,
-      packageTitle: (b.travel_packages as { title?: string } | null)?.title ?? 'Yatra Booking',
-      travel_packages: undefined,
-    }))
+    const enriched = (bookings ?? []).map((b: Record<string, unknown>) => {
+      const tp = b.travel_packages as { title?: string, image_url?: string, start_date?: string, duration?: string } | null
+      return {
+        ...b,
+        packageTitle: tp?.title ?? 'Yatra Booking',
+        packageImageUrl: tp?.image_url,
+        packageStartDate: tp?.start_date,
+        packageDuration: tp?.duration,
+        travel_packages: undefined,
+      }
+    })
 
     response.json({ bookings: enriched })
   } catch (error) {
@@ -215,26 +273,59 @@ bookingsRouter.get('/', requireAuth, async (request, response, next) => {
   }
 })
 
-bookingsRouter.get('/:bookingId', requireAuth, async (request, response, next) => {
+bookingsRouter.get('/:id', requireAuth, async (request, response, next) => {
   try {
     const authRequest = request as AuthenticatedRequest
-    const { bookingId } = request.params
+    const { id } = request.params
 
     const { data: booking, error } = await supabaseAdmin
       .from('bookings')
-      .select('*')
-      .eq('id', bookingId)
+      .select(`
+        *,
+        travel_packages(title, image_url, price, duration, start_date),
+        booking_passengers(
+          *,
+          passenger_documents(*)
+        )
+      `)
+      .eq('id', id)
       .single()
 
-    if (error || !booking) {
-      throw new HttpError(404, 'Booking not found')
-    }
-
-    if (booking.user_id !== authRequest.userId) {
-      throw new HttpError(403, 'Booking does not belong to the authenticated user')
-    }
+    if (error || !booking) throw new HttpError(404, 'Booking not found')
+    if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Booking does not belong to the authenticated user')
 
     response.json({ booking })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// DELETE /api/bookings/:id
+bookingsRouter.delete('/:id', requireAuth, async (request, response, next) => {
+  try {
+    const authRequest = request as AuthenticatedRequest
+    const { id } = request.params
+
+    const { data: booking, error: fetchError } = await supabaseAdmin
+      .from('bookings')
+      .select('user_id, status')
+      .eq('id', id)
+      .single()
+
+    if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
+    if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
+    if (!['draft', 'documents_pending', 'payment_pending'].includes(booking.status)) {
+      throw new HttpError(400, 'Cannot cancel a booking in this state')
+    }
+
+    const { error: cancelError } = await supabaseAdmin
+      .from('bookings')
+      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (cancelError) throw new HttpError(500, 'Failed to cancel booking')
+
+    response.json({ success: true, message: 'Booking cancelled' })
   } catch (error) {
     next(error)
   }

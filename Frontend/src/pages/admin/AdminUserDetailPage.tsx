@@ -16,7 +16,6 @@ import {
   ShieldCheck,
   Mail,
   Phone,
-  Clock,
 } from 'lucide-react'
 import { QUERY_KEYS } from '@/lib/queryKeys'
 import apiClient from '@/lib/apiClient'
@@ -172,9 +171,9 @@ export function AdminUserDetailPage() {
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          {user.profile_image ? (
+          {user.profile_image_url ? (
             <img
-              src={user.profile_image}
+              src={user.profile_image_url}
               alt={user.full_name}
               className="w-16 h-16 rounded-full object-cover ring-4 ring-[#B8860B]/20 border border-[#E9DCC5] shadow-md shrink-0"
             />
