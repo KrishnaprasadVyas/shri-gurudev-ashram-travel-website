@@ -51,7 +51,7 @@ const faqData: FaqItem[] = [
   {
     category: 'Ashram',
     question: 'Can I visit the Ashram without joining a Yatra?',
-    answer: 'Absolutely. Shri Gurudev Ashram at Palaskhed Sapkal welcomes all visitors and devotees throughout the year. You can attend daily satsang, Gita Path, Haripath, participate in Annadan seva, and seek Gurudev Ji\'s darshan during regular visiting hours.',
+    answer: 'Absolutely. माँ वैष्णवी टूरिज़्म at Palaskhed Sapkal welcomes all visitors and devotees throughout the year. You can attend daily satsang, Gita Path, Haripath, participate in Annadan seva, and seek darshan during regular visiting hours.',
   },
   {
     category: 'Ashram',
@@ -91,8 +91,8 @@ const faqData: FaqItem[] = [
   // ── Donations ──
   {
     category: 'Donations',
-    question: 'How can I donate to Shri Gurudev Ashram?',
-    answer: 'Donations can be made directly at the Ashram office, via bank transfer to the Ashram\'s official account, or through our website. All donations support the Ashram\'s seva initiatives including Annadan, Gaushala, Education, Medical Service, and Sacred Yatras.',
+    question: 'How can I donate to माँ वैष्णवी टूरिज़्म?',
+    answer: 'Donations can be made directly at the Ashram office, via bank transfer to the official account, or through our website. All donations support our seva initiatives including Annadan, Gaushala, Education, Medical Service, and Sacred Yatras.',
   },
   {
     category: 'Donations',

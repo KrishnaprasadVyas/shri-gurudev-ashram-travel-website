@@ -131,7 +131,7 @@ export function AdminUsersPage() {
           </h1>
           <div className="h-px w-36 bg-gradient-to-r from-[#B8860B] via-[#E9DCC5] to-transparent my-3" />
           <p className="font-body-md text-sm sm:text-base text-[#6F5B47] leading-relaxed font-normal">
-            Manage all registered devotees, verify spiritual identification records, and oversee account access across Shri Gurudev Ashram.
+            Manage all registered devotees, verify spiritual identification records, and oversee account access across माँ वैष्णवी टूरिज़्म.
           </p>
         </div>
       </div>

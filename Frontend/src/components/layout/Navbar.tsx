@@ -117,8 +117,8 @@ export const Navbar: React.FC = () => {
               style={{ filter: 'brightness(1.1) contrast(1.15)' }}
               className="h-[80px] md:h-[120px] w-auto object-contain drop-shadow-sm transition-transform group-hover:scale-105 duration-500"
             />
-            <div className="text-[#4B3621] font-bold text-[14px] md:text-[16px] leading-[1.2] text-center mt-1.5 tracking-normal">
-              श्री गुरुदेव आश्रम,<br />पळसखेड (सपकाळ)
+            <div className="text-[#4B3621] font-bold text-[15px] md:text-[18px] leading-[1.2] text-center mt-1.5 tracking-normal">
+              माँ वैष्णवी टूरिज़्म
             </div>
           </Link>
         </div>

@@ -23,7 +23,7 @@ export const JourneyTimeline: React.FC = () => {
           <div className="ml-8 md:ml-0 md:w-[50%] md:pr-12 md:text-right">
             <span className="font-label-caps text-secondary font-bold block mb-1">1992</span>
             <h3 className="font-bold text-lg text-primary mb-2">Ashram Established</h3>
-            <p className="text-sm text-on-surface-variant md:ml-auto md:max-w-md">Shri Gurudev Ashram was founded under Maharaj Ji's vision, creating a holy sanctuary of prayer and silent meditation.</p>
+            <p className="text-sm text-on-surface-variant md:ml-auto md:max-w-md">माँ वैष्णवी टूरिज़्म was founded under Maharaj Ji's vision, creating a holy sanctuary of prayer and silent meditation.</p>
           </div>
         </motion.div>
 

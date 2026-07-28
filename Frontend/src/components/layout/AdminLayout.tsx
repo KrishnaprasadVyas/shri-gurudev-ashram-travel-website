@@ -37,7 +37,7 @@ export function AdminLayout() {
   // Determine dynamic title and subtitle depending on current path
   let headerInfo = {
     title: 'Administration Portal',
-    subtitle: 'Manage Shri Gurudev Ashram sacred operations and devotee services.',
+    subtitle: 'Manage माँ वैष्णवी टूरिज़्म sacred operations and devotee services.',
   }
 
   // Exact match first

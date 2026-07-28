@@ -156,15 +156,12 @@ export const Footer: React.FC = () => {
               <AshramLogo />
 
               <h3 className="mt-2.5 font-display-lg text-2xl lg:text-[26px] text-[#F5EFE4] font-bold leading-tight">
-                Shri Gurudev Ashram
+                माँ वैष्णवी टूरिज़्म
               </h3>
             </div>
 
             <p className="text-[13px] leading-[1.65] text-[#C9B79D] max-w-[350px] text-center lg:text-left mx-auto lg:mx-0">
-              Dedicated to Param Pujya Shri Swami
-              Harichaitanyanand Saraswatiji Maharaj.
-              Seeking the Divine within through
-              tradition, service, and silence.
+              Dedicated to sacred yatras and spiritual pilgrimages. Seeking the Divine within through tradition, service, and devotion.
             </p>
             {/* Social */}
             <div className="flex justify-center lg:justify-start gap-3 mt-5">
@@ -193,7 +190,7 @@ export const Footer: React.FC = () => {
               <li className="flex items-start gap-3">
                 <LocationIcon />
                 <span className="leading-[1.7]">
-                  Shri Gurudev Ashram, Palaskhed Sapkal,<br />
+                  माँ वैष्णवी टूरिज़्म, Palaskhed Sapkal,<br />
                   Tehsil Chikhli, District Buldhana,<br />
                   Maharashtra - 443001
                 </span>
@@ -295,7 +292,7 @@ export const Footer: React.FC = () => {
 
       <div className="w-full max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-[12px] text-[#C9B79D]/70 text-center md:text-left">
-          © 2026 Shri Gurudev Ashram, Palaskhed Sapkal. All rights reserved.
+          © 2026 माँ वैष्णवी टूरिज़्म. All rights reserved.
         </p>
 
         <div className="hidden md:block">

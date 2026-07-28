@@ -45,7 +45,7 @@ export function usePayment() {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
           amount: order.amount,
           currency: order.currency ?? 'INR',
-          name: 'Shri Gurudev Ashram',
+          name: 'माँ वैष्णवी टूरिज़्म',
           description: `Yatra Booking - ${bookingReference}`,
           order_id: order.id,
           theme: { color: '#E97B22' },

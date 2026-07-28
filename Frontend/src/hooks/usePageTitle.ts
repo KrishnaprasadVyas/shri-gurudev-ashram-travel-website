@@ -2,9 +2,9 @@ import { useEffect } from 'react'
 
 export function usePageTitle(title: string) {
   useEffect(() => {
-    document.title = `${title} — Shri Gurudev Ashram`
+    document.title = `${title} — माँ वैष्णवी टूरिज़्म`
     return () => {
-      document.title = 'Shri Gurudev Ashram'
+      document.title = 'माँ वैष्णवी टूरिज़्म'
     }
   }, [title])
 }

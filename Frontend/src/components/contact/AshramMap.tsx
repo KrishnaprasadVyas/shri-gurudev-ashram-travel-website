@@ -16,22 +16,13 @@ export const AshramMap: React.FC = () => {
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            className="w-full h-full grayscale-[10%] filter contrast-[105%]"
           />
         </div>
 
-        {/* Below Map Editorial Explanation */}
-        <div className="max-w-3xl mx-auto text-center bg-surface-container-lowest p-8 md:p-12 rounded-3xl border border-outline-variant/30 shadow-md relative overflow-hidden">
-          <div className="w-12 h-12 rounded-full bg-[#C98B1A]/10 text-primary flex items-center justify-center mx-auto mb-6">
-            <MapPin className="w-6 h-6" />
-          </div>
-
-          <h3 className="font-display-lg text-2xl md:text-4xl text-primary font-bold tracking-tight mb-4">
-            Finding the Ashram
-          </h3>
-
-          <p className="font-body-lg text-base md:text-lg text-on-surface-variant leading-relaxed font-light">
-            Shri Gurudev Ashram is peacefully situated amidst the serene hills of Palaskhed Sapkal in Buldhana District, Maharashtra. Devotees traveling by road can easily reach via Chikhli or Malkapur. For those arriving by railway, Malkapur junction (approx. 50 km) and Akola station provide convenient taxi and bus connections directly to the Ashram gates.
+        {/* Location Info Text */}
+        <div className="mt-8 text-center max-w-2xl mx-auto">
+          <p className="font-body-md text-sm text-on-surface-variant leading-relaxed font-light">
+            माँ वैष्णवी टूरिज़्म is peacefully situated amidst the serene hills of Palaskhed Sapkal in Buldhana District, Maharashtra. Devotees traveling by road can easily reach via Chikhli or Malkapur. For those arriving by railway, Malkapur junction (approx. 50 km) and Akola station provide convenient taxi and bus connections directly to the premises.
           </p>
         </div>
       </div>

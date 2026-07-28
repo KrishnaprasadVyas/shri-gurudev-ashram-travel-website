@@ -8,7 +8,7 @@ export const ContactCta: React.FC = () => {
         We Look Forward to Welcoming You
       </h2>
       <p className="font-body-lg text-base sm:text-lg md:text-xl text-on-surface-variant mb-10 leading-relaxed font-light max-w-2xl mx-auto">
-        Whether you are planning your first visit, joining a Sacred Yatra, or seeking spiritual guidance, Shri Gurudev Ashram warmly welcomes every devotee.
+        Whether you are planning your first visit, joining a Sacred Yatra, or seeking spiritual guidance, माँ वैष्णवी टूरिज़्म warmly welcomes every devotee.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <Link
