@@ -444,7 +444,7 @@ bookingsRouter.get('/', requireAuth, async (request, response, next) => {
       .from('bookings')
       .select('*, travel_packages(title, image_url, start_date, duration), seva_bookings(*)')
       .eq('user_id', authRequest.userId)
-      .not('status', 'in', '("draft","documents_pending")')
+      .not('status', 'in', '(draft,documents_pending)')
       .order('created_at', { ascending: false })
 
     if (error) throw new HttpError(500, error.message)

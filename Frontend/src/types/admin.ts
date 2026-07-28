@@ -5,6 +5,11 @@ export interface AdminStats {
   totalBookings: number
   totalRevenue: number
   pendingVerifications: number
+  approvedVerifications: number
+  rejectedVerifications: number
+  confirmedBookings: number
+  pendingPaymentBookings: number
+  cancelledBookings: number
   activePackages: number
 }
 

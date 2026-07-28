@@ -245,7 +245,7 @@ export function AdminBookingsPage() {
             </div>
           </div>
           <p className="font-display text-3xl font-bold text-[#B8860B] mt-3">
-            {stats?.activePackages ?? 4}
+            {stats?.activePackages ?? 0}
           </p>
           <span className="text-[11px] text-[#9A8A78] font-normal mt-1">Open for booking right now</span>
         </div>
@@ -260,7 +260,7 @@ export function AdminBookingsPage() {
             </div>
           </div>
           <p className="font-display text-3xl font-bold text-[#2E7D32] mt-3">
-            {bookings.filter((b) => b.status === 'paid').length || Math.round((stats?.totalBookings ?? total) * 0.7)}
+            {stats?.confirmedBookings ?? bookings.filter((b) => ['paid', 'verified', 'ticket_generated', 'completed'].includes(b.status)).length}
           </p>
           <span className="text-[11px] text-[#9A8A78] font-normal mt-1">Fully paid reservations</span>
         </div>
@@ -275,7 +275,7 @@ export function AdminBookingsPage() {
             </div>
           </div>
           <p className="font-display text-3xl font-bold text-[#C68A00] mt-3">
-            {bookings.filter((b) => b.status === 'payment_pending').length || Math.round((stats?.totalBookings ?? total) * 0.2)}
+            {stats?.pendingPaymentBookings ?? bookings.filter((b) => b.status === 'payment_pending').length}
           </p>
           <span className="text-[11px] text-[#9A8A78] font-normal mt-1">Awaiting financial transfer</span>
         </div>
@@ -290,7 +290,7 @@ export function AdminBookingsPage() {
             </div>
           </div>
           <p className="font-display text-3xl font-bold text-[#C0392B] mt-3">
-            {bookings.filter((b) => b.status === 'cancelled').length || Math.round((stats?.totalBookings ?? total) * 0.1)}
+            {stats?.cancelledBookings ?? bookings.filter((b) => b.status === 'cancelled').length}
           </p>
           <span className="text-[11px] text-[#9A8A78] font-normal mt-1">Cancelled or expired records</span>
         </div>

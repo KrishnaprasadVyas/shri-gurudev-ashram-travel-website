@@ -139,84 +139,103 @@ export function AdminReportsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-5xl">
-      <div>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#f2f0eb]">
-          Reports & Export Center
-        </h1>
-        <p className="text-xs text-[#f2f0eb]/50 mt-1">
-          Export passenger manifests and financial ledgers in CSV format for Ashram staff
-        </p>
+    <div className="space-y-8 text-[#3E2B1F]">
+      {/* Top Header Card */}
+      <div className="p-8 sm:p-10 rounded-[24px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(90,70,20,0.06)] relative overflow-hidden flex flex-col justify-between gap-3">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(140,106,10,0.08)_0%,transparent_70%)] pointer-events-none" />
+
+        <div className="space-y-2 relative z-10 max-w-2xl">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#B8860B]" />
+            <span className="font-label-caps text-[11px] font-bold uppercase tracking-[0.2em] text-[#B8860B]">
+              Sacred Administration • Export Center
+            </span>
+          </div>
+
+          <h1 className="font-display text-2xl sm:text-4xl font-bold text-[#3E2B1F] tracking-tight">
+            Reports & Manifest Exports
+          </h1>
+          <p className="text-sm font-normal text-[#6F5B47] leading-relaxed">
+            Generate and download complete passenger manifests, identity verification records, and financial transaction ledgers in CSV format for Ashram staff.
+          </p>
+        </div>
       </div>
 
       {message && (
-        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs">
-          {message}
+        <div className="p-4 rounded-[16px] bg-[#FFFFFF] border border-[#B8860B]/40 shadow-sm text-[#3E2B1F] text-xs font-semibold flex items-center gap-3">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#B8860B] animate-pulse" />
+          <span>{message}</span>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Passenger Manifest Card */}
-        <div className="p-6 rounded-2xl bg-[#121110] border border-amber-900/20 space-y-4">
-          <div className="flex items-center gap-3">
-            <span className="p-3 rounded-xl bg-amber-500/10 text-amber-400">
-              <FileSpreadsheet className="h-6 w-6" />
-            </span>
+        <div className="p-6 sm:p-8 rounded-[24px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(90,70,20,0.06)] space-y-5 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-full bg-[#B8860B]/15 border border-[#B8860B]/30 text-[#B8860B] flex items-center justify-center shrink-0">
+                <FileSpreadsheet className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-display text-xl font-bold text-[#3E2B1F]">Yatra Passenger Manifest</h3>
+                <p className="text-xs text-[#6F5B47]">Export complete list of passengers, Aadhaar, room & transit choices</p>
+              </div>
+            </div>
+
             <div>
-              <h3 className="font-bold text-[#f2f0eb]">Yatra Passenger Manifest</h3>
-              <p className="text-xs text-[#f2f0eb]/50">Export complete list of passengers, Aadhaar, room & transit choices</p>
+              <label className="block text-xs font-bold text-[#6F5B47] uppercase tracking-wider mb-2">Filter by Yatra Package (Optional)</label>
+              <select
+                value={selectedPackageId}
+                onChange={(e) => setSelectedPackageId(e.target.value)}
+                className="w-full px-4 py-3 rounded-[16px] bg-[#FFFFFF] border border-[#E9DCC5] text-xs font-medium text-[#3E2B1F] focus:border-[#B8860B] outline-none shadow-2xs"
+              >
+                <option value="">All Active & Past Yatras</option>
+                {packages.map((pkg) => (
+                  <option key={pkg.id} value={pkg.id}>
+                    {pkg.title}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs text-[#f2f0eb]/70 mb-1">Filter by Yatra Package (Optional)</label>
-            <select
-              value={selectedPackageId}
-              onChange={(e) => setSelectedPackageId(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/40 border border-amber-900/30 text-xs text-[#f2f0eb]"
-            >
-              <option value="">All Active & Past Yatras</option>
-              {packages.map((pkg) => (
-                <option key={pkg.id} value={pkg.id}>
-                  {pkg.title}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <button
+            type="button"
             onClick={exportPassengerManifest}
             disabled={exporting}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 font-semibold text-white text-xs hover:from-amber-600 hover:to-orange-700 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-6 rounded-full bg-[#B8860B] hover:bg-[#6F5200] text-white font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(140,106,10,0.25)] disabled:opacity-60 cursor-pointer"
           >
             <Download className="h-4 w-4" />
-            {exporting ? 'Generating CSV Manifest...' : 'Export Passenger Manifest (CSV)'}
+            <span>{exporting ? 'Generating CSV Manifest...' : 'Export Passenger Manifest (CSV)'}</span>
           </button>
         </div>
 
         {/* Financial Ledger Card */}
-        <div className="p-6 rounded-2xl bg-[#121110] border border-amber-900/20 space-y-4">
-          <div className="flex items-center gap-3">
-            <span className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400">
-              <Sparkles className="h-6 w-6" />
-            </span>
-            <div>
-              <h3 className="font-bold text-[#f2f0eb]">Financial Ledger & Gateway Fees</h3>
-              <p className="text-xs text-[#f2f0eb]/50">Export monetary transactions, 2% fees, and booking totals</p>
+        <div className="p-6 sm:p-8 rounded-[24px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(90,70,20,0.06)] space-y-5 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-full bg-[#2E7D32]/15 border border-[#2E7D32]/30 text-[#2E7D32] flex items-center justify-center shrink-0">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-display text-xl font-bold text-[#3E2B1F]">Financial Ledger & Gateway Fees</h3>
+                <p className="text-xs text-[#6F5B47]">Export monetary transactions, gateway fees, and booking totals</p>
+              </div>
             </div>
+
+            <p className="text-xs text-[#6F5B47] leading-relaxed pt-1">
+              Generates detailed financial report listing base package costs, transport add-ons, room add-ons, convenience fee collections, and payment statuses.
+            </p>
           </div>
 
-          <p className="text-xs text-[#f2f0eb]/60 leading-relaxed pt-2">
-            Generates detailed financial report listing base package costs, transport add-ons, room add-ons, convenience fee collections, and payment statuses.
-          </p>
-
           <button
+            type="button"
             onClick={exportFinancialLedger}
             disabled={exporting}
-            className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 font-semibold text-white text-xs transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-6 rounded-full bg-[#2E7D32] hover:bg-[#1b4d1f] text-white font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(46,125,50,0.25)] disabled:opacity-60 cursor-pointer"
           >
             <Download className="h-4 w-4" />
-            {exporting ? 'Generating Ledger...' : 'Export Financial Ledger (CSV)'}
+            <span>{exporting ? 'Generating Ledger...' : 'Export Financial Ledger (CSV)'}</span>
           </button>
         </div>
       </div>

@@ -40,7 +40,15 @@ adminRouter.get('/stats', ...protect, async (_req, res, next) => {
     const [
       { count: totalUsers },
       { count: totalBookings },
-      { count: pendingVerifications },
+      { count: pendingPassVerifications },
+      { count: approvedPassVerifications },
+      { count: rejectedPassVerifications },
+      { count: pendingUserVerifications },
+      { count: approvedUserVerifications },
+      { count: rejectedUserVerifications },
+      { count: confirmedBookings },
+      { count: pendingPaymentBookings },
+      { count: cancelledBookings },
       { count: activePackages },
       revenueResult,
     ] = await Promise.all([
@@ -50,6 +58,38 @@ adminRouter.get('/stats', ...protect, async (_req, res, next) => {
         .from('booking_passengers')
         .select('*', { count: 'exact', head: true })
         .eq('verification_status', 'submitted'),
+      supabaseAdmin
+        .from('booking_passengers')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'verified'),
+      supabaseAdmin
+        .from('booking_passengers')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'rejected'),
+      supabaseAdmin
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'submitted'),
+      supabaseAdmin
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'verified'),
+      supabaseAdmin
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'rejected'),
+      supabaseAdmin
+        .from('bookings')
+        .select('*', { count: 'exact', head: true })
+        .in('status', ['paid', 'verified', 'ticket_generated', 'completed']),
+      supabaseAdmin
+        .from('bookings')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'payment_pending'),
+      supabaseAdmin
+        .from('bookings')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'cancelled'),
       supabaseAdmin
         .from('travel_packages')
         .select('*', { count: 'exact', head: true })
@@ -65,11 +105,20 @@ adminRouter.get('/stats', ...protect, async (_req, res, next) => {
       0,
     )
 
+    const pendingVerifications = (pendingPassVerifications ?? 0) + (pendingUserVerifications ?? 0)
+    const approvedVerifications = (approvedPassVerifications ?? 0) + (approvedUserVerifications ?? 0)
+    const rejectedVerifications = (rejectedPassVerifications ?? 0) + (rejectedUserVerifications ?? 0)
+
     res.json({
       totalUsers: totalUsers ?? 0,
       totalBookings: totalBookings ?? 0,
       totalRevenue,
-      pendingVerifications: pendingVerifications ?? 0,
+      pendingVerifications,
+      approvedVerifications,
+      rejectedVerifications,
+      confirmedBookings: confirmedBookings ?? 0,
+      pendingPaymentBookings: pendingPaymentBookings ?? 0,
+      cancelledBookings: cancelledBookings ?? 0,
       activePackages: activePackages ?? 0,
     })
   } catch (error) {
@@ -260,8 +309,9 @@ adminRouter.put('/passengers/:id/verification', ...protect, async (req, res, nex
 
     if (allPassError) throw dbError(allPassError, 'Failed to fetch siblings')
 
-    const allVerified = allPassengers.every(p => p.verification_status === 'verified')
-    const anyRejected = allPassengers.some(p => p.verification_status === 'rejected')
+    const passList = Array.isArray(allPassengers) ? allPassengers : (allPassengers ? [allPassengers] : [])
+    const allVerified = passList.length > 0 && passList.every((p: any) => p && p.verification_status === 'verified')
+    const anyRejected = passList.some((p: any) => p && p.verification_status === 'rejected')
 
     let bookingUpdatePromise: PromiseLike<unknown> = Promise.resolve()
     if (allVerified && booking.status === 'verification_pending') {
@@ -317,7 +367,7 @@ adminRouter.get('/bookings', ...protect, async (req, res, next) => {
     if (status) {
       query = query.eq('status', status)
     } else {
-      query = query.not('status', 'in', '("draft","documents_pending")')
+      query = query.not('status', 'in', '(draft,documents_pending)')
     }
 
     if (packageId) query = query.eq('package_id', packageId)
@@ -329,8 +379,9 @@ adminRouter.get('/bookings', ...protect, async (req, res, next) => {
     if (error) throw dbError(error, 'Failed to fetch bookings')
 
     const flat = (bookings ?? []).map((b: Record<string, unknown>) => {
-      const pmts = (b.payments as Array<{ status: string; razorpay_payment_id?: string }>) || []
-      const paidPmt = pmts.find(p => p.status === 'captured')
+      const rawPmts = b.payments
+      const pmts = Array.isArray(rawPmts) ? rawPmts : (rawPmts ? [rawPmts] : [])
+      const paidPmt = pmts.find((p: { status?: string; razorpay_payment_id?: string }) => p && p.status === 'captured')
       const isPaid = Boolean(paidPmt) || ['verification_pending', 'verified', 'ticket_generated', 'completed', 'paid'].includes(String(b.status))
       return {
         ...b,

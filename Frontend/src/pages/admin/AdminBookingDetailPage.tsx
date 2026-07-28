@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   ArrowLeft,
   User,
@@ -8,11 +9,17 @@ import {
   CreditCard,
   ShieldCheck,
   FileText,
+  ZoomIn,
+  Download,
+  Loader2,
+  CheckCircle,
+  XCircle,
 } from 'lucide-react'
 import { QUERY_KEYS } from '@/lib/queryKeys'
 import apiClient from '@/lib/apiClient'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { LoadingState } from '@/components/shared/States'
+import { toast } from 'sonner'
 import type { BookingRow, UserRow, TravelPackageRow, PaymentRow } from '@/types/database.types'
 
 function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
@@ -32,9 +39,101 @@ const statusBadge: Record<string, string> = {
   completed: 'bg-[#2563EB]/15 text-[#2563EB] border border-[#2563EB]/30 font-bold',
 }
 
+function PassengerDocPreview({ passengerId, filePath, label }: { passengerId: string; filePath: string; label: string }) {
+  const [imgError, setImgError] = useState(false)
+  const [isZoomed, setIsZoomed] = useState(false)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin', 'passenger-doc-url', passengerId, filePath],
+    queryFn: async () => {
+      const { data } = await apiClient.get(`/api/admin/passengers/${passengerId}/document-url`, {
+        params: { path: filePath },
+      })
+      return data as { url: string; expiresAt: number }
+    },
+    staleTime: 4 * 60 * 1000,
+  })
+
+  return (
+    <>
+      <div className="mt-2 space-y-1.5">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-semibold text-[#6F5B47] uppercase tracking-wider text-[10px]">{label}</span>
+          {data?.url && !imgError && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setIsZoomed(true)}
+                className="px-2 py-0.5 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[10px] font-bold flex items-center gap-1 transition-colors"
+              >
+                <ZoomIn className="h-3 w-3" />
+                <span>Zoom</span>
+              </button>
+              <a
+                href={data.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="px-2 py-0.5 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[10px] font-bold flex items-center gap-1 transition-colors"
+              >
+                <Download className="h-3 w-3" />
+                <span>Open</span>
+              </a>
+            </div>
+          )}
+        </div>
+
+        <div className="h-40 rounded-[14px] bg-[#FFFFFF] border border-[#E9DCC5] p-2 flex items-center justify-center relative overflow-hidden group shadow-2xs">
+          {isLoading ? (
+            <div className="flex flex-col items-center gap-1 text-[#B8860B] text-xs">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="font-mono text-[10px]">Loading document...</span>
+            </div>
+          ) : data?.url && !imgError ? (
+            <img
+              src={data.url}
+              alt={label}
+              className="w-full h-full object-contain rounded-[10px] cursor-pointer transition-transform duration-200 group-hover:scale-102"
+              onClick={() => setIsZoomed(true)}
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="flex flex-col items-center gap-1 text-[#9A8A78] text-xs">
+              <FileText className="h-6 w-6 text-[#E9DCC5]" />
+              <span className="text-[11px] font-medium">No document preview</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {isZoomed && data?.url && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-200"
+          onClick={() => setIsZoomed(false)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] w-full flex flex-col items-center">
+            <button
+              type="button"
+              className="absolute -top-12 right-0 px-4 py-1.5 rounded-full bg-[#FFFFFF] text-[#3E2B1F] font-bold text-xs uppercase tracking-wider hover:bg-[#B8860B] hover:text-[#FFFFFF] transition-colors"
+              onClick={() => setIsZoomed(false)}
+            >
+              Close Zoom ✕
+            </button>
+            <img
+              src={data.url}
+              alt={label}
+              className="max-h-[85vh] w-auto object-contain rounded-[20px] shadow-2xl border-4 border-[#FFFFFF]"
+            />
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
 export function AdminBookingDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery<{
     booking: BookingRow
@@ -52,6 +151,18 @@ export function AdminBookingDetailPage() {
   })
 
   usePageTitle(data?.booking?.booking_reference ? `Booking #${data.booking.booking_reference}` : 'Booking Detail')
+
+  const verifyPassengerMutation = useMutation({
+    mutationFn: async ({ passengerId, status, notes }: { passengerId: string; status: 'verified' | 'rejected'; notes?: string }) => {
+      await apiClient.put(`/api/admin/passengers/${passengerId}/verification`, { status, notes })
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminBooking(id ?? '') })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminStats })
+      toast.success(variables.status === 'verified' ? 'Passenger verification approved! ✓' : 'Passenger verification rejected.')
+    },
+    onError: () => toast.error('Failed to update passenger verification.'),
+  })
 
   if (isLoading) return <LoadingState variant="detail" />
   if (!data) return null
@@ -128,15 +239,81 @@ export function AdminBookingDetailPage() {
             <div className="divide-y divide-[#F1E9D8]">
               {passengers?.length > 0 ? (
                 passengers.map((p, idx) => (
-                  <div key={p.id} className="py-4">
-                    <p className="font-bold text-[#3E2B1F] mb-2 text-sm">
-                      Traveler {idx + 1} {p.is_primary ? '(Primary)' : ''}
-                    </p>
+                  <div key={p.id} className="py-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="font-bold text-[#3E2B1F] text-sm">
+                        Traveler {idx + 1} {p.is_primary ? '(Primary Lead)' : ''}
+                      </p>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                        p.verification_status === 'verified'
+                          ? 'bg-[#2E7D32]/15 text-[#2E7D32] border border-[#2E7D32]/30'
+                          : p.verification_status === 'rejected'
+                          ? 'bg-[#C0392B]/15 text-[#C0392B] border border-[#C0392B]/30'
+                          : 'bg-[#C68A00]/15 text-[#C68A00] border border-[#C68A00]/30'
+                      }`}>
+                        {p.verification_status || 'Pending'}
+                      </span>
+                    </div>
+
                     <InfoRow label="Name" value={p.full_name} />
                     <InfoRow label="Gender/Age" value={`${p.gender} • ${new Date().getFullYear() - new Date(p.dob).getFullYear()} yrs`} />
                     <InfoRow label="Phone" value={p.phone} />
                     <InfoRow label="Aadhaar" value={p.aadhaar_number} />
                     <InfoRow label="Address" value={p.address} />
+
+                    {/* Passenger Identity Documents Viewer */}
+                    {Array.isArray(p.passenger_documents) && p.passenger_documents.length > 0 ? (
+                      <div className="pt-2">
+                        <p className="text-xs font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Submitted Identity Documents:</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {p.passenger_documents.map((doc: any) => (
+                            <PassengerDocPreview
+                              key={doc.id}
+                              passengerId={p.id}
+                              filePath={doc.file_path}
+                              label={doc.document_type ? doc.document_type.replace('_', ' ') : 'Identity Card'}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ) : p.aadhaar_image_path ? (
+                      <div className="pt-2">
+                        <PassengerDocPreview
+                          passengerId={p.id}
+                          filePath={p.aadhaar_image_path}
+                          label="Aadhaar Card Record"
+                        />
+                      </div>
+                    ) : null}
+
+                    {/* Passenger Verification Action Buttons */}
+                    {p.verification_status !== 'verified' && (
+                      <div className="pt-3 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => verifyPassengerMutation.mutate({ passengerId: p.id, status: 'verified' })}
+                          disabled={verifyPassengerMutation.isPending}
+                          className="px-3.5 py-1.5 rounded-full bg-[#2E7D32] hover:bg-[#1b4d1f] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs"
+                        >
+                          <CheckCircle className="h-3.5 w-3.5" />
+                          <span>Approve Passenger ID</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const notes = window.prompt('Enter reason for rejecting passenger document:')
+                            if (notes && notes.trim()) {
+                              verifyPassengerMutation.mutate({ passengerId: p.id, status: 'rejected', notes })
+                            }
+                          }}
+                          disabled={verifyPassengerMutation.isPending}
+                          className="px-3.5 py-1.5 rounded-full bg-[#FFFFFF] border border-[#C0392B] text-[#C0392B] hover:bg-[#C0392B] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs"
+                        >
+                          <XCircle className="h-3.5 w-3.5" />
+                          <span>Reject ID</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))
               ) : (
