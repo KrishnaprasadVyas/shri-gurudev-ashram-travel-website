@@ -298,7 +298,7 @@ export function ProfilePage() {
             {verStatus === 'rejected' && (
               <>
                 <p className="text-sm text-[#6F5B47] mb-4 leading-relaxed">
-                  Verification was rejected.{displayProfile?.admin_notes ? ` Reason: ${displayProfile.admin_notes}` : ''} Please re-upload clearer documents.
+                  Verification was rejected. Please re-upload clearer documents.
                 </p>
                 <Link to="/portal/verify" className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full bg-[#C0392B] text-white hover:opacity-90 transition-all shadow-sm">
                   Resubmit Documents

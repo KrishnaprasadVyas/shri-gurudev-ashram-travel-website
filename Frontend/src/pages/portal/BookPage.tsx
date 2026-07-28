@@ -219,7 +219,7 @@ export function BookPage() {
   const pricePerPerson = pkg.price + transportSurcharge + roomSurcharge
   const totalBasePrice = pricePerPerson * travelerCount
 
-  const renderSurcharge = (price?: number) => {
+  const renderSurcharge = (price?: number | null) => {
     return price && price > 0 ? <span className="text-[10px] block opacity-70">(+₹{price.toLocaleString('en-IN')})</span> : null
   }
 
