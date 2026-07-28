@@ -34,7 +34,7 @@ export const OurStory: React.FC = () => {
 
         {/* Subtitle */}
         <p className="font-body text-[#666666] text-[16px] md:text-[18px] max-w-[900px] leading-relaxed mb-8">
-          Founder and spiritual guide of Shri Gurudev Ashram<br />
+          Founder and spiritual guide of माँ वैष्णवी टूरिज़्म<br />
           (Palaskhed Sapkal, Chikhli, Buldhana)<br />
           and Swami Harichaitanya Shanti Ashram Trust<br />
           (Datala, Malkapur)

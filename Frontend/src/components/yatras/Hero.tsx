@@ -1,5 +1,6 @@
 import React from 'react';
 import { kedarnath } from '@/assets/images';
+import whitelogo from '@/assets/whitelogo.svg';
 
 const SpiritualDivider = () => (
   <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-6 pb-4">
@@ -16,7 +17,7 @@ export const Hero: React.FC = () => {
       <div className="absolute inset-0 z-0">
         <img
           className="w-full h-full object-cover object-center transform scale-105"
-          alt="Sacred Kedarnath Pilgrimage — Shri Gurudev Ashram Yatra"
+          alt="Sacred Kedarnath Pilgrimage — माँ वैष्णवी टूरिज़्म Yatra"
           src={kedarnath}
           loading="eager"
           fetchPriority="high"
@@ -30,7 +31,7 @@ export const Hero: React.FC = () => {
       <div className="relative z-10 w-full max-w-4xl mx-auto animate-fade-in-up flex flex-col items-center">
         {/* White Ashram Logo — Primary Brand Identity */}
         <img
-          src="/assets/Ashram vector logo_2022_white-01.png"
+          src={whitelogo}
           alt="Shri Gurudev Ashram Official Logo"
           width={320}
           height={320}

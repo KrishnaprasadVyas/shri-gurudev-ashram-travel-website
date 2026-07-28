@@ -8,7 +8,7 @@ export const Hero: React.FC = () => {
       <div className="absolute inset-0 z-0 bg-black">
         <img
           className="w-full h-full object-cover opacity-80"
-          alt="Shri Gurudev Ashram — Sacred Abode, Palaskhed Sapkal"
+          alt="माँ वैष्णवी टूरिज़्म — Sacred Abode, Palaskhed Sapkal"
           src="/assets/Home_Page.JPG"
           loading="eager"
           fetchPriority="high"

@@ -48,7 +48,7 @@ export function PortalSidebar() {
         </div>
         <div className="min-w-0 flex-1">
           <p className="font-display text-[15px] font-bold text-[#3E2B1F] truncate tracking-wide leading-tight">
-            Shri Gurudev Ashram
+            माँ वैष्णवी टूरिज़्म
           </p>
           <p className="font-label-caps text-[10px] font-bold tracking-[0.18em] uppercase text-[#B8860B] mt-0.5">
             Devotee Portal

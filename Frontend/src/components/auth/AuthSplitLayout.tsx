@@ -31,7 +31,7 @@ export const AuthSplitLayout: React.FC<AuthSplitLayoutProps> = ({ children }) =>
           <Link
             to="/"
             className="relative inline-block group transition-transform duration-700 hover:scale-[1.03] mb-12 sm:mb-14 lg:mb-16"
-            aria-label="Shri Gurudev Ashram — Home"
+            aria-label="माँ वैष्णवी टूरिज़्म — Home"
           >
             {/* Outer ambient sunlight bleed — wide, very soft, low opacity */}
             <span
@@ -76,7 +76,7 @@ export const AuthSplitLayout: React.FC<AuthSplitLayoutProps> = ({ children }) =>
 
             {/* 2. Primary heading */}
             <h1 className="font-display-lg text-3xl sm:text-4xl lg:text-5xl text-white font-bold tracking-tight leading-tight drop-shadow-md">
-              Welcome to Shri Gurudev Ashram
+              Welcome to माँ वैष्णवी टूरिज़्म
             </h1>
 
             {/* 3. Supporting description */}

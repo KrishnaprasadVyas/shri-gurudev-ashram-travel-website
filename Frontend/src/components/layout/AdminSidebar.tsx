@@ -66,7 +66,7 @@ export function AdminSidebar({ isCollapsed = false }: AdminSidebarProps) {
         {!isCollapsed && (
           <div className="space-y-1 animate-in fade-in duration-200">
             <h2 className="font-display text-xl font-bold tracking-wide text-[#3E2B1F] leading-tight">
-              Shri Gurudev Ashram
+              माँ वैष्णवी टूरिज़्म
             </h2>
             <p className="font-label-caps text-[11px] font-bold tracking-[0.2em] text-[#B8860B] uppercase">
               Admin Portal

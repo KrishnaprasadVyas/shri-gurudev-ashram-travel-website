@@ -5,7 +5,6 @@ import { Navbar } from './Navbar';
 
 export const PublicLayout: React.FC = () => {
   const { pathname } = useLocation();
-  const isHome = pathname === '/';
 
   // Scroll to top on route change
   useEffect(() => {
@@ -17,7 +16,7 @@ export const PublicLayout: React.FC = () => {
       <Navbar />
       <main 
         className="flex-1"
-        style={!isHome ? { paddingTop: 'var(--app-nav-height, 150px)' } : undefined}
+        style={{ paddingTop: 'var(--app-nav-height, 150px)' }}
       >
         <Outlet />
       </main>

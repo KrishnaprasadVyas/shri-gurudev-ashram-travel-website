@@ -115,7 +115,7 @@ export function AdminDashboardPage() {
               </h1>
               <div className="h-px w-32 bg-gradient-to-r from-[#B8860B] via-[#E9DCC5] to-transparent my-3.5" />
               <p className="font-body-md text-base sm:text-lg text-[#6F5B47] leading-relaxed font-normal">
-                Welcome back to the Shri Gurudev Ashram Administration Portal. <br className="hidden sm:inline" />
+                Welcome back to the माँ वैष्णवी टूरिज़्म Administration Portal. <br className="hidden sm:inline" />
                 Manage devotees, yatras, bookings and ashram activities from one place.
               </p>
             </div>

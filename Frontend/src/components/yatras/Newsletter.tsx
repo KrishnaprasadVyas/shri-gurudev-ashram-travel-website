@@ -32,7 +32,7 @@ export const Newsletter: React.FC = () => {
           <p className="font-body-lg text-on-surface-variant mb-10 max-w-2xl text-center leading-relaxed">
             Every Yatra begins with a single step of faith.
             <span className="block mt-2">
-              Join Shri Gurudev Ashram and experience sacred pilgrimages guided by devotion, discipline, and selfless service. Travel alongside fellow devotees to some of Bharat's holiest destinations under the blessings of Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj.
+              Join माँ वैष्णवी टूरिज़्म and experience sacred pilgrimages guided by devotion, discipline, and selfless service. Travel alongside fellow devotees to some of Bharat's holiest destinations under the blessings of Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj.
             </span>
           </p>
           

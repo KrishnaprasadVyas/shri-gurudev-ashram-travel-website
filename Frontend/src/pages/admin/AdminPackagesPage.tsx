@@ -363,7 +363,7 @@ export function AdminPackagesPage() {
                 <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
                   <div className="space-y-3">
                     <p className="text-xs text-[#6F5B47] line-clamp-2 leading-relaxed font-normal">
-                      {pkg.description || 'Experience the divine atmosphere and spiritual blessings of Shri Gurudev Ashram across sacred temples.'}
+                      {pkg.description || 'Experience the divine atmosphere and spiritual blessings of माँ वैष्णवी टूरिज़्म across sacred temples.'}
                     </p>
 
                     <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#E9DCC5] text-xs font-medium text-[#3E2B1F]">

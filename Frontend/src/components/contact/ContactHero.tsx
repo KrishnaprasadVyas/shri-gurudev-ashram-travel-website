@@ -47,12 +47,12 @@ export const ContactHero: React.FC = () => {
         
         {/* Small Eyebrow */}
         <span className="font-label-caps text-xs md:text-sm text-secondary uppercase tracking-[0.25em] mb-4 block font-semibold">
-          Visit Shri Gurudev Ashram
+          Visit माँ वैष्णवी टूरिज़्म
         </span>
 
         {/* Large Heading */}
         <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl text-primary font-bold tracking-tight mb-4">
-          Contact & Visit the Ashram
+          Contact & Visit Us
         </h1>
 
         {/* Short Description */}

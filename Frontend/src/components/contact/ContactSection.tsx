@@ -44,8 +44,8 @@ export const ContactSection: React.FC = () => {
       title: 'Ashram Address',
       content: (
         <>
-          Shri Gurudev Ashram<br />
-          Palaskhed Sapkal<br />
+          माँ वैष्णवी टूरिज़्म<br />
+          Palaskhed Sapkal, Tehsil Chikhli<br />
           Taluka Chikhli<br />
           District Buldhana<br />
           Maharashtra – 443001
