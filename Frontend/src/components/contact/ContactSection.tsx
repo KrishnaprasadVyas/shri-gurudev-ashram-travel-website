@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Phone, Mail, Clock, Send, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 
@@ -12,6 +13,15 @@ export const ContactSection: React.FC = () => {
     message: '',
   });
   const [sending, setSending] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 640);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,28 +105,62 @@ export const ContactSection: React.FC = () => {
     <section className="py-16 md:py-24 px-4 sm:px-6 max-w-container-max mx-auto relative z-10">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         {/* Left Side: Contact Information Cards (Col Span 6) */}
-        <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-          {contactCards.map((card, idx) => {
-            const IconComponent = card.icon;
-            return (
-              <div
-                key={idx}
-                className="rounded-2xl bg-surface-container-lowest p-6 md:p-8 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start group"
-              >
-                {/* Elegant Icon with Saffron Accent */}
-                <div className="w-12 h-12 rounded-xl bg-[#C98B1A]/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shadow-inner">
-                  <IconComponent className="w-6 h-6" />
-                </div>
-                <h3 className="font-headline-sm text-lg md:text-xl font-bold text-primary mb-3">
-                  {card.title}
-                </h3>
-                <div className="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed font-light">
-                  {card.content}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <motion.div layout className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+          <AnimatePresence mode="popLayout">
+            {contactCards.map((card, idx) => {
+              const shouldRender = isDesktop || isExpanded || idx < 1;
+              if (!shouldRender) return null;
+
+              const IconComponent = card.icon;
+              return (
+                <motion.div
+                  key={card.title}
+                  layout
+                  initial={!isDesktop && idx >= 1 ? { opacity: 0, y: 30 } : false}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: !isDesktop && idx >= 1 ? (idx - 1) * 0.1 : 0 
+                  }}
+                  className="rounded-2xl bg-surface-container-lowest p-6 md:p-8 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start group"
+                >
+                  {/* Elegant Icon with Saffron Accent */}
+                  <div className="w-12 h-12 rounded-xl bg-[#C98B1A]/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shadow-inner">
+                    <IconComponent className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-headline-sm text-lg md:text-xl font-bold text-primary mb-3">
+                    {card.title}
+                  </h3>
+                  <div className="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed font-light">
+                    {card.content}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+
+          {/* View More Toggle for Mobile */}
+          {!isDesktop && contactCards.length > 1 && (
+            <motion.button
+              layout
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="mt-2 w-full flex items-center justify-center gap-2 py-4 border-y border-outline-variant/30 text-[#C98B1A] hover:bg-[#C98B1A]/5 active:bg-[#C98B1A]/10 transition-colors focus-ring min-h-[44px]"
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="w-5 h-5" />
+                  <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-5 h-5" />
+                  <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View More Details</span>
+                </>
+              )}
+            </motion.button>
+          )}
+        </motion.div>
 
         {/* Right Side: Premium Floating Form Card (Col Span 6) */}
         <div className="lg:col-span-6">

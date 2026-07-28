@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { GalleryHero } from '@/components/gallery/GalleryHero'
 
@@ -76,6 +77,15 @@ const heights = ['h-64', 'h-48', 'h-72', 'h-56', 'h-64', 'h-52', 'h-72', 'h-48',
 export function GalleryPage() {
   usePageTitle('Gallery')
   const [lightbox, setLightbox] = useState<number | null>(null)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(true)
+
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 640)
+    checkDesktop()
+    window.addEventListener('resize', checkDesktop)
+    return () => window.removeEventListener('resize', checkDesktop)
+  }, [])
 
   const photoUrls = photos.map(
     (id) => `https://images.unsplash.com/${id}?w=800&q=80&fit=crop`,
@@ -92,23 +102,57 @@ export function GalleryPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 md:pt-8 pb-16 md:pb-24">
 
       {/* Masonry grid */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
-        {photoUrls.map((src, i) => (
-          <div
-            key={i}
-            className={`relative ${heights[i % heights.length]} rounded-2xl cursor-pointer group break-inside-avoid mb-4 overflow-hidden`}
-            onClick={() => openLightbox(i)}
-          >
-            <img
-              src={src}
-              alt={`Yatra gallery ${i + 1}`}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-2xl" />
-          </div>
-        ))}
-      </div>
+      <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+        <AnimatePresence mode="popLayout">
+          {photoUrls.map((src, i) => {
+            const shouldRender = isDesktop || isExpanded || i < 4;
+            if (!shouldRender) return null;
+
+            return (
+              <motion.div
+                key={i}
+                layout
+                initial={!isDesktop && i >= 4 ? { opacity: 0, y: 30 } : false}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: !isDesktop && i >= 4 ? (i - 4) * 0.05 : 0 }}
+                className={`relative ${heights[i % heights.length]} rounded-2xl cursor-pointer group break-inside-avoid overflow-hidden`}
+                style={{ marginBottom: '1rem' }}
+                onClick={() => openLightbox(i)}
+              >
+                <img
+                  src={src}
+                  alt={`Yatra gallery ${i + 1}`}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-2xl" />
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* View More Toggle */}
+      {!isDesktop && photoUrls.length > 4 && (
+        <motion.button
+          layout
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="mt-8 mb-4 w-full flex items-center justify-center gap-2 py-4 border-y border-outline-variant/30 text-[#C98B1A] hover:bg-[#C98B1A]/5 active:bg-[#C98B1A]/10 transition-colors focus-ring min-h-[44px]"
+        >
+          {isExpanded ? (
+            <>
+              <ChevronUp className="w-5 h-5" />
+              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+            </>
+          ) : (
+            <>
+              <ChevronDown className="w-5 h-5" />
+              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View More Photos</span>
+            </>
+          )}
+        </motion.button>
+      )}
 
       {/* Lightbox */}
       {lightbox !== null && (

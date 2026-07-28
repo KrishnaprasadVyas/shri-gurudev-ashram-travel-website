@@ -91,10 +91,11 @@ export const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <header
-      ref={headerRef}
-      className={`fixed top-0 z-[100] w-full bg-[#F8F3EA] border-b border-[#D6B36A] shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
-    >
+    <>
+      <header
+        ref={headerRef}
+        className={`fixed top-0 z-[100] w-full bg-[#F8F3EA] border-b border-[#D6B36A] shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition-transform duration-300 ${isVisible || mobileOpen ? 'translate-y-0' : '-translate-y-full'}`}
+      >
       <nav className="flex justify-between items-center px-6 md:px-10 lg:px-16 py-1 md:py-1 max-w-[1600px] mx-auto w-full gap-4">
 
         {/* Left Side: Navigation Links (Desktop) */}
@@ -215,6 +216,7 @@ export const Navbar: React.FC = () => {
           </button>
         </div>
       </nav>
+      </header>
 
       {/* Mobile Right-Slide Drawer via Framer Motion */}
       <AnimatePresence>
@@ -226,7 +228,7 @@ export const Navbar: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-black/50 z-[105] lg:hidden"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[105] lg:hidden"
               onClick={closeMobile}
             />
 
@@ -235,7 +237,7 @@ export const Navbar: React.FC = () => {
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              transition={{ type: 'tween', duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
               className="fixed top-0 right-0 h-full w-[85%] max-w-[340px] bg-[#F8F3EA] shadow-2xl z-[110] lg:hidden flex flex-col"
             >
               <div className="flex justify-between items-center px-6 py-4 border-b border-[#D6B36A]/30 shrink-0">
@@ -282,7 +284,7 @@ export const Navbar: React.FC = () => {
                           }`
                         }
                       >
-                        {link.name}
+                        {link.name === 'Yatras' ? 'Maa Vaishnavi Tourism' : link.name}
                       </NavLink>
                     </motion.div>
                   ))}
@@ -363,6 +365,6 @@ export const Navbar: React.FC = () => {
           </>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 };

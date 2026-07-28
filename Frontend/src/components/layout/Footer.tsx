@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ashramlogo from '../../assets/ashramlogo.png';
 import whitelogo from '../../assets/whitelogo.svg';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 /* ─── Inline SVG Icons ─── */
 const FacebookIcon = () => (
@@ -125,6 +126,16 @@ const QuickLink: React.FC<{ to: string; label: string }> = ({ to, label }) => (
    FOOTER COMPONENT
    ═══════════════════════════════════════════════════════════════ */
 export const Footer: React.FC = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
   return (
     <footer className="relative z-20 overflow-hidden text-[#F5EFE4] font-body-md"
       style={{
@@ -142,13 +153,27 @@ export const Footer: React.FC = () => {
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#C98B1A]/40 to-transparent" />
 
       {/* ─── Main Grid ─── */}
-      <div className="relative w-full max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 pt-10 pb-8">
+      <div className="relative w-full max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 pt-10 pb-8 flex flex-col items-center">
         <motion.div
+          layout
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
           viewport={{ once: true, amount: 0.15 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.3fr_1px_1fr_1px_1fr_1px_1fr_1px_1.1fr] gap-y-10 items-start"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.3fr_1px_1fr_1px_1fr_1px_1fr_1px_1.1fr] gap-y-10 items-start overflow-hidden w-full transition-all duration-500"
+          style={
+            !isDesktop && !isExpanded
+              ? {
+                  maxHeight: '320px',
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 65%, transparent 100%)',
+                  maskImage: 'linear-gradient(to bottom, black 65%, transparent 100%)'
+                }
+              : {
+                  maxHeight: '3000px',
+                  WebkitMaskImage: 'none',
+                  maskImage: 'none'
+                }
+          }
         >
           {/* ── Col 1 : Ashram Info ── */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:pr-8 xl:pr-12">
@@ -285,6 +310,26 @@ export const Footer: React.FC = () => {
           </div>
 
         </motion.div>
+
+        {!isDesktop && (
+          <motion.button
+            layout
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="mt-6 w-full flex items-center justify-center gap-2 py-4 border-y border-[#C98B1A]/20 text-[#C98B1A] hover:bg-[#C98B1A]/5 active:bg-[#C98B1A]/10 transition-colors focus-ring min-h-[44px]"
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="w-5 h-5" />
+                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-5 h-5" />
+                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View More</span>
+              </>
+            )}
+          </motion.button>
+        )}
       </div>
 
       {/* ─── Bottom Bar ─── */}
