@@ -29,9 +29,9 @@ apiClient.interceptors.request.use(async (config) => {
     throw new Error(errorMsg)
   }
 
-  // Prevent double /api/api/ if baseUrl already ends with /api and config.url starts with /api/
-  if (baseUrl.endsWith('/api') && config.url?.startsWith('/api/')) {
-    config.url = config.url.substring(4)
+  // Prevent double /api/api/ if baseUrl already ends with /api and config.url starts with /api
+  if (baseUrl.endsWith('/api') && config.url) {
+    config.url = config.url.replace(/^\/api(\/|$)/, '$1')
   }
 
   let token: string | null = null

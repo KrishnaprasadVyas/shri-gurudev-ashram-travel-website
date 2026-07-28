@@ -19,13 +19,16 @@ import { supabaseAdmin } from './services/supabaseAdmin.js'
 
 export const app = express()
 
+// Trust reverse proxy (Nginx / Cloudflare) for accurate client IP rate limiting
+app.set('trust proxy', 1)
+
 // Security headers
 app.use(helmet())
 
 // Rate limiters
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30,
+  max: 300,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later' },
@@ -33,7 +36,7 @@ const authLimiter = rateLimit({
 
 const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many payment requests, please try again later' },
@@ -58,19 +61,19 @@ app.use(
   }),
 )
 
-app.use('/api/webhooks/razorpay', express.raw({ type: 'application/json' }), razorpayWebhookRouter)
+app.use(['/api/webhooks/razorpay', '/webhooks/razorpay'], express.raw({ type: 'application/json' }), razorpayWebhookRouter)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Apply rate limiters & mount routes
-app.use('/api/users', authLimiter, usersRouter)
-app.use('/api/bookings', bookingsRouter)
-app.use('/api/bookings/:bookingId/passengers', passengersRouter)
-app.use('/api/payments', paymentLimiter, paymentsRouter)
-app.use('/api/seva', sevaRouter)
-app.use('/api/public/seva-packages', sevaPackagesPublicRouter)
-app.use('/api/admin/seva-packages', sevaPackagesAdminRouter)
-app.use('/api/admin', adminRouter)
+// Apply rate limiters & mount routes (supporting both /api/* and /* for Nginx reverse-proxy compatibility)
+app.use(['/api/users', '/users'], authLimiter, usersRouter)
+app.use(['/api/bookings', '/bookings'], bookingsRouter)
+app.use(['/api/bookings/:bookingId/passengers', '/bookings/:bookingId/passengers'], passengersRouter)
+app.use(['/api/payments', '/payments'], paymentLimiter, paymentsRouter)
+app.use(['/api/seva', '/seva'], sevaRouter)
+app.use(['/api/public/seva-packages', '/public/seva-packages'], sevaPackagesPublicRouter)
+app.use(['/api/admin/seva-packages', '/admin/seva-packages'], sevaPackagesAdminRouter)
+app.use(['/api/admin', '/admin'], adminRouter)
 
 app.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
   const status = error instanceof HttpError ? error.status : 500
