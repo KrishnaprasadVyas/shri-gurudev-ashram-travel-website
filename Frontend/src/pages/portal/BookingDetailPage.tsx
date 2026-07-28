@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, AlertCircle, CheckCircle, XCircle, IndianRupee } from 'lucide-react'
+import { ArrowLeft, AlertCircle, CheckCircle, XCircle, IndianRupee, MapPin, Clock, Plane, BedDouble } from 'lucide-react'
 import { useBooking } from '@/hooks/useBookings'
 import { usePayment } from '@/hooks/usePayment'
 import { usePageTitle } from '@/hooks/usePageTitle'
@@ -8,6 +8,24 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import apiClient from '@/lib/apiClient'
 import { toast } from 'sonner'
 import type { BookingRow } from '@/types/database.types'
+
+type TravelPackageInfo = {
+  title?: string
+  image_url?: string
+  start_date?: string
+  duration?: string
+  price?: number
+}
+
+type EnrichedBooking = BookingRow & {
+  booking_passengers?: any[]
+  travel_packages?: TravelPackageInfo | null
+  base_amount?: number
+  transport_amount?: number
+  room_amount?: number
+  additional_seva_amount?: number
+  gateway_fee?: number
+}
 
 function InfoRow({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null
@@ -51,7 +69,7 @@ export function BookingDetailPage() {
     }
   })
 
-  const booking: BookingRow & { booking_passengers?: any[] } = data?.booking as any
+  const booking: EnrichedBooking = data?.booking as any
   usePageTitle(booking ? `Booking #${booking.booking_reference}` : 'Booking Detail')
 
   if (isLoading) return <LoadingState variant="detail" />
@@ -75,6 +93,49 @@ export function BookingDetailPage() {
 
   return (
     <div className="max-w-3xl space-y-8 animate-in fade-in duration-300">
+      {/* ── Package Info ────────────────────────────────── */}
+      {booking.travel_packages && (
+        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#FFF7E8] to-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(62,43,31,0.04)] flex flex-col sm:flex-row gap-5 items-start">
+          {booking.travel_packages.image_url && (
+            <img
+              src={booking.travel_packages.image_url}
+              alt={booking.travel_packages.title}
+              className="w-full sm:w-32 h-24 object-cover rounded-2xl border border-[#E9DCC5] flex-shrink-0"
+            />
+          )}
+          <div className="flex-1 space-y-2">
+            <p className="font-label-caps text-[10px] font-bold uppercase tracking-[0.2em] text-[#B8860B]">Yatra Package</p>
+            <h2 className="font-display text-xl font-bold text-[#3E2B1F]">{booking.travel_packages.title}</h2>
+            <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-1">
+              {booking.travel_packages.start_date && (
+                <span className="flex items-center gap-1.5 text-xs text-[#6F5B47] font-medium">
+                  <MapPin className="h-3.5 w-3.5 text-[#B8860B]" />
+                  Departure: {new Date(booking.travel_packages.start_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </span>
+              )}
+              {booking.travel_packages.duration && (
+                <span className="flex items-center gap-1.5 text-xs text-[#6F5B47] font-medium">
+                  <Clock className="h-3.5 w-3.5 text-[#B8860B]" />
+                  {booking.travel_packages.duration}
+                </span>
+              )}
+              {booking.transport_type && (
+                <span className="flex items-center gap-1.5 text-xs text-[#6F5B47] font-medium">
+                  <Plane className="h-3.5 w-3.5 text-[#B8860B]" />
+                  {booking.transport_type}{booking.bus_type ? ` (${booking.bus_type})` : ''}
+                </span>
+              )}
+              {booking.room_type && (
+                <span className="flex items-center gap-1.5 text-xs text-[#6F5B47] font-medium">
+                  <BedDouble className="h-3.5 w-3.5 text-[#B8860B]" />
+                  {booking.room_type}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Header ───────────────────────────────────────── */}
       <div className="flex items-center gap-3.5">
         <Link
@@ -183,7 +244,24 @@ export function BookingDetailPage() {
         <h2 className="font-display text-lg font-bold text-[#3E2B1F] mb-4 pb-3 border-b border-[#E9DCC5]">
           Payment Summary
         </h2>
-        <div className="flex items-center justify-between py-3">
+        <div className="space-y-1">
+          {booking.base_amount != null && (
+            <InfoRow label="Base Fare" value={`₹${Number(booking.base_amount).toLocaleString('en-IN')} × ${booking.traveler_count}`} />
+          )}
+          {booking.transport_amount != null && Number(booking.transport_amount) > 0 && (
+            <InfoRow label="Transport" value={`+₹${Number(booking.transport_amount).toLocaleString('en-IN')}`} />
+          )}
+          {booking.room_amount != null && Number(booking.room_amount) > 0 && (
+            <InfoRow label="Room Upgrade" value={`+₹${Number(booking.room_amount).toLocaleString('en-IN')}`} />
+          )}
+          {booking.additional_seva_amount != null && Number(booking.additional_seva_amount) > 0 && (
+            <InfoRow label="Attached Seva" value={`+₹${Number(booking.additional_seva_amount).toLocaleString('en-IN')}`} />
+          )}
+          {booking.gateway_fee != null && Number(booking.gateway_fee) > 0 && (
+            <InfoRow label="Gateway Fee" value={`+₹${Number(booking.gateway_fee).toLocaleString('en-IN')}`} />
+          )}
+        </div>
+        <div className="flex items-center justify-between py-4 mt-2 border-t border-[#E9DCC5]">
           <span className="font-label-caps text-xs font-bold uppercase tracking-wider text-[#6F5B47]">Total Amount</span>
           <span className="font-display text-3xl font-bold text-[#B8860B]">
             ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}

@@ -12,6 +12,7 @@ import { SIGNED_URL_SECRET } from "../config.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const UPLOAD_BASE_DIR = path.resolve(__dirname, "../../uploads/verifications");
+const UPLOADS_ROOT = path.resolve(__dirname, "../../uploads");
 
 // Simple HMAC-based signed URL token generation
 const SIGNED_URL_EXPIRY_SECONDS = 300; // 5 minutes
@@ -81,12 +82,9 @@ usersRouter.get("/verification-file", async (request, response, next) => {
     }
 
     // Resolve and validate the actual file path (prevent path traversal)
-    const absolutePath = path.resolve(
-      path.dirname(UPLOAD_BASE_DIR),
-      "..",
-      filePath,
-    );
-    if (!absolutePath.startsWith(UPLOAD_BASE_DIR)) {
+    // Allow both uploads/verifications/ (user) and uploads/bookings/ (passengers)
+    const absolutePath = path.resolve(UPLOADS_ROOT, "..", filePath);
+    if (!absolutePath.startsWith(UPLOADS_ROOT + path.sep) && !absolutePath.startsWith(UPLOADS_ROOT + '/')) {
       throw new HttpError(403, "Invalid file path");
     }
 

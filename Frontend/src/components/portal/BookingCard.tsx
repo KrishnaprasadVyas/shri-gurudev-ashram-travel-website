@@ -2,7 +2,15 @@ import { Link } from 'react-router-dom'
 import { IndianRupee, Calendar, Users, ArrowRight } from 'lucide-react'
 import type { BookingRow } from '@/types/database.types'
 
-type BookingWithTitle = BookingRow & { packageTitle?: string }
+type BookingWithTitle = BookingRow & {
+  packageTitle?: string
+  packageStartDate?: string
+  packageDuration?: string
+  transport_type?: string
+  room_type?: string
+  bus_type?: string
+  additional_seva_type?: string
+}
 
 const statusConfig: Record<string, { label: string, className: string }> = {
   draft: { label: 'Unsubmitted Draft', className: 'bg-[#6F5B47]/15 text-[#6F5B47] border-[#6F5B47]/30 font-bold' },
@@ -22,10 +30,10 @@ export function BookingCard({ booking }: { booking: BookingWithTitle }) {
   return (
     <div className="group p-6 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B]/40 transition-all duration-300 shadow-[0_8px_30px_rgba(62,43,31,0.04)] hover:shadow-md">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex-1 min-w-0 space-y-2">
+        <div className="flex-1 min-w-0 space-y-1.5">
           <div className="flex items-center gap-2.5 flex-wrap">
             <p className="font-display text-base font-bold text-[#3E2B1F] truncate group-hover:text-[#B8860B] transition-colors">
-              {booking.packageTitle ?? 'Sacred Pilgrimage Package'}
+              {booking.packageTitle ?? 'Yatra Booking'}
             </p>
             <span className={`font-label-caps text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${status.className}`}>
               {status.label}
@@ -34,6 +42,12 @@ export function BookingCard({ booking }: { booking: BookingWithTitle }) {
           <p className="text-[11px] text-[#6F5B47] font-mono font-bold">
             Ref: #{booking.booking_reference}
           </p>
+          {(booking.transport_type || booking.room_type) && (
+            <p className="text-[11px] text-[#9A8A78] font-medium">
+              {[booking.transport_type, booking.room_type].filter(Boolean).join(' · ')}
+              {booking.additional_seva_type && ` · Seva: ${booking.additional_seva_type.replace(/_/g, ' ')}`}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-5 text-[13px] text-[#6F5B47]">
