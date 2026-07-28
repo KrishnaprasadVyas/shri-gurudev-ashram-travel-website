@@ -99,7 +99,7 @@ export function BookingDetailPage() {
           {booking.travel_packages.image_url && (
             <img
               src={booking.travel_packages.image_url}
-              alt={booking.travel_packages.title}
+              alt={booking.travel_packages.title ?? 'Yatra Package'}
               className="w-full sm:w-32 h-24 object-cover rounded-2xl border border-[#E9DCC5] flex-shrink-0"
             />
           )}
