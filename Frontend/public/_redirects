@@ -3,5 +3,5 @@
 /* ─────────────────────────────────────────────────────────────────── */
 /*  G.1: SPA catch-all redirect for React Router                       */
 /* ─────────────────────────────────────────────────────────────────── */
-/api/*  https://your-backend.railway.app/api/:splat  200
+/api/*  https://api.mavt.in/api/:splat  200
 /*      /index.html                                  200

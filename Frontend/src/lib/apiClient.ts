@@ -3,8 +3,16 @@ import { firebaseAuth } from '@/firebase/config'
 
 const LOG = import.meta.env.DEV
 
+const getApiBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL
+  if (!envUrl || envUrl.trim() === '') {
+    return ''
+  }
+  return envUrl.trim().replace(/\/+$/, '')
+}
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000',
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
@@ -12,14 +20,15 @@ const apiClient = axios.create({
 
 // ---------------------------------------------------------------------------
 // Request interceptor — attach a fresh Bearer token before every request.
-//
-// DEMO_AUTH mode  → read the static mock token from localStorage.
-// Firebase mode   → call firebaseAuth.currentUser.getIdToken() which:
-//     • returns the cached token if still valid (> 5 min remaining)
-//     • silently refreshes the token when it is close to expiry
-//   Firebase manages the refresh cycle automatically — no localStorage needed.
 // ---------------------------------------------------------------------------
 apiClient.interceptors.request.use(async (config) => {
+  const baseUrl = getApiBaseUrl()
+  if (!baseUrl && !config.url?.startsWith('http://') && !config.url?.startsWith('https://')) {
+    const errorMsg = '[API Client Error] Backend API URL is not configured. Please define VITE_API_BASE_URL or VITE_API_URL in your environment variables.'
+    console.error(errorMsg)
+    throw new Error(errorMsg)
+  }
+
   let token: string | null = null
 
   if (import.meta.env.VITE_DEMO_AUTH === 'true') {

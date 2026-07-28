@@ -10,7 +10,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). You'll be redirected to `/login`.
+Open the local URL shown in your terminal. You'll be redirected to `/login`.
 
 **Demo auth:** any email + password (6+ characters). Example: `admin@ashram.dev` / `password`.
 

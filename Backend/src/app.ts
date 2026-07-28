@@ -36,15 +36,20 @@ const paymentLimiter = rateLimit({
   message: { error: 'Too many payment requests, please try again later' },
 })
 
-// CORS — allow Vite dev server and production frontend
+// CORS configuration — dynamic origins based on FRONTEND_URL environment variable
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map((url) => url.trim())
+  : []
+
 app.use(
   cors({
-    origin: [
-      'http://localhost:5173', // Vite dev server
-      'http://localhost:4173', // Vite preview
-      'http://localhost:3001', // alternate dev port
-      process.env.FRONTEND_URL ?? '', // production frontend URL
-    ].filter(Boolean),
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -86,7 +91,7 @@ app.use((error: unknown, _request: Request, response: Response, _next: NextFunct
 
 
 export function startServer() {
-  const port = Number(process.env.PORT ?? 3000)
+  const port = Number(process.env.PORT ?? 3001)
 
   if (!Number.isInteger(port) || port <= 0) {
     throw new Error('Missing or invalid environment variable: PORT')

@@ -192,8 +192,7 @@ shri-gurudev-ashram-website/
 VITE_SUPABASE_URL=https://jpvowbxojdvrpgtpxvmo.supabase.co
 VITE_SUPABASE_ANON_KEY=<your-anon-key>
 
-VITE_API_BASE_URL=http://localhost:3000
-# production: https://your-api.railway.app
+VITE_API_BASE_URL=https://api.mavt.in
 
 VITE_RAZORPAY_KEY_ID=rzp_test_SxD6T0TWVN7G3r
 ```
@@ -583,9 +582,7 @@ In backend/src/app.ts update CORS config:
 
   app.use(cors({
     origin: [
-      'http://localhost:5173',           // Vite dev server default port
-      'http://localhost:4173',           // Vite preview
-      'https://your-website.netlify.app' // production (update later)
+      process.env.FRONTEND_URL || 'https://mavt.in'
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
