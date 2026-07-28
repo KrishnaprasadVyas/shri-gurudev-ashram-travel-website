@@ -3,7 +3,7 @@ import { aboutGarden, aboutMeditation, aboutManuscript } from '@/assets/images';
 
 export const SacredMomentsGallery: React.FC = () => {
   return (
-    <section className="px-margin-mobile md:px-margin-desktop mb-section-gap max-w-container-max mx-auto">
+    <section className="px-4 md:px-margin-desktop mb-12 md:mb-section-gap max-w-container-max mx-auto">
       <div className="text-center mb-12">
         <h2 className="font-headline-md text-headline-md text-primary mb-4">Sacred Moments</h2>
         <p className="text-on-surface-variant max-w-2xl mx-auto">Glimpses of stillness and devotion from our Ashram and Yatras.</p>

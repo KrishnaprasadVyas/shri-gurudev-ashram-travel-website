@@ -10,7 +10,7 @@ const SpiritualDivider = () => (
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative min-h-[500px] md:min-h-[600px] flex flex-col items-center justify-start text-center px-6 overflow-hidden bg-surface border-b border-outline-variant/20 pt-10 md:pt-16 pb-16 md:pb-20">
+    <section className="relative min-h-[400px] md:min-h-[600px] flex flex-col items-center justify-start text-center px-4 md:px-6 overflow-hidden bg-surface border-b border-outline-variant/20 pt-10 md:pt-16 pb-16 md:pb-20">
       {/* Editorial Ivory Background with Subtle Gradients */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(201,139,26,0.1)_0%,rgba(232,163,56,0.03)_50%,transparent_70%)] blur-2xl"></div>

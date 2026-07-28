@@ -2,7 +2,7 @@ import React from 'react';
 
 export const Testimonials: React.FC = () => {
   return (
-    <section className="py-section-gap px-margin-mobile text-center relative overflow-hidden bg-surface-container-low">
+    <section className="py-16 md:py-section-gap px-4 md:px-margin-mobile text-center relative overflow-hidden bg-surface-container-low">
       {/* Background Image with warm white overlay */}
       <div className="absolute inset-0 z-0">
         <img

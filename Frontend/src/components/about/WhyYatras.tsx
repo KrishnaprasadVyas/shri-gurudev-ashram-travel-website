@@ -3,8 +3,8 @@ import { Footprints, Users, Leaf } from 'lucide-react';
 
 export const WhyYatras: React.FC = () => {
   return (
-    <section className="bg-surface-container-low py-section-gap">
-      <div className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+    <section className="bg-surface-container-low py-16 md:py-section-gap">
+      <div className="px-4 md:px-margin-desktop max-w-container-max mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
           <div className="order-2 lg:order-1 rounded-xl overflow-hidden shadow-sm aspect-video lg:aspect-square relative">
             <img className="w-full h-full object-cover" alt="" src="/assets/TULSI MALA.jpg" loading="lazy" />

@@ -39,7 +39,7 @@ export function YatraDetailPage() {
       <div className="mb-8">
         <Link
           to="/yatras"
-          className="inline-flex items-center gap-1.5 text-sm text-[#f2f0eb]/50 hover:text-amber-400 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-[#f2f0eb]/50 hover:text-amber-400 transition-colors min-h-[44px]"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to Yatras

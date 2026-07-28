@@ -89,17 +89,17 @@ export function PackageCard({ package: pkg, showBookButton = true }: PackageCard
         </div>
 
         {/* Footer */}
-        <div className="mt-auto flex items-center gap-2">
+        <div className="mt-auto flex flex-col sm:flex-row items-stretch gap-2">
           <Link
             to={`/yatras/${pkg.id}`}
-            className="flex-1 text-center py-2 rounded-lg border border-amber-500/30 text-amber-400 text-sm font-medium hover:bg-amber-500/10 transition-colors"
+            className="flex-1 flex items-center justify-center py-2 rounded-lg border border-amber-500/30 text-amber-400 text-sm font-medium hover:bg-amber-500/10 transition-colors min-h-[44px]"
           >
             View Details
           </Link>
           {showBookButton && pkg.remaining_seats > 0 && (
             <button
               onClick={handleBook}
-              className="flex-1 py-2 rounded-lg bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 transition-colors"
+              className="flex-1 flex items-center justify-center py-2 rounded-lg bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 transition-colors min-h-[44px]"
             >
               Book Now
             </button>

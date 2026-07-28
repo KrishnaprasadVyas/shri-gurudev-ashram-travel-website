@@ -36,7 +36,7 @@ const features = [
 
 export const WhyTravelWithUs: React.FC = () => {
   return (
-    <section className="bg-surface-container py-section-gap px-margin-mobile md:px-margin-desktop">
+    <section className="bg-surface-container py-16 md:py-section-gap px-4 md:px-margin-desktop">
       <div className="max-w-container-max mx-auto">
         <div className="text-center mb-16">
           <span className="section-eyebrow">The Difference</span>

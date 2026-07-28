@@ -8,8 +8,8 @@ export const CallToAction: React.FC = () => {
       <p className="font-body-lg text-on-surface-variant mb-10 leading-relaxed">
         Walk the timeless paths of Bharat under the blessings of Gurudev Ji. Join fellow devotees in a pilgrimage of faith, service, and inner transformation.
       </p>
-      <Link 
-        to="/yatras" 
+      <Link
+        to="/yatras"
         className="btn-primary"
       >
         Explore Yatras

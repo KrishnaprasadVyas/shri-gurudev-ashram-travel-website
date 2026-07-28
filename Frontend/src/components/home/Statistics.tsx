@@ -11,7 +11,7 @@ const stats = [
 export const Statistics: React.FC = () => {
   return (
     <section className="bg-surface pt-4 pb-16 md:pt-6 md:pb-20 border-b border-outline-variant/30">
-      <div className="max-w-container-max mx-auto px-margin-desktop">
+      <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
