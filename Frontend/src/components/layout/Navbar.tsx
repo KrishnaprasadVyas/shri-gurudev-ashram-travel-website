@@ -70,6 +70,7 @@ export const Navbar: React.FC = () => {
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Yatras', path: '/yatras' },
+    { name: 'Seva', path: '/seva' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'FAQ', path: '/faq' },
     { name: 'Contact', path: '/contact' },

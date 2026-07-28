@@ -15,6 +15,7 @@ import { HomePage } from './pages/public/HomePage'
 import { AboutPage } from './pages/public/AboutPage'
 import { YatrasPage } from './pages/public/YatrasPage'
 import { YatraDetailPage } from './pages/public/YatraDetailPage'
+import { SevaPage } from './pages/public/SevaPage'
 import { GalleryPage } from './pages/public/GalleryPage'
 import { FaqPage } from './pages/public/FaqPage'
 import { ContactPage } from './pages/public/ContactPage'
@@ -38,6 +39,8 @@ import { AdminBookingDetailPage } from './pages/admin/AdminBookingDetailPage'
 import { AdminPackagesPage } from './pages/admin/AdminPackagesPage'
 import { AdminNewPackagePage } from './pages/admin/AdminNewPackagePage'
 import { AdminEditPackagePage } from './pages/admin/AdminEditPackagePage'
+import { AdminSevaPackagesPage } from './pages/admin/AdminSevaPackagesPage'
+import { AdminReportsPage } from './pages/admin/AdminReportsPage'
 
 function NotFoundPage() {
   return (
@@ -64,6 +67,7 @@ export default function App() {
         <Route path="about" element={<AboutPage />} />
         <Route path="yatras" element={<YatrasPage />} />
         <Route path="yatras/:id" element={<YatraDetailPage />} />
+        <Route path="seva" element={<SevaPage />} />
         <Route path="gallery" element={<GalleryPage />} />
         <Route path="faq" element={<FaqPage />} />
         <Route path="contact" element={<ContactPage />} />
@@ -100,6 +104,8 @@ export default function App() {
           <Route path="packages" element={<AdminPackagesPage />} />
           <Route path="packages/new" element={<AdminNewPackagePage />} />
           <Route path="packages/:id/edit" element={<AdminEditPackagePage />} />
+          <Route path="seva-packages" element={<AdminSevaPackagesPage />} />
+          <Route path="reports" element={<AdminReportsPage />} />
         </Route>
       </Route>
 

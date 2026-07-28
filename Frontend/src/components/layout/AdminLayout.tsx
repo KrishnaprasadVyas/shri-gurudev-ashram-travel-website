@@ -28,6 +28,14 @@ const routeHeaders: Record<string, { title: string; subtitle: string }> = {
     title: 'Pilgrimage Packages',
     subtitle: 'Create, edit and manage sacred yatra travel catalogs for devotees.',
   },
+  '/admin/seva-packages': {
+    title: 'Seva Catalog Management',
+    subtitle: 'Configure dynamic Seva offerings, pricing, daily caps and ritual availability.',
+  },
+  '/admin/reports': {
+    title: 'Reports & Manifest Exports',
+    subtitle: 'Export passenger manifests and financial ledgers in CSV format for Ashram staff.',
+  },
 }
 
 export function AdminLayout() {

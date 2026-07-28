@@ -18,6 +18,8 @@ type VerifyPaymentBody = {
   razorpay_signature?: string
 }
 
+// ─── TRAVEL BOOKING PAYMENTS ──────────────────────────────────────────────────
+
 paymentsRouter.post('/create-order', requireAuth, async (request, response, next) => {
   try {
     const { bookingId } = request.body as CreateOrderBody
@@ -95,6 +97,7 @@ paymentsRouter.post('/create-order', requireAuth, async (request, response, next
       payment_method: 'razorpay',
       razorpay_order_id: order.id,
       status: 'created',
+      gateway_fee: booking.gateway_fee || Math.round(amount * 0.02),
     }
 
     const paymentQuery = existingPayment
@@ -202,6 +205,107 @@ paymentsRouter.post('/verify', requireAuth, async (request, response, next) => {
   }
 })
 
+// ─── STANDALONE SEVA PAYMENTS ─────────────────────────────────────────────────
+
+paymentsRouter.post('/create-seva-order', requireAuth, async (request, response, next) => {
+  try {
+    const { sevaBookingId } = request.body
+    if (!sevaBookingId || typeof sevaBookingId !== 'string') {
+      throw new HttpError(400, 'sevaBookingId is required')
+    }
+
+    const authReq = request as AuthenticatedRequest
+    const { data: sevaBooking, error } = await supabaseAdmin
+      .from('seva_bookings')
+      .select('*')
+      .eq('id', sevaBookingId)
+      .single()
+
+    if (error || !sevaBooking) {
+      throw new HttpError(404, 'Seva booking not found')
+    }
+    if (sevaBooking.user_id !== authReq.userId) {
+      throw new HttpError(403, 'Unauthorized')
+    }
+    if (sevaBooking.status === 'paid') {
+      throw new HttpError(409, 'Seva booking is already paid')
+    }
+
+    const amountInPaise = Math.round(Number(sevaBooking.total_amount) * 100)
+
+    if (sevaBooking.razorpay_order_id) {
+      response.json({
+        order: {
+          id: sevaBooking.razorpay_order_id,
+          amount: amountInPaise,
+          currency: 'INR',
+        },
+        sevaBooking,
+      })
+      return
+    }
+
+    const order = await razorpay.orders.create({
+      amount: amountInPaise,
+      currency: 'INR',
+      receipt: sevaBooking.booking_reference,
+      notes: {
+        sevaBookingId,
+      },
+    })
+
+    await supabaseAdmin
+      .from('seva_bookings')
+      .update({ razorpay_order_id: order.id, updated_at: new Date().toISOString() })
+      .eq('id', sevaBookingId)
+
+    response.json({ order, sevaBooking })
+  } catch (error) {
+    next(error)
+  }
+})
+
+paymentsRouter.post('/verify-seva', requireAuth, async (request, response, next) => {
+  try {
+    const { sevaBookingId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = request.body
+    if (!sevaBookingId || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      throw new HttpError(400, 'sevaBookingId, razorpay_order_id, razorpay_payment_id, and razorpay_signature are required')
+    }
+
+    if (!isValidPaymentSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)) {
+      throw new HttpError(400, 'Invalid Razorpay signature')
+    }
+
+    const authReq = request as AuthenticatedRequest
+    const { data: sevaBooking, error } = await supabaseAdmin
+      .from('seva_bookings')
+      .select('*')
+      .eq('id', sevaBookingId)
+      .single()
+
+    if (error || !sevaBooking) throw new HttpError(404, 'Seva booking not found')
+    if (sevaBooking.user_id !== authReq.userId) throw new HttpError(403, 'Unauthorized')
+    if (sevaBooking.status === 'paid') throw new HttpError(409, 'Seva booking is already paid')
+
+    await supabaseAdmin
+      .from('seva_bookings')
+      .update({
+        status: 'paid',
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sevaBookingId)
+
+    response.json({ success: true, message: 'Seva payment verified' })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── UTILITIES ────────────────────────────────────────────────────────────────
+
 function isValidPaymentSignature(orderId: string, paymentId: string, signature: string) {
   const expectedSignature = crypto
     .createHmac('sha256', razorpayKeySecret)
@@ -238,7 +342,6 @@ async function loadPackage(packageId: string) {
 
   return travelPackage
 }
-
 
 function assertBookingOwner(bookingUserId: string, requestUserId: string) {
   if (bookingUserId !== requestUserId) {

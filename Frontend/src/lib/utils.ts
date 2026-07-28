@@ -28,3 +28,18 @@ export function formatRelativeTime(date: string | Date) {
   if (days < 7) return `${days}d ago`
   return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
 }
+
+/** Dynamic Razorpay Web Checkout SDK script loader */
+export function loadRazorpayScript(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true)
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
+}

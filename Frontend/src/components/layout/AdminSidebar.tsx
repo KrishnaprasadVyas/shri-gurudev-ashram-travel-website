@@ -7,6 +7,8 @@ import {
   Map,
   LogOut,
   Bell,
+  Sparkles,
+  FileSpreadsheet,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/context/AuthContext'
@@ -20,7 +22,9 @@ const navItems = [
   { to: '/admin/users', label: 'Users', icon: Users, end: false },
   { to: '/admin/verifications', label: 'Verifications', icon: ShieldCheck, end: false },
   { to: '/admin/bookings', label: 'Bookings', icon: BookOpen, end: false },
-  { to: '/admin/packages', label: 'Packages', icon: Map, end: false },
+  { to: '/admin/packages', label: 'Yatras', icon: Map, end: false },
+  { to: '/admin/seva-packages', label: 'Seva Catalog', icon: Sparkles, end: false },
+  { to: '/admin/reports', label: 'Reports', icon: FileSpreadsheet, end: false },
 ]
 
 interface AdminSidebarProps {

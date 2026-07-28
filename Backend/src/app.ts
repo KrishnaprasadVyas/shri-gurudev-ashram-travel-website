@@ -12,6 +12,9 @@ import { paymentsRouter } from './routes/payments.js'
 import { razorpayWebhookRouter } from './routes/razorpayWebhook.js'
 import { passengersRouter } from './routes/passengers.js'
 import { usersRouter } from './routes/users.js'
+import { sevaRouter } from './routes/seva.js'
+import { sevaPackagesPublicRouter } from './routes/sevaPackagesPublic.js'
+import { sevaPackagesAdminRouter } from './routes/sevaPackagesAdmin.js'
 import { supabaseAdmin } from './services/supabaseAdmin.js'
 
 export const app = express()
@@ -21,8 +24,8 @@ app.use(helmet())
 
 // Rate limiters
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // 30 requests per window
+  windowMs: 15 * 60 * 1000,
+  max: 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later' },
@@ -30,13 +33,12 @@ const authLimiter = rateLimit({
 
 const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20, // 20 payment requests per 15 minutes
+  max: 20,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many payment requests, please try again later' },
 })
 
-// CORS configuration — dynamic origins based on FRONTEND_URL environment variable
 const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map((url) => url.trim())
   : []
@@ -60,25 +62,25 @@ app.use('/api/webhooks/razorpay', express.raw({ type: 'application/json' }), raz
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Apply rate limiters to sensitive routes
+// Apply rate limiters & mount routes
 app.use('/api/users', authLimiter, usersRouter)
 app.use('/api/bookings', bookingsRouter)
 app.use('/api/bookings/:bookingId/passengers', passengersRouter)
 app.use('/api/payments', paymentLimiter, paymentsRouter)
+app.use('/api/seva', sevaRouter)
+app.use('/api/public/seva-packages', sevaPackagesPublicRouter)
+app.use('/api/admin/seva-packages', sevaPackagesAdminRouter)
 app.use('/api/admin', adminRouter)
-
 
 app.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
   const status = error instanceof HttpError ? error.status : 500
 
-  // In production, don't leak raw error messages for 500s
   let message: string
   if (error instanceof HttpError) {
     message = error.message
   } else if (process.env.NODE_ENV === 'development') {
     message = error instanceof Error ? error.message : 'Internal server error'
   } else {
-    // Log the real error server-side, send generic message to client
     console.error('[Unhandled Error]', error instanceof Error ? error.stack : error)
     message = 'Internal server error'
   }
@@ -87,8 +89,6 @@ app.use((error: unknown, _request: Request, response: Response, _next: NextFunct
     error: message,
   })
 })
-
-
 
 export function startServer() {
   const port = Number(process.env.PORT ?? 3001)
@@ -116,7 +116,6 @@ export function startServer() {
     }
   }, CRON_INTERVAL_MS)
 
-  // Ensure process exits cleanly
   process.on('SIGINT', () => {
     clearInterval(expireJob)
     server.close()

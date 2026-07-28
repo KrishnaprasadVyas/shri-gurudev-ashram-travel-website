@@ -12,10 +12,260 @@ function generateBookingReference() {
   return `YAT-${yyyymmdd}-${random4}`
 }
 
-const DRAFT_TTL_MINUTES = Number(process.env.DRAFT_TTL_MINUTES) || 120
-const PAYMENT_TTL_MINUTES = Number(process.env.PAYMENT_TTL_MINUTES) || 30
+function generateSevaReference(sevaType: string) {
+  const d = new Date()
+  const yyyymmdd = d.toISOString().split('T')[0].replace(/-/g, '')
+  const random4 = Math.floor(1000 + Math.random() * 9000)
+  const prefix = sevaType.toLowerCase().includes('yajman') ? 'YAJ' : 'SEV'
+  return `${prefix}-${yyyymmdd}-${random4}`
+}
 
-// POST /api/bookings/draft
+const PAYMENT_TTL_MINUTES = Number(process.env.PAYMENT_TTL_MINUTES) || 30
+const DRAFT_TTL_MINUTES = Number(process.env.DRAFT_TTL_MINUTES) || 120
+
+// POST /api/bookings - Atomic Multi-Passenger & Attached Seva Booking Creation
+bookingsRouter.post('/', requireAuth, async (request, response, next) => {
+  try {
+    const authRequest = request as AuthenticatedRequest
+    const {
+      packageId,
+      travelerCount = 1,
+      transportType,
+      busType,
+      roomType,
+      specialNotes,
+      additionalSevaPackageId,
+      additionalSevaType,
+      additionalSevaDate,
+      passengers = [],
+      fullName,
+      phone,
+      whatsappNumber,
+      dob,
+      address,
+      emergencyContactName,
+      emergencyContactPhone,
+      emergencyContactRelationship,
+    } = request.body
+
+    if (!packageId || typeof packageId !== 'string') {
+      throw new HttpError(400, 'packageId is required')
+    }
+
+    const count = Number(travelerCount)
+    if (!Number.isInteger(count) || count < 1 || count > 20) {
+      throw new HttpError(400, 'travelerCount must be an integer between 1 and 20')
+    }
+
+    // Load Travel Package
+    const { data: travelPackage, error: pkgError } = await supabaseAdmin
+      .from('travel_packages')
+      .select('*')
+      .eq('id', packageId)
+      .single()
+
+    if (pkgError || !travelPackage) {
+      throw new HttpError(404, 'Travel package not found')
+    }
+    if (!travelPackage.is_active) {
+      throw new HttpError(400, 'Travel package is not active')
+    }
+    if (travelPackage.remaining_seats < count) {
+      throw new HttpError(400, 'Not enough seats available')
+    }
+
+    // Load user for lead passenger document inheritance
+    const { data: userProfile } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('id', authRequest.userId)
+      .single()
+
+    // Additional Seva Fee Calculation
+    let sevaFee = 0
+    let sevaTypeResolved = additionalSevaType || null
+    let targetSevaPackageId = additionalSevaPackageId || null
+
+    if (additionalSevaPackageId) {
+      const { data: sevaPkg } = await supabaseAdmin
+        .from('seva_packages')
+        .select('*')
+        .eq('id', additionalSevaPackageId)
+        .single()
+
+      if (sevaPkg) {
+        sevaFee = Number(sevaPkg.price)
+        sevaTypeResolved = sevaPkg.seva_type
+      }
+    } else if (additionalSevaType) {
+      if (additionalSevaType === 'guruji_aarti') sevaFee = 2100
+      else if (additionalSevaType === 'yajman' || additionalSevaType === 'yajman_pad') sevaFee = 5100
+      else sevaFee = 1000
+    }
+
+    // Pricing breakdown calculation
+    const basePrice = Number(travelPackage.price)
+    const flightSurcharge = transportType === 'Flight' ? Number(travelPackage.flight_price || 0) : 0
+    const trainAcSurcharge = transportType === 'Train' && busType === 'AC Train' ? Number(travelPackage.train_ac_price || 0) : 0
+    const trainNonAcSurcharge = transportType === 'Train' && busType === 'Non-AC Train' ? Number(travelPackage.train_non_ac_price || 0) : 0
+    const transportAmountPerPerson = flightSurcharge + trainAcSurcharge + trainNonAcSurcharge
+
+    const acRoomSurcharge = roomType === 'AC Room' ? Number(travelPackage.room_ac_price || 0) : 0
+    const nonAcRoomSurcharge = roomType === 'Non-AC Room' ? Number(travelPackage.room_non_ac_price || 0) : 0
+    const roomAmountPerPerson = acRoomSurcharge + nonAcRoomSurcharge
+
+    const baseAmountTotal = basePrice * count
+    const transportAmountTotal = transportAmountPerPerson * count
+    const roomAmountTotal = roomAmountPerPerson * count
+    const subtotalAmount = baseAmountTotal + transportAmountTotal + roomAmountTotal
+    const totalAmount = subtotalAmount + sevaFee
+
+    const gatewayFee = Math.round(totalAmount * 0.02)
+    const payableAmount = totalAmount + gatewayFee
+
+    const bookingReference = generateBookingReference()
+    const expiresAt = new Date(Date.now() + PAYMENT_TTL_MINUTES * 60 * 1000).toISOString()
+
+    // Primary lead passenger info
+    const leadPass = passengers[0] || {}
+    const leadName = leadPass.fullName || fullName || userProfile?.full_name || 'Lead Traveler'
+    const leadPhone = leadPass.phone || phone || userProfile?.phone || ''
+    const leadAddress = leadPass.address || address || ''
+    const leadDob = leadPass.dob || dob || null
+
+    // 1. Insert into bookings
+    const { data: booking, error: bookingError } = await supabaseAdmin
+      .from('bookings')
+      .insert({
+        booking_reference: bookingReference,
+        user_id: authRequest.userId,
+        package_id: packageId,
+        status: 'payment_pending',
+        traveler_count: count,
+        special_notes: specialNotes?.trim() || null,
+        full_name: leadName,
+        phone_number: leadPhone,
+        whatsapp_number: whatsappNumber?.trim() || null,
+        dob: leadDob,
+        address: leadAddress,
+        transport_type: transportType || 'Train',
+        bus_type: busType || null,
+        room_type: roomType || 'AC Room',
+        emergency_contact_name: emergencyContactName || null,
+        emergency_contact_phone: emergencyContactPhone || null,
+        emergency_contact_relationship: emergencyContactRelationship || null,
+        base_amount: baseAmountTotal,
+        transport_amount: transportAmountTotal,
+        room_amount: roomAmountTotal,
+        additional_seva_package_id: targetSevaPackageId,
+        additional_seva_type: sevaTypeResolved,
+        additional_seva_date: additionalSevaDate || null,
+        additional_seva_amount: sevaFee,
+        subtotal_amount: subtotalAmount,
+        total_amount: totalAmount,
+        gateway_fee: gatewayFee,
+        payable_amount: payableAmount,
+        expires_at: expiresAt,
+      })
+      .select('*')
+      .single()
+
+    if (bookingError || !booking) {
+      throw new HttpError(500, bookingError?.message ?? 'Failed to create booking')
+    }
+
+    // 2. Insert passengers & documents if provided
+    const insertedPassengers = []
+    if (Array.isArray(passengers) && passengers.length > 0) {
+      for (let i = 0; i < passengers.length; i++) {
+        const p = passengers[i]
+        const isPrimary = i === 0
+
+        // Document inheritance for lead passenger if user profile verified/submitted
+        let aadhaarNo = p.aadhaarNumber || p.aadhaar_number || ''
+        let aadhaarPath = p.aadhaarImagePath || p.aadhaar_image_path || null
+        let selfiePath = p.selfieImagePath || p.selfie_image_path || null
+
+        if (isPrimary && (!aadhaarNo || !aadhaarPath) && userProfile) {
+          if (['submitted', 'verified'].includes(userProfile.verification_status)) {
+            aadhaarNo = userProfile.aadhaar_number || aadhaarNo
+            aadhaarPath = userProfile.aadhaar_image_path || aadhaarPath
+            selfiePath = userProfile.selfie_image_path || selfiePath
+          }
+        }
+
+        const { data: passRow, error: passErr } = await supabaseAdmin
+          .from('booking_passengers')
+          .insert({
+            booking_id: booking.id,
+            passenger_index: i,
+            is_primary: isPrimary,
+            full_name: p.fullName || p.full_name || `Passenger ${i + 1}`,
+            gender: p.gender || 'prefer_not_to_say',
+            dob: p.dob || leadDob || '1990-01-01',
+            phone: p.phone || leadPhone || '',
+            address: p.address || leadAddress || '',
+            aadhaar_number: aadhaarNo || '000000000000',
+            verification_status: (isPrimary && userProfile?.verification_status === 'verified') ? 'verified' : 'submitted',
+          })
+          .select('*')
+          .single()
+
+        if (!passErr && passRow) {
+          insertedPassengers.push(passRow)
+          // Insert passenger documents if paths exist
+          if (aadhaarPath) {
+            await supabaseAdmin.from('passenger_documents').insert({
+              passenger_id: passRow.id,
+              document_type: 'aadhaar_front',
+              file_path: aadhaarPath,
+            })
+          }
+          if (selfiePath) {
+            await supabaseAdmin.from('passenger_documents').insert({
+              passenger_id: passRow.id,
+              document_type: 'selfie',
+              file_path: selfiePath,
+            })
+          }
+        }
+      }
+    }
+
+    // 3. Create linked Seva booking if attached
+    if (sevaTypeResolved && sevaFee > 0) {
+      const sevaRef = generateSevaReference(sevaTypeResolved)
+      const validSevaType = (['annadan', 'yajman', 'gau_seva', 'temple_seva', 'special_pooja', 'event'].includes(sevaTypeResolved)
+        ? sevaTypeResolved
+        : 'event') as 'annadan' | 'yajman' | 'gau_seva' | 'temple_seva' | 'special_pooja' | 'event'
+
+      await supabaseAdmin.from('seva_bookings').insert({
+        booking_reference: sevaRef,
+        user_id: authRequest.userId,
+        travel_booking_id: booking.id,
+        seva_package_id: targetSevaPackageId,
+        seva_type: validSevaType,
+        seva_date: additionalSevaDate || new Date().toISOString().split('T')[0],
+        full_name: leadName,
+        phone_number: leadPhone,
+        total_amount: sevaFee,
+        status: 'payment_pending',
+        notes: `Attached to Yatra booking ${bookingReference}`,
+      })
+    }
+
+    response.status(201).json({
+      booking: {
+        ...booking,
+        passengers: insertedPassengers,
+      },
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// POST /api/bookings/draft - Create a draft booking
 bookingsRouter.post('/draft', requireAuth, async (request, response, next) => {
   try {
     const { packageId } = request.body
@@ -46,8 +296,8 @@ bookingsRouter.post('/draft', requireAuth, async (request, response, next) => {
         user_id: authRequest.userId,
         package_id: packageId,
         status: 'draft',
-        traveler_count: 1, // Default, updated later
-        total_amount: travelPackage.price, // Will be recalculated at submit
+        traveler_count: 1,
+        total_amount: travelPackage.price,
         booking_reference: bookingReference,
         expires_at: expiresAt,
       })
@@ -127,9 +377,6 @@ bookingsRouter.patch('/:id/preferences', requireAuth, async (request, response, 
 
     if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
     if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
-    if (!['draft', 'documents_pending'].includes(booking.status)) {
-      throw new HttpError(400, 'Cannot update preferences in this state')
-    }
 
     const { data: updatedBooking, error: updateError } = await supabaseAdmin
       .from('bookings')
@@ -157,106 +404,20 @@ bookingsRouter.patch('/:id/preferences', requireAuth, async (request, response, 
   }
 })
 
-// POST /api/bookings/:id/submit
-bookingsRouter.post('/:id/submit', requireAuth, async (request, response, next) => {
-  try {
-    const { id } = request.params
-    const authRequest = request as AuthenticatedRequest
-
-    const { data: booking, error: fetchError } = await supabaseAdmin
-      .from('bookings')
-      .select('*, travel_packages(price, remaining_seats, flight_price, train_ac_price, train_non_ac_price, room_ac_price, room_non_ac_price)')
-      .eq('id', id)
-      .single()
-
-    if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
-    if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
-    if (!['draft', 'documents_pending'].includes(booking.status)) {
-      throw new HttpError(400, 'Booking is already submitted or in an invalid state')
-    }
-
-    // Check passengers
-    const { data: passengers, error: passengersError } = await supabaseAdmin
-      .from('booking_passengers')
-      .select('id, passenger_index, verification_status')
-      .eq('booking_id', id)
-
-    if (passengersError) throw new HttpError(500, 'Failed to fetch passengers')
-
-    if (passengers.length !== booking.traveler_count) {
-      throw new HttpError(400, `Expected ${booking.traveler_count} passengers, but found ${passengers.length}`)
-    }
-
-    // Check seats against soft reservation view? 
-    // We can do this implicitly or just rely on the RPC for hard check.
-    // For good UX, let's check soft availability first
-    const { data: availability, error: availError } = await supabaseAdmin
-      .from('package_seat_availability')
-      .select('truly_available_seats')
-      .eq('package_id', booking.package_id)
-      .single()
-
-    if (availError || !availability) throw new HttpError(500, 'Failed to check seat availability')
-    if (availability.truly_available_seats < booking.traveler_count) {
-      throw new HttpError(400, 'Not enough seats available at this time')
-    }
-
-    type PackagePrices = { price: number; flight_price?: number; train_ac_price?: number; train_non_ac_price?: number; room_ac_price?: number; room_non_ac_price?: number }
-    const pkg = booking.travel_packages as PackagePrices
-    const price = Number(pkg.price)
-    
-    // Add surcharges based on preferences
-    const flightSurcharge = booking.transport_type === 'Flight' ? Number(pkg.flight_price || 0) : 0
-    const trainAcSurcharge = (booking.transport_type === 'Train' && booking.bus_type === 'AC Train') ? Number(pkg.train_ac_price || 0) : 0
-    const trainNonAcSurcharge = (booking.transport_type === 'Train' && booking.bus_type === 'Non-AC Train') ? Number(pkg.train_non_ac_price || 0) : 0
-    const transportSurcharge = flightSurcharge + trainAcSurcharge + trainNonAcSurcharge
-
-    const acRoomSurcharge = booking.room_type === 'AC Room' ? Number(pkg.room_ac_price || 0) : 0
-    const nonAcRoomSurcharge = booking.room_type === 'Non-AC Room' ? Number(pkg.room_non_ac_price || 0) : 0
-    const roomSurcharge = acRoomSurcharge + nonAcRoomSurcharge
-    
-    const pricePerPerson = price + transportSurcharge + roomSurcharge
-    const baseAmount = pricePerPerson * booking.traveler_count
-    const gatewayFee = baseAmount * 0.0236
-    const payableAmount = baseAmount + gatewayFee
-    const expiresAt = new Date(Date.now() + PAYMENT_TTL_MINUTES * 60 * 1000).toISOString()
-
-    const { data: submittedBooking, error: submitError } = await supabaseAdmin
-      .from('bookings')
-      .update({
-        status: 'payment_pending',
-        base_amount: baseAmount,
-        gateway_fee: gatewayFee,
-        payable_amount: payableAmount,
-        total_amount: payableAmount, // Fallback for old clients
-        expires_at: expiresAt,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', id)
-      .select('*')
-      .single()
-
-    if (submitError || !submittedBooking) throw new HttpError(500, 'Failed to submit booking')
-
-    response.json({ booking: submittedBooking })
-  } catch (error) {
-    next(error)
-  }
-})
-
+// GET /api/bookings - Get current user bookings
 bookingsRouter.get('/', requireAuth, async (request, response, next) => {
   try {
     const authRequest = request as AuthenticatedRequest
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
-      .select('*, travel_packages(title, image_url, start_date, duration)')
+      .select('*, travel_packages(title, image_url, start_date, duration), seva_bookings(*)')
       .eq('user_id', authRequest.userId)
       .order('created_at', { ascending: false })
 
     if (error) throw new HttpError(500, error.message)
 
     const enriched = (bookings ?? []).map((b: Record<string, unknown>) => {
-      const tp = b.travel_packages as { title?: string, image_url?: string, start_date?: string, duration?: string } | null
+      const tp = b.travel_packages as { title?: string; image_url?: string; start_date?: string; duration?: string } | null
       return {
         ...b,
         packageTitle: tp?.title ?? 'Yatra Booking',
@@ -273,6 +434,7 @@ bookingsRouter.get('/', requireAuth, async (request, response, next) => {
   }
 })
 
+// GET /api/bookings/:id - Single booking details
 bookingsRouter.get('/:id', requireAuth, async (request, response, next) => {
   try {
     const authRequest = request as AuthenticatedRequest
@@ -286,7 +448,8 @@ bookingsRouter.get('/:id', requireAuth, async (request, response, next) => {
         booking_passengers(
           *,
           passenger_documents(*)
-        )
+        ),
+        seva_bookings(*)
       `)
       .eq('id', id)
       .single()
@@ -300,22 +463,23 @@ bookingsRouter.get('/:id', requireAuth, async (request, response, next) => {
   }
 })
 
-// DELETE /api/bookings/:id
-bookingsRouter.delete('/:id', requireAuth, async (request, response, next) => {
+// POST /api/bookings/:id/cancel - Cancel booking
+bookingsRouter.post('/:id/cancel', requireAuth, async (request, response, next) => {
   try {
     const authRequest = request as AuthenticatedRequest
     const { id } = request.params
 
     const { data: booking, error: fetchError } = await supabaseAdmin
       .from('bookings')
-      .select('user_id, status')
+      .select('user_id, status, package_id, traveler_count')
       .eq('id', id)
       .single()
 
     if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
     if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
-    if (!['draft', 'documents_pending', 'payment_pending'].includes(booking.status)) {
-      throw new HttpError(400, 'Cannot cancel a booking in this state')
+
+    if (['cancelled', 'completed', 'refunded'].includes(booking.status)) {
+      throw new HttpError(400, 'Booking is already cancelled or completed')
     }
 
     const { error: cancelError } = await supabaseAdmin
@@ -325,7 +489,13 @@ bookingsRouter.delete('/:id', requireAuth, async (request, response, next) => {
 
     if (cancelError) throw new HttpError(500, 'Failed to cancel booking')
 
-    response.json({ success: true, message: 'Booking cancelled' })
+    // Increment seats RPC
+    await supabaseAdmin.rpc('increment_seats' as never, {
+      pid: booking.package_id,
+      count: booking.traveler_count,
+    } as never)
+
+    response.json({ success: true, message: 'Booking cancelled successfully' })
   } catch (error) {
     next(error)
   }
