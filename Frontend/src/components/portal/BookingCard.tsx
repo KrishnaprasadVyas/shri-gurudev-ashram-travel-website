@@ -3,13 +3,13 @@ import { IndianRupee, Calendar, Users, ArrowRight } from 'lucide-react'
 import type { BookingRow } from '@/types/database.types'
 
 type BookingWithTitle = BookingRow & {
-  packageTitle?: string
-  packageStartDate?: string
-  packageDuration?: string
-  transport_type?: string
-  room_type?: string
-  bus_type?: string
-  additional_seva_type?: string
+  packageTitle?: string | null
+  packageStartDate?: string | null
+  packageDuration?: string | null
+  transport_type?: string | null
+  room_type?: string | null
+  bus_type?: string | null
+  additional_seva_type?: string | null
 }
 
 const statusConfig: Record<string, { label: string, className: string }> = {

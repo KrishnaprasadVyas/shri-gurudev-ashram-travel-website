@@ -10,11 +10,11 @@ import { toast } from 'sonner'
 import type { BookingRow } from '@/types/database.types'
 
 type TravelPackageInfo = {
-  title?: string
-  image_url?: string
-  start_date?: string
-  duration?: string
-  price?: number
+  title?: string | null
+  image_url?: string | null
+  start_date?: string | null
+  duration?: string | null
+  price?: number | null
 }
 
 type EnrichedBooking = BookingRow & {
