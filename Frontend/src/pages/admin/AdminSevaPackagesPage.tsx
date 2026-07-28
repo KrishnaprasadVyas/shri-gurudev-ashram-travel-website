@@ -11,6 +11,22 @@ export function AdminSevaPackagesPage() {
   const [loading, setLoading] = useState(true)
   const [showArchived, setShowArchived] = useState(false)
   const [seeding, setSeeding] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingPkg, setEditingPkg] = useState<SevaPackage | null>(null)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [formData, setFormData] = useState({
+    seva_type: 'guruji_aarti',
+    title: '',
+    description: '',
+    image_url: '',
+    price: 1100,
+    is_active: true,
+    booking_enabled: true,
+    allow_date_selection: true,
+    max_bookings_per_day: 50,
+    display_order: 1,
+    category: 'General',
+  })
 
   useEffect(() => {
     fetchSevaPackages()
