@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ReadMore } from '../shared/ReadMore';
 
 export const GurudevBlessings: React.FC = () => {
   return (
@@ -39,12 +40,14 @@ export const GurudevBlessings: React.FC = () => {
             Under the Blessings of Gurudev
           </span>
           <div className="space-y-6 text-on-surface-variant leading-relaxed font-body-md text-lg font-light">
-            <p>
-              Founder and spiritual guide of <strong className="font-medium text-on-surface">Shri Gurudev Ashram (Palaskhed Sapkal, Chikhli, Buldhana)</strong> and <strong className="font-medium text-on-surface">Swami Harichaitanya Shanti Ashram Trust (Datala, Malkapur)</strong>.
-            </p>
-            <p>
-              Gurudev Ji has guided countless devotees on the path of Bhakti, Gyan, Nishkam Seva and Sacred Yatras, inspiring thousands to live a life rooted in spirituality, compassion and discipline.
-            </p>
+            <ReadMore>
+              <p>
+                Founder and spiritual guide of <strong className="font-medium text-on-surface">Shri Gurudev Ashram (Palaskhed Sapkal, Chikhli, Buldhana)</strong> and <strong className="font-medium text-on-surface">Swami Harichaitanya Shanti Ashram Trust (Datala, Malkapur)</strong>.
+              </p>
+              <p>
+                Gurudev Ji has guided countless devotees on the path of Bhakti, Gyan, Nishkam Seva and Sacred Yatras, inspiring thousands to live a life rooted in spirituality, compassion and discipline.
+              </p>
+            </ReadMore>
           </div>
         </div>
       </motion.div>

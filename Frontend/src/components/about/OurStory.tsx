@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReadMoreText } from '../shared/ReadMoreText';
+import { ReadMore } from '../shared/ReadMore';
 
 export const OurStory: React.FC = () => {
   return (
@@ -46,9 +46,8 @@ export const OurStory: React.FC = () => {
 
         {/* Description */}
         <div className="font-body text-[#3E2B1F] text-base leading-relaxed md:text-[22px] md:leading-[1.9] max-w-[900px] w-full text-left md:text-center mx-auto">
-          <ReadMoreText 
+          <ReadMore 
             text={`Gurudev Ji has shown countless devotees the path of <strong>Bhakti</strong> (Devotion), <strong>Gyan</strong> (Wisdom), and Nishkam <strong>Seva</strong> (Selfless Service). Through daily Satsang, Gita Path, Haripath, Annadan, Education, Medical Service, Gaushala, Gurukulam, Adivasi Seva, Anath Ashram, and Seva Tirth Dham, the Ashram continues to serve society with compassion and dedication.\n\nThe purpose of every seva is the purification of the mind and the upliftment of society. Inspired by Gurudev Ji, the Ashram continues to connect devotees across India through spirituality, service, and sacred Yatras.`}
-            characterLimit={200}
           />
         </div>
 
