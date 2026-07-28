@@ -53,7 +53,7 @@ adminRouter.get('/stats', ...protect, async (_req, res, next) => {
       revenueResult,
     ] = await Promise.all([
       supabaseAdmin.from('users').select('*', { count: 'exact', head: true }),
-      supabaseAdmin.from('bookings').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('bookings').select('*', { count: 'exact', head: true }).not('status', 'in', '(draft,documents_pending,payment_failed)'),
       supabaseAdmin
         .from('booking_passengers')
         .select('*', { count: 'exact', head: true })
