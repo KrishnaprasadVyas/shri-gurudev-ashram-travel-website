@@ -96,11 +96,24 @@ export function AdminBookingDetailPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto relative z-10">
-          <span className="text-xs text-[#6F5B47] font-semibold">Total Amount:</span>
-          <span className="font-display text-2xl font-bold text-[#B8860B]">
-            ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
-          </span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 self-end sm:self-auto relative z-10">
+          {payments.some(p => p.status === 'captured') || ['verification_pending', 'verified', 'ticket_generated', 'completed', 'paid'].includes(booking.status) ? (
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#2E7D32]/15 text-[#2E7D32] border border-[#2E7D32]/30 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#2E7D32]"></span>
+              PAYMENT VERIFIED (PAID)
+            </span>
+          ) : (
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#C68A00]/15 text-[#C68A00] border border-[#C68A00]/30 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#C68A00]"></span>
+              UNPAID (PENDING PAYMENT)
+            </span>
+          )}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#6F5B47] font-semibold">Total:</span>
+            <span className="font-display text-2xl font-bold text-[#B8860B]">
+              ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
+            </span>
+          </div>
         </div>
       </div>
 

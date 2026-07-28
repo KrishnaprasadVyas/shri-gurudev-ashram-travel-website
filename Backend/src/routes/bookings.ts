@@ -366,6 +366,9 @@ bookingsRouter.patch('/:id/preferences', requireAuth, async (request, response, 
       emergencyContactName,
       emergencyContactPhone,
       emergencyContactRelationship,
+      additionalSevaPackageId,
+      additionalSevaType,
+      additionalSevaDate,
     } = request.body
     const authRequest = request as AuthenticatedRequest
 
@@ -378,6 +381,31 @@ bookingsRouter.patch('/:id/preferences', requireAuth, async (request, response, 
     if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
     if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
 
+    let sevaFee = 0
+    let sevaTypeResolved = additionalSevaType || null
+    let targetSevaPackageId = additionalSevaPackageId || null
+
+    if (additionalSevaPackageId) {
+      const { data: sevaPkg } = await supabaseAdmin
+        .from('seva_packages')
+        .select('*')
+        .eq('id', additionalSevaPackageId)
+        .single()
+
+      if (sevaPkg) {
+        sevaFee = Number(sevaPkg.price || 0)
+        sevaTypeResolved = sevaPkg.seva_type
+      }
+    } else if (additionalSevaType) {
+      if (additionalSevaType === 'guruji_aarti') sevaFee = 2100
+      else if (additionalSevaType === 'yajman' || additionalSevaType === 'yajman_pad') sevaFee = 5100
+      else if (additionalSevaType === 'none') {
+        sevaFee = 0
+        sevaTypeResolved = null
+        targetSevaPackageId = null
+      } else sevaFee = 1000
+    }
+
     const { data: updatedBooking, error: updateError } = await supabaseAdmin
       .from('bookings')
       .update({
@@ -388,6 +416,10 @@ bookingsRouter.patch('/:id/preferences', requireAuth, async (request, response, 
         emergency_contact_name: emergencyContactName?.trim() || null,
         emergency_contact_phone: emergencyContactPhone?.trim() || null,
         emergency_contact_relationship: emergencyContactRelationship?.trim() || null,
+        additional_seva_package_id: targetSevaPackageId,
+        additional_seva_type: sevaTypeResolved,
+        additional_seva_date: additionalSevaDate || null,
+        additional_seva_amount: sevaFee,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -412,6 +444,7 @@ bookingsRouter.get('/', requireAuth, async (request, response, next) => {
       .from('bookings')
       .select('*, travel_packages(title, image_url, start_date, duration), seva_bookings(*)')
       .eq('user_id', authRequest.userId)
+      .not('status', 'in', '("draft","documents_pending")')
       .order('created_at', { ascending: false })
 
     if (error) throw new HttpError(500, error.message)
@@ -558,11 +591,58 @@ bookingsRouter.post('/:id/submit', requireAuth, async (request, response, next) 
       throw new HttpError(500, updateError?.message ?? 'Failed to submit booking')
     }
 
+    // Upsert or sync linked Seva booking if attached
+    const sevaTypeResolved = booking.additional_seva_type
+    const targetSevaPackageId = booking.additional_seva_package_id
+    if (sevaFee > 0 && sevaTypeResolved) {
+      const { data: existingSeva } = await supabaseAdmin
+        .from('seva_bookings')
+        .select('*')
+        .eq('travel_booking_id', id)
+        .maybeSingle()
+
+      const sevaRef = existingSeva?.booking_reference || generateSevaReference(sevaTypeResolved)
+      const validSevaType = (['annadan', 'yajman', 'gau_seva', 'temple_seva', 'special_pooja', 'event'].includes(sevaTypeResolved)
+        ? sevaTypeResolved
+        : 'event') as 'annadan' | 'yajman' | 'gau_seva' | 'temple_seva' | 'special_pooja' | 'event'
+
+      const leadName = booking.full_name || 'Traveler'
+      const leadPhone = booking.phone_number || ''
+
+      if (existingSeva) {
+        await supabaseAdmin
+          .from('seva_bookings')
+          .update({
+            seva_package_id: targetSevaPackageId,
+            seva_type: validSevaType,
+            seva_date: booking.additional_seva_date || new Date().toISOString().split('T')[0],
+            total_amount: sevaFee,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingSeva.id)
+      } else {
+        await supabaseAdmin.from('seva_bookings').insert({
+          booking_reference: sevaRef,
+          user_id: authRequest.userId,
+          travel_booking_id: id,
+          seva_package_id: targetSevaPackageId,
+          seva_type: validSevaType,
+          seva_date: booking.additional_seva_date || new Date().toISOString().split('T')[0],
+          full_name: leadName,
+          phone_number: leadPhone,
+          total_amount: sevaFee,
+          status: 'payment_pending',
+          notes: `Attached to Yatra booking ${booking.booking_reference}`,
+        })
+      }
+    }
+
     response.json({ booking: updatedBooking })
   } catch (error) {
     next(error)
   }
 })
+
 
 // POST /api/bookings/:id/cancel - Cancel booking
 bookingsRouter.post('/:id/cancel', requireAuth, async (request, response, next) => {

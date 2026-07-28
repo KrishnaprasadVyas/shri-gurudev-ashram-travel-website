@@ -310,11 +310,16 @@ adminRouter.get('/bookings', ...protect, async (req, res, next) => {
 
     let query = supabaseAdmin
       .from('bookings')
-      .select('*, users(full_name, email, phone), travel_packages(title)', {
+      .select('*, users(full_name, email, phone), travel_packages(title), payments(*)', {
         count: 'exact',
       })
 
-    if (status) query = query.eq('status', status)
+    if (status) {
+      query = query.eq('status', status)
+    } else {
+      query = query.not('status', 'in', '("draft","documents_pending")')
+    }
+
     if (packageId) query = query.eq('package_id', packageId)
 
     const { data: bookings, error, count } = await query
@@ -323,11 +328,18 @@ adminRouter.get('/bookings', ...protect, async (req, res, next) => {
 
     if (error) throw dbError(error, 'Failed to fetch bookings')
 
-    const flat = (bookings ?? []).map((b: Record<string, unknown>) => ({
-      ...b,
-      userName: (b.users as { full_name?: string } | null)?.full_name ?? '',
-      packageTitle: (b.travel_packages as { title?: string } | null)?.title ?? '',
-    }))
+    const flat = (bookings ?? []).map((b: Record<string, unknown>) => {
+      const pmts = (b.payments as Array<{ status: string; razorpay_payment_id?: string }>) || []
+      const paidPmt = pmts.find(p => p.status === 'captured')
+      const isPaid = Boolean(paidPmt) || ['verification_pending', 'verified', 'ticket_generated', 'completed', 'paid'].includes(String(b.status))
+      return {
+        ...b,
+        userName: (b.users as { full_name?: string } | null)?.full_name ?? '',
+        packageTitle: (b.travel_packages as { title?: string } | null)?.title ?? '',
+        isPaid,
+        razorpayPaymentId: paidPmt?.razorpay_payment_id ?? null,
+      }
+    })
 
     res.json({ bookings: flat, total: count ?? 0, page, limit })
   } catch (error) {

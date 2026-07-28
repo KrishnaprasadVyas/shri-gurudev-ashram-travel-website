@@ -19,15 +19,16 @@ function InfoRow({ label, value }: { label: string; value?: string | null }) {
   )
 }
 
-const statusConfig: Record<string, { label: string, icon: any, className: string }> = {
-  draft: { label: 'Draft', icon: AlertCircle, className: 'text-[#6F5B47] bg-[#6F5B47]/15 border-[#6F5B47]/30' },
-  documents_pending: { label: 'Action Required', icon: AlertCircle, className: 'text-[#C68A00] bg-[#C68A00]/15 border-[#C68A00]/30' },
-  payment_pending: { label: 'Payment Pending', icon: AlertCircle, className: 'text-[#C68A00] bg-[#C68A00]/15 border-[#C68A00]/30' },
-  paid: { label: 'Confirmed', icon: CheckCircle, className: 'text-[#2E7D32] bg-[#2E7D32]/15 border-[#2E7D32]/30' },
-  verification_pending: { label: 'Under Review', icon: AlertCircle, className: 'text-[#C68A00] bg-[#C68A00]/15 border-[#C68A00]/30' },
-  verified: { label: 'Verified', icon: CheckCircle, className: 'text-[#2E7D32] bg-[#2E7D32]/15 border-[#2E7D32]/30' },
-  cancelled: { label: 'Cancelled', icon: XCircle, className: 'text-[#C0392B] bg-[#C0392B]/15 border-[#C0392B]/30' },
-  completed: { label: 'Completed', icon: CheckCircle, className: 'text-[#B8860B] bg-[#B8860B]/15 border-[#B8860B]/30' },
+const statusConfig: Record<string, { label: string, description?: string, icon: any, className: string }> = {
+  draft: { label: 'Unsubmitted Draft', description: 'Incomplete reservation form.', icon: AlertCircle, className: 'text-[#6F5B47] bg-[#6F5B47]/15 border-[#6F5B47]/30' },
+  documents_pending: { label: 'Incomplete Form', description: 'Passenger document upload required.', icon: AlertCircle, className: 'text-[#C68A00] bg-[#C68A00]/15 border-[#C68A00]/30' },
+  payment_pending: { label: 'Payment Pending (Unpaid)', description: 'Complete payment below to confirm your sacred Yatra seat.', icon: AlertCircle, className: 'text-[#C68A00] bg-[#C68A00]/15 border-[#C68A00]/30' },
+  verification_pending: { label: 'Payment Received • Under Review', description: 'Your online payment is captured & confirmed! Devotee documents are currently under admin review.', icon: CheckCircle, className: 'text-[#2563EB] bg-[#2563EB]/15 border-[#2563EB]/30' },
+  paid: { label: 'Payment Confirmed', description: 'Payment verified successfully.', icon: CheckCircle, className: 'text-[#2E7D32] bg-[#2E7D32]/15 border-[#2E7D32]/30' },
+  verified: { label: 'Verified & Confirmed', description: 'Identity verified and pilgrimage seat confirmed!', icon: CheckCircle, className: 'text-[#2E7D32] bg-[#2E7D32]/15 border-[#2E7D32]/30' },
+  ticket_generated: { label: 'Boarding Pass Issued', description: 'Your official Yatra pass is ready.', icon: CheckCircle, className: 'text-[#2E7D32] bg-[#2E7D32]/15 border-[#2E7D32]/30' },
+  cancelled: { label: 'Cancelled', description: 'This booking has been cancelled.', icon: XCircle, className: 'text-[#C0392B] bg-[#C0392B]/15 border-[#C0392B]/30' },
+  completed: { label: 'Yatra Completed', description: 'Pilgrimage journey completed.', icon: CheckCircle, className: 'text-[#B8860B] bg-[#B8860B]/15 border-[#B8860B]/30' },
 }
 
 export function BookingDetailPage() {
@@ -99,8 +100,8 @@ export function BookingDetailPage() {
           <StatusIcon className="h-6 w-6 flex-shrink-0" />
           <div>
             <p className="font-display text-base font-bold">{status.label}</p>
-            {booking.status === 'payment_pending' && (
-              <p className="text-xs opacity-80 mt-0.5 font-medium">Complete payment below to confirm your sacred Yatra pass.</p>
+            {status.description && (
+              <p className="text-xs opacity-80 mt-0.5 font-medium">{status.description}</p>
             )}
           </div>
         </div>
@@ -168,6 +169,12 @@ export function BookingDetailPage() {
         {booking.bus_type && <InfoRow label="Train Class" value={booking.bus_type} />}
         <InfoRow label="Room Type" value={booking.room_type} />
         <InfoRow label="Travelers" value={`${booking.traveler_count} person${booking.traveler_count !== 1 ? 's' : ''}`} />
+        {booking.additional_seva_type && (
+          <InfoRow
+            label="Attached Seva"
+            value={`${booking.additional_seva_type.replace(/_/g, ' ').toUpperCase()}${booking.additional_seva_amount ? ` (+₹${booking.additional_seva_amount.toLocaleString('en-IN')})` : ''}`}
+          />
+        )}
         {booking.special_notes && <InfoRow label="Special Notes" value={booking.special_notes} />}
       </div>
 

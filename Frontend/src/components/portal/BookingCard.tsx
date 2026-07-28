@@ -5,12 +5,13 @@ import type { BookingRow } from '@/types/database.types'
 type BookingWithTitle = BookingRow & { packageTitle?: string }
 
 const statusConfig: Record<string, { label: string, className: string }> = {
-  draft: { label: 'Draft', className: 'bg-[#6F5B47]/15 text-[#6F5B47] border-[#6F5B47]/30 font-bold' },
-  documents_pending: { label: 'Action Required', className: 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30 font-bold' },
-  payment_pending: { label: 'Payment Pending', className: 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30 font-bold' },
-  paid: { label: 'Confirmed', className: 'bg-[#2E7D32]/15 text-[#2E7D32] border-[#2E7D32]/30 font-bold' },
-  verification_pending: { label: 'Under Review', className: 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30 font-bold' },
-  verified: { label: 'Verified', className: 'bg-[#2E7D32]/15 text-[#2E7D32] border-[#2E7D32]/30 font-bold' },
+  draft: { label: 'Unsubmitted Draft', className: 'bg-[#6F5B47]/15 text-[#6F5B47] border-[#6F5B47]/30 font-bold' },
+  documents_pending: { label: 'Incomplete Form', className: 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30 font-bold' },
+  payment_pending: { label: 'Payment Pending (Unpaid)', className: 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30 font-bold' },
+  verification_pending: { label: 'Paid • Under Review', className: 'bg-[#2563EB]/15 text-[#2563EB] border-[#2563EB]/30 font-bold' },
+  paid: { label: 'Payment Verified', className: 'bg-[#2E7D32]/15 text-[#2E7D32] border-[#2E7D32]/30 font-bold' },
+  verified: { label: 'Verified & Confirmed', className: 'bg-[#2E7D32]/15 text-[#2E7D32] border-[#2E7D32]/30 font-bold' },
+  ticket_generated: { label: 'Boarding Pass Ready', className: 'bg-[#2E7D32]/15 text-[#2E7D32] border-[#2E7D32]/30 font-bold' },
   cancelled: { label: 'Cancelled', className: 'bg-[#C0392B]/15 text-[#C0392B] border-[#C0392B]/30 font-bold' },
   completed: { label: 'Completed', className: 'bg-[#B8860B]/15 text-[#B8860B] border-[#B8860B]/30 font-bold' },
 }

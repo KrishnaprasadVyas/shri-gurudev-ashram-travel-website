@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ShieldX, Loader2, IndianRupee, ArrowLeft, Clock, Users, Sparkles, CheckCircle2, ChevronRight, Upload, X } from 'lucide-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { ShieldX, Loader2, IndianRupee, ArrowLeft, Clock, Users, Sparkles, CheckCircle2, ChevronRight, Upload, X, Gift } from 'lucide-react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/context/AuthContext'
 import { usePackage } from '@/hooks/usePackages'
 import { usePageTitle } from '@/hooks/usePageTitle'
@@ -33,6 +33,22 @@ export function BookPage() {
   const { userProfile } = useAuth()
   const { data: pkg, isLoading } = usePackage(packageId)
 
+  // Fetch available public Seva packages
+  const { data: sevaPackages = [] } = useQuery({
+    queryKey: ['public-seva-packages'],
+    queryFn: async () => {
+      const { data } = await apiClient.get('/api/public/seva-packages')
+      return (data.packages ?? []) as Array<{
+        id: string
+        title: string
+        description: string | null
+        price: number
+        seva_type: string
+        allow_date_selection: boolean
+      }>
+    }
+  })
+
   usePageTitle(pkg ? `Book ${pkg.title}` : 'Book Yatra')
 
   const [step, setStep] = useState<Step>(1)
@@ -44,7 +60,10 @@ export function BookPage() {
   const [preferences, setPreferences] = useState({
     transportType: 'Flight',
     busType: '',
-    roomType: 'AC Room'
+    roomType: 'AC Room',
+    additionalSevaPackageId: '',
+    additionalSevaType: '',
+    additionalSevaDate: '',
   })
   
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -70,6 +89,8 @@ export function BookPage() {
     }
   }, [travelerCount, userProfile, passengers])
 
+  const selectedSeva = sevaPackages.find(s => s.id === preferences.additionalSevaPackageId)
+
   const step1Mutation = useMutation({
     mutationFn: async () => {
       const { data: d1 } = await apiClient.post('/api/bookings/draft', { packageId })
@@ -78,7 +99,10 @@ export function BookPage() {
       await apiClient.patch(`/api/bookings/${bId}/preferences`, {
         transportType: preferences.transportType,
         busType: preferences.transportType === 'Train' ? preferences.busType : undefined,
-        roomType: preferences.roomType
+        roomType: preferences.roomType,
+        additionalSevaPackageId: preferences.additionalSevaPackageId || undefined,
+        additionalSevaType: selectedSeva ? selectedSeva.seva_type : undefined,
+        additionalSevaDate: preferences.additionalSevaDate || undefined,
       })
       return d2.booking
     },
@@ -218,6 +242,8 @@ export function BookPage() {
   
   const pricePerPerson = pkg.price + transportSurcharge + roomSurcharge
   const totalBasePrice = pricePerPerson * travelerCount
+  const sevaFee = selectedSeva ? Number(selectedSeva.price || 0) : 0
+  const grandTotal = totalBasePrice + sevaFee
 
   const renderSurcharge = (price?: number | null) => {
     return price && price > 0 ? <span className="text-[10px] block opacity-70">(+₹{price.toLocaleString('en-IN')})</span> : null
@@ -318,6 +344,58 @@ export function BookPage() {
                 </div>
               )}
 
+              {/* ── Attach Optional Seva Section ─────────────────── */}
+              <div className="pt-4 border-t border-[#E9DCC5]/60 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[#3E2B1F] uppercase tracking-wider flex items-center gap-2">
+                    <Gift className="h-4 w-4 text-[#B8860B]" />
+                    Attach Optional Seva (Devotional Offering)
+                  </label>
+                  <span className="text-[10px] font-bold text-[#B8860B] uppercase bg-[#FFF7E8] px-2 py-0.5 rounded-md border border-[#B8860B]/20">Optional</span>
+                </div>
+                <p className="text-xs text-[#6F5B47]">Enhance your Yatra experience by attaching an auspicious Seva offering to your pilgrimage booking.</p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setPreferences(prev => ({ ...prev, additionalSevaPackageId: '', additionalSevaType: '' }))}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${!preferences.additionalSevaPackageId ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B] ring-2 ring-[#B8860B]/20' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47] hover:border-[#B8860B]/40'}`}
+                  >
+                    <div className="font-bold text-sm text-[#3E2B1F]">No Attached Seva</div>
+                    <div className="text-xs text-[#6F5B47] mt-1">Standard Yatra travel booking only</div>
+                    <div className="mt-2 text-xs font-bold text-[#B8860B]">₹0</div>
+                  </button>
+
+                  {sevaPackages.map((s) => {
+                    const isSelected = preferences.additionalSevaPackageId === s.id
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => setPreferences(prev => ({ ...prev, additionalSevaPackageId: s.id, additionalSevaType: s.seva_type }))}
+                        className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${isSelected ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B] ring-2 ring-[#B8860B]/20' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47] hover:border-[#B8860B]/40'}`}
+                      >
+                        <div className="font-bold text-sm text-[#3E2B1F] line-clamp-1">{s.title}</div>
+                        <div className="text-xs text-[#6F5B47] mt-1 line-clamp-2">{s.description || 'Sacred Ashram Seva'}</div>
+                        <div className="mt-2 text-xs font-bold text-[#B8860B]">+ ₹{Number(s.price).toLocaleString('en-IN')}</div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {selectedSeva?.allow_date_selection && (
+                  <div className="pt-2 max-w-xs">
+                    <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Seva Performing Date</label>
+                    <input
+                      type="date"
+                      value={preferences.additionalSevaDate}
+                      onChange={(e) => setPreferences(prev => ({ ...prev, additionalSevaDate: e.target.value }))}
+                      className={inputClass()}
+                    />
+                  </div>
+                )}
+              </div>
+
               <div className="p-5 rounded-2xl bg-[#FFF7E8] border border-[#B8860B]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-[#B8860B] uppercase tracking-wider mb-1">Travelers</label>
@@ -326,13 +404,17 @@ export function BookPage() {
                   </div>
                   <span className="flex items-center gap-1.5 font-medium text-xs text-[#6F5B47] mt-2"><Users className="h-3 w-3 text-[#B8860B]" /> {pkg.remaining_seats} seats left</span>
                 </div>
-                <div className="text-right">
-                  <span className="block font-medium text-xs text-[#6F5B47] mb-0.5">Total Amount</span>
+                <div className="text-right space-y-1">
+                  <div className="text-xs text-[#6F5B47]">
+                    Yatra ({travelerCount}x): ₹{totalBasePrice.toLocaleString('en-IN')}
+                    {sevaFee > 0 && <span className="ml-2 font-semibold text-[#B8860B]">+ Seva: ₹{sevaFee.toLocaleString('en-IN')}</span>}
+                  </div>
+                  <span className="block font-medium text-xs text-[#6F5B47]">Total Base Amount</span>
                   <span className="flex items-center justify-end gap-1 font-display text-2xl font-bold text-[#B8860B]">
                     <IndianRupee className="h-5 w-5" />
-                    {totalBasePrice.toLocaleString('en-IN')}
+                    {grandTotal.toLocaleString('en-IN')}
                   </span>
-                  <span className="block text-[10px] text-[#6F5B47] mt-0.5">+ 2.36% Gateway Fee</span>
+                  <span className="block text-[10px] text-[#6F5B47]">+ 2.36% Gateway Fee</span>
                 </div>
               </div>
             </div>
@@ -491,22 +573,34 @@ export function BookPage() {
                   <span className="font-medium text-[#3E2B1F] text-right">{preferences.transportType} {preferences.busType ? `(${preferences.busType})` : ''}</span>
                   <span className="text-[#6F5B47]">Room</span>
                   <span className="font-medium text-[#3E2B1F] text-right">{preferences.roomType}</span>
+                  {selectedSeva && (
+                    <>
+                      <span className="text-[#6F5B47]">Attached Seva</span>
+                      <span className="font-medium text-[#B8860B] text-right">{selectedSeva.title}</span>
+                    </>
+                  )}
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#FFF7E8] border border-[#B8860B]/30 shadow-sm">
-                <div className="flex justify-between text-sm text-[#6F5B47] mb-2">
-                  <span className="font-medium">₹{pricePerPerson.toLocaleString('en-IN')} × {travelerCount} traveler{travelerCount > 1 ? 's' : ''}</span>
+              <div className="p-5 rounded-2xl bg-[#FFF7E8] border border-[#B8860B]/30 shadow-sm space-y-2">
+                <div className="flex justify-between text-sm text-[#6F5B47]">
+                  <span className="font-medium">Yatra ({travelerCount} traveler{travelerCount > 1 ? 's' : ''})</span>
                   <span className="font-bold text-[#3E2B1F]">₹{totalBasePrice.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between text-xs text-[#6F5B47] mb-3">
+                {selectedSeva && (
+                  <div className="flex justify-between text-sm text-[#6F5B47]">
+                    <span className="font-medium">Seva ({selectedSeva.title})</span>
+                    <span className="font-bold text-[#B8860B]">₹{sevaFee.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-xs text-[#6F5B47] pt-1">
                   <span>Payment Gateway Fee (2.36%) will be added</span>
                 </div>
                 <div className="flex items-center justify-between pt-3 border-t border-[#B8860B]/20">
-                  <span className="font-display text-lg font-bold text-[#3E2B1F]">Base Amount</span>
+                  <span className="font-display text-lg font-bold text-[#3E2B1F]">Total Subtotal</span>
                   <div className="flex items-center gap-1 text-2xl font-bold text-[#B8860B]">
                     <IndianRupee className="h-5 w-5" />
-                    {totalBasePrice.toLocaleString('en-IN')}
+                    {grandTotal.toLocaleString('en-IN')}
                   </div>
                 </div>
               </div>

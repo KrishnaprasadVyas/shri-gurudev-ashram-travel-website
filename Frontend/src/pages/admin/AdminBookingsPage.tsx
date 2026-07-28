@@ -21,23 +21,49 @@ import { useDebounce } from '@/hooks/useDebounce'
 import type { AdminBooking, AdminStats } from '@/types/admin'
 
 const statusTabs = [
-  { value: '', label: 'All Reservations' },
-  { value: 'paid', label: 'Confirmed (Paid)' },
-  { value: 'payment_pending', label: 'Pending Payment' },
-  { value: 'completed', label: 'Completed Pilgrimage' },
+  { value: '', label: 'All Active Reservations' },
+  { value: 'verification_pending', label: 'Paid • Under Review' },
+  { value: 'verified', label: 'Verified & Confirmed' },
+  { value: 'payment_pending', label: 'Pending Payment (Unpaid)' },
+  { value: 'completed', label: 'Completed' },
   { value: 'cancelled', label: 'Cancelled' },
 ]
 
 const statusStyles: Record<string, { badge: string; label: string; icon: string }> = {
+  verification_pending: {
+    badge: 'bg-[#2563EB]/15 text-[#2563EB] border border-[#2563EB]/30',
+    label: 'Paid • Under Review',
+    icon: '●',
+  },
+  verified: {
+    badge: 'bg-[#2E7D32]/15 text-[#2E7D32] border border-[#2E7D32]/30',
+    label: 'Verified & Confirmed',
+    icon: '●',
+  },
   paid: {
     badge: 'bg-[#2E7D32]/15 text-[#2E7D32] border border-[#2E7D32]/30',
-    label: 'Confirmed',
+    label: 'Paid',
+    icon: '●',
+  },
+  ticket_generated: {
+    badge: 'bg-[#B8860B]/15 text-[#B8860B] border border-[#B8860B]/30',
+    label: 'Ticket Issued',
     icon: '●',
   },
   payment_pending: {
     badge: 'bg-[#C68A00]/15 text-[#C68A00] border border-[#C68A00]/30',
-    label: 'Pending',
+    label: 'Pending Payment',
     icon: '●',
+  },
+  draft: {
+    badge: 'bg-[#9A8A78]/15 text-[#9A8A78] border border-[#9A8A78]/30',
+    label: 'Unsubmitted Draft',
+    icon: '○',
+  },
+  documents_pending: {
+    badge: 'bg-[#9A8A78]/15 text-[#9A8A78] border border-[#9A8A78]/30',
+    label: 'Incomplete Form',
+    icon: '○',
   },
   completed: {
     badge: 'bg-[#2563EB]/15 text-[#2563EB] border border-[#2563EB]/30',
@@ -47,6 +73,11 @@ const statusStyles: Record<string, { badge: string; label: string; icon: string 
   cancelled: {
     badge: 'bg-[#C0392B]/15 text-[#C0392B] border border-[#C0392B]/30',
     label: 'Cancelled',
+    icon: '●',
+  },
+  rejected: {
+    badge: 'bg-[#C0392B]/15 text-[#C0392B] border border-[#C0392B]/30',
+    label: 'Verification Rejected',
     icon: '●',
   },
 }
@@ -344,7 +375,7 @@ export function AdminBookingsPage() {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="border-b border-[#E9DCC5] bg-[#FFFFFF] sticky top-0 z-10">
-                {['Reference', 'Devotee', 'Package / Yatra', 'Travelers', 'Amount', 'Status', 'Booking Date', 'Actions'].map((h) => (
+                {['Reference', 'Devotee', 'Package / Yatra', 'Travelers', 'Amount', 'Payment', 'Status', 'Booking Date', 'Actions'].map((h) => (
                   <th
                     key={h}
                     className="text-left px-6 py-4 text-[11px] font-label-caps font-bold text-[#B8860B] uppercase tracking-[0.15em] whitespace-nowrap"
@@ -364,6 +395,7 @@ export function AdminBookingsPage() {
                     <td className="px-6 py-5"><div className="w-40 h-4 bg-[#FAF7F2] rounded" /></td>
                     <td className="px-6 py-5"><div className="w-12 h-4 bg-[#FAF7F2] rounded" /></td>
                     <td className="px-6 py-5"><div className="w-20 h-4 bg-[#FAF7F2] rounded" /></td>
+                    <td className="px-6 py-5"><div className="w-16 h-6 bg-[#FAF7F2] rounded-full" /></td>
                     <td className="px-6 py-5"><div className="w-24 h-6 bg-[#FAF7F2] rounded-full" /></td>
                     <td className="px-6 py-5"><div className="w-24 h-4 bg-[#FAF7F2] rounded" /></td>
                     <td className="px-6 py-5"><div className="w-9 h-9 bg-[#FAF7F2] rounded-full" /></td>
@@ -372,7 +404,7 @@ export function AdminBookingsPage() {
               ) : bookings.length === 0 ? (
                 /* 9. Empty State */
                 <tr>
-                  <td colSpan={8} className="py-16 px-4">
+                  <td colSpan={9} className="py-16 px-4">
                     <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto space-y-3">
                       <div className="w-16 h-16 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] flex items-center justify-center text-3xl shadow-sm mb-1 text-[#B8860B]">
                         🛕
@@ -395,6 +427,7 @@ export function AdminBookingsPage() {
               ) : (
                 bookings.map((b) => {
                   const statusInfo = statusStyles[b.status] ?? statusStyles.payment_pending
+                  const isPaid = (b as any).isPaid || ['verification_pending', 'verified', 'ticket_generated', 'completed', 'paid'].includes(b.status)
 
                   return (
                     <tr
@@ -422,8 +455,28 @@ export function AdminBookingsPage() {
                         ₹{b.total_amount.toLocaleString('en-IN')}
                       </td>
 
-                      {/* 7. Status Badges */}
-                      <td className="px-6 py-5">
+                      {/* Payment Status Pill */}
+                      <td className="px-6 py-5 whitespace-nowrap">
+                        {isPaid ? (
+                          <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#2E7D32]/15 text-[#2E7D32] border border-[#2E7D32]/30 inline-flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+                            PAID
+                          </span>
+                        ) : b.status === 'cancelled' ? (
+                          <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#C0392B]/15 text-[#C0392B] border border-[#C0392B]/30 inline-flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#C0392B]"></span>
+                            CANCELLED
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#C68A00]/15 text-[#C68A00] border border-[#C68A00]/30 inline-flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#C68A00]"></span>
+                            UNPAID
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Lifecycle Status Badges */}
+                      <td className="px-6 py-5 whitespace-nowrap">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs ${statusInfo.badge}`}
                         >
