@@ -33,7 +33,7 @@ const destinations: Destination[] = [
 
 export const SacredDestinations: React.FC = () => {
   return (
-    <section className="py-24 md:py-32 px-margin-mobile md:px-margin-desktop bg-surface-container-low max-w-container-max mx-auto overflow-hidden">
+    <section className="py-16 md:py-32 px-4 md:px-margin-desktop bg-surface-container-low max-w-container-max mx-auto overflow-hidden">
       <div className="text-center mb-16 max-w-2xl mx-auto">
         <span className="section-eyebrow">Our Sacred Destinations</span>
         <h2 className="section-heading">Our Sacred Destinations</h2>
@@ -61,7 +61,7 @@ export const SacredDestinations: React.FC = () => {
               />
             </div>
             
-            <div className="p-6 flex-1 flex flex-col justify-between border-t border-amber-900/5">
+            <div className="p-4 md:p-6 flex-1 flex flex-col justify-between border-t border-amber-900/5">
               <div>
                 <h3 className="font-headline-sm text-2xl text-primary font-bold tracking-wide">{dest.name}</h3>
                 <span className="font-label-caps text-xs text-secondary tracking-widest uppercase block mt-1.5 mb-3 font-semibold">Sacred Yatra</span>

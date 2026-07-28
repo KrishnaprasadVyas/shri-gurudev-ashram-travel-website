@@ -22,7 +22,7 @@ export const YatraCard: React.FC<YatraCardProps> = ({
 }) => {
   return (
     <div className="yatra-card group bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/30 flex flex-col hover:shadow-lg transition-all duration-500">
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-56 md:h-64 overflow-hidden">
         <img
           className="yatra-image w-full h-full object-cover"
           alt={title}
@@ -33,7 +33,7 @@ export const YatraCard: React.FC<YatraCardProps> = ({
         </div>
       </div>
       
-      <div className="p-8 flex-grow flex flex-col">
+      <div className="p-5 md:p-8 flex-grow flex flex-col">
         <div className="flex items-center gap-2 mb-3">
           <span className="material-symbols-outlined text-secondary text-[20px]">calendar_today</span>
           <span className="font-label-caps text-on-surface-variant">{dates}</span>

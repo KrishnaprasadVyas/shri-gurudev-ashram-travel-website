@@ -8,7 +8,7 @@ import { Hero as HomeHero } from '@/components/home/Hero';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 export const HomePage: React.FC = () => {
-  usePageTitle('Begin Your Sacred Journey');
+  usePageTitle('माँ वैष्णवी टूरिज़्म');
   useEffect(() => {
     // Entrance animation logic
     const observerOptions = {
@@ -33,7 +33,7 @@ export const HomePage: React.FC = () => {
       (el as HTMLElement).style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
       observer.observe(el);
     });
-    
+
     return () => observer.disconnect();
   }, []);
 

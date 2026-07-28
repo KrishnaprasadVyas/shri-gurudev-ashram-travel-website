@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export const JourneyTimeline: React.FC = () => {
   return (
-    <section className="py-24 md:py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto overflow-hidden">
+    <section className="py-16 md:py-32 px-4 md:px-margin-desktop max-w-container-max mx-auto overflow-hidden">
       <div className="text-center mb-16 animate-fade-in-up">
         <span className="font-label-caps text-label-caps text-secondary mb-2 block tracking-widest">OUR MILESTONES</span>
         <h2 className="font-headline-md text-headline-md text-primary mb-4">Journey Through the Years</h2>

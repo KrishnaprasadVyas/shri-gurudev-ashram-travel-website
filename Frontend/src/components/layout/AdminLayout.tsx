@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Menu, X, Sparkles } from 'lucide-react'
 import { AdminSidebar } from './AdminSidebar'
@@ -33,6 +33,23 @@ const routeHeaders: Record<string, { title: string; subtitle: string }> = {
 export function AdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
+
+  // Scroll lock for drawer
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileOpen])
+
+  // Close drawer on navigation
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [location.pathname])
 
   // Determine dynamic title and subtitle depending on current path
   let headerInfo = {
@@ -86,7 +103,7 @@ export function AdminLayout() {
             className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="md:hidden fixed left-0 top-0 bottom-0 w-[280px] z-50 border-r border-[#E9DCC5] bg-[#FFFFFF] shadow-[0_20px_60px_rgba(62,43,31,0.2)] animate-in slide-in-from-left duration-300">
+          <aside className={`md:hidden fixed right-0 top-0 bottom-0 w-[280px] z-50 border-l border-[#E9DCC5] bg-[#FFFFFF] shadow-[-20px_0_60px_rgba(62,43,31,0.2)] transform transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}>
             <AdminSidebar isCollapsed={false} />
           </aside>
         </>

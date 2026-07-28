@@ -56,7 +56,7 @@ export function BookingCard({ booking }: { booking: BookingWithTitle }) {
 
         <Link
           to={`/portal/bookings/${booking.id}`}
-          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#B8860B] hover:text-[#D4AF37] transition-colors shrink-0 px-4 py-2 rounded-full bg-[#F5EFE4] hover:bg-[#FFF7E8] border border-[#E9DCC5] shadow-2xs"
+          className="inline-flex justify-center items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#B8860B] hover:text-[#D4AF37] transition-colors shrink-0 px-4 py-2 min-h-[44px] rounded-full bg-[#F5EFE4] hover:bg-[#FFF7E8] border border-[#E9DCC5] shadow-2xs w-full sm:w-auto mt-2 sm:mt-0"
         >
           View Details <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform duration-200" />
         </Link>

@@ -219,7 +219,7 @@ export const FaqSection: React.FC = () => {
   };
 
   return (
-    <section className="pt-0 pb-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto bg-surface">
+    <section className="pt-0 pb-12 md:pb-section-gap px-4 md:px-margin-desktop max-w-container-max mx-auto bg-surface">
       {/* ── Search Bar ── */}
       <div className="max-w-2xl mx-auto mb-12">
         <div className="relative group">
@@ -234,7 +234,7 @@ export const FaqSection: React.FC = () => {
               setSearchQuery(e.target.value);
               setOpenIndex(null);
             }}
-            className="w-full pl-14 pr-6 py-4 sm:py-5 bg-surface border border-outline-variant/40 rounded-2xl text-on-surface placeholder:text-on-surface-variant/50 font-body-md text-base shadow-sm focus:shadow-lg focus:shadow-[#C98B1A]/10 focus:border-[#C98B1A]/50 focus:outline-none transition-all duration-300 focus-ring"
+            className="w-full pl-14 pr-6 py-4 sm:py-5 min-h-[44px] bg-surface border border-outline-variant/40 rounded-2xl text-on-surface placeholder:text-on-surface-variant/50 font-body-md text-base shadow-sm focus:shadow-lg focus:shadow-[#C98B1A]/10 focus:border-[#C98B1A]/50 focus:outline-none transition-all duration-300 focus-ring"
           />
         </div>
       </div>
@@ -248,7 +248,7 @@ export const FaqSection: React.FC = () => {
               setActiveCategory(cat);
               setOpenIndex(null);
             }}
-            className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 select-none cursor-pointer focus-ring ${
+            className={`px-5 sm:px-6 py-2 sm:py-2.5 min-h-[44px] flex items-center justify-center rounded-full text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 select-none cursor-pointer focus-ring ${
               activeCategory === cat
                 ? 'bg-primary text-on-primary shadow-md'
                 : 'bg-surface-container-low text-on-surface-variant border border-outline-variant/30 hover:border-primary/30 hover:text-primary hover:-translate-y-0.5'

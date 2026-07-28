@@ -43,7 +43,7 @@ const BottomOrnament = () => (
 
 export const QuoteSection = () => {
   return (
-    <section className="py-section-gap bg-[#fffdf8] flex flex-col items-center justify-center text-center px-margin-mobile relative overflow-visible border-t border-outline-variant/30 min-h-[70vh]">
+    <section className="py-12 md:py-section-gap bg-[#fffdf8] flex flex-col items-center justify-center text-center px-margin-mobile relative overflow-visible border-t border-outline-variant/30 min-h-[50vh] md:min-h-[70vh]">
       
       {/* Cinematic Spiritual Background Image with Fade */}
       <div className="absolute inset-0 z-0 overflow-hidden">

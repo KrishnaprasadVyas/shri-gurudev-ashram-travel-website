@@ -96,7 +96,7 @@ export function GalleryPage() {
         {photoUrls.map((src, i) => (
           <div
             key={i}
-            className={`relative ${heights[i % heights.length]} rounded-2xl  cursor-pointer group break-inside-avoid mb-4`}
+            className={`relative ${heights[i % heights.length]} rounded-2xl cursor-pointer group break-inside-avoid mb-4 overflow-hidden`}
             onClick={() => openLightbox(i)}
           >
             <img

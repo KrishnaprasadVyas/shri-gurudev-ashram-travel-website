@@ -100,7 +100,7 @@ const SocialBtn: React.FC<{ href: string; label: string; children: React.ReactNo
     target="_blank"
     rel="noreferrer"
     aria-label={label}
-    className="w-9 h-9 rounded-full bg-[#F5EFE4]/90 flex items-center justify-center text-[#1a0d06]
+    className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-[#F5EFE4]/90 flex items-center justify-center text-[#1a0d06]
                hover:bg-[#C98B1A] hover:text-white hover:shadow-[0_0_14px_rgba(201,139,26,0.45)]
                hover:-translate-y-[2px] transition-all duration-300 ease-out"
   >
@@ -112,7 +112,7 @@ const SocialBtn: React.FC<{ href: string; label: string; children: React.ReactNo
 const QuickLink: React.FC<{ to: string; label: string }> = ({ to, label }) => (
   <Link
     to={to}
-    className="flex items-center gap-1.5 text-[#C9B79D] hover:text-[#C98B1A] transition-all duration-200 group"
+    className="flex items-center gap-1.5 text-[#C9B79D] hover:text-[#C98B1A] transition-all duration-200 group min-h-[44px]"
   >
     <span className="group-hover:translate-x-0.5 transition-transform duration-200 flex items-center gap-1.5">
       <ChevronIcon />

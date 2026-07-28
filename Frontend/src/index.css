@@ -133,8 +133,9 @@
 }
 
 @layer base {
-  html {
+  html, body {
     @apply scroll-smooth;
+    overflow-x: hidden;
   }
 }
 

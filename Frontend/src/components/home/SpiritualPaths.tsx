@@ -9,7 +9,7 @@ export const SpiritualPaths: React.FC = () => {
   const { data: packages, isLoading, error } = usePackages();
 
   return (
-    <section className="bg-surface-container-low py-section-gap px-margin-desktop">
+    <section className="bg-surface-container-low py-12 md:py-section-gap px-4 md:px-margin-desktop">
       <div className="max-w-container-max mx-auto space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <span className="section-eyebrow">Divine Pilgrimages</span>

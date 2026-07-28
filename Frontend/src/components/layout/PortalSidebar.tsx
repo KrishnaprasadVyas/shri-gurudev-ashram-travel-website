@@ -119,7 +119,7 @@ export function PortalSidebar() {
 
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#B8860B] border border-[#B8860B] hover:bg-[#FFF7E8] hover:text-[#3E2B1F] transition-all duration-250 cursor-pointer shadow-2xs"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 min-h-[44px] rounded-xl text-[12px] font-bold text-[#B8860B] border border-[#B8860B] hover:bg-[#FFF7E8] hover:text-[#3E2B1F] transition-all duration-250 cursor-pointer shadow-2xs"
             aria-label="Sign out of portal"
           >
             <LogOut className="h-3.5 w-3.5 shrink-0" />
