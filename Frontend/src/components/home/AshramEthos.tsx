@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ReadMoreText } from '../shared/ReadMoreText';
+import { ReadMore } from '../shared/ReadMore';
 
 export const AshramEthos: React.FC = () => {
   return (
@@ -13,9 +13,8 @@ export const AshramEthos: React.FC = () => {
           </div>
 
           <div className="font-body-lg text-base md:text-body-lg text-on-surface-variant leading-relaxed space-y-6 max-w-prose">
-            <ReadMoreText
+            <ReadMore
               text={`Founder and spiritual guide of <strong>Shri Gurudev Ashram (Palaskhed Sapkal, Chikhli, Buldhana)</strong> and <strong>Swami Harichaitanya Shanti Ashram Trust (Datala, Malkapur)</strong>.\n\nGurudev Ji has shown countless devotees the path of <strong>Bhakti</strong> (Devotion), <strong>Gyan</strong> (Wisdom), and Nishkam <strong>Seva</strong> (Selfless Service).\n\nThrough daily <strong>Satsang</strong>, <strong>Gita Path</strong>, <strong>Haripath</strong>, <strong>Annadan</strong>, <strong>Education</strong>, <strong>Medical Service</strong>, <strong>Gaushala</strong>, <strong>Gurukulam</strong>, <strong>Adivasi Seva</strong>, <strong>Anath Ashram</strong>, and <strong>Seva Tirth Dham</strong>, the Ashram continues to serve society with compassion and dedication.\n\nThe purpose of every seva is the purification of the mind and the upliftment of society.\n\nInspired by Gurudev Ji, the Ashram continues to connect devotees across India through spirituality, service, and sacred Yatras.`}
-              characterLimit={200}
             />
             <div className="mt-8 border-l-2 border-primary pl-6 py-2">
               <p className="font-display-lg text-2xl text-primary italic leading-snug">

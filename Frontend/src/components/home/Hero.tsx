@@ -39,7 +39,7 @@ export const Hero: React.FC = () => {
           <Link to="/yatras" className="btn-primary w-full md:w-auto min-h-[44px]">
             Explore Sacred Yatras
           </Link>
-          <Link to="/about" className="btn-outline border-white text-white hover:bg-white hover:text-on-surface w-full md:w-auto min-h-[44px]">
+          <Link to="/about" className="btn-outline border-white/80 !text-white hover:bg-white hover:!text-[#3a2d00] w-full md:w-auto min-h-[44px] backdrop-blur-md bg-black/20 shadow-[0_4px_15px_rgba(0,0,0,0.3)]">
             Our Philosophy
           </Link>
         </div>

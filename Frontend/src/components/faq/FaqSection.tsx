@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, Search } from 'lucide-react';
+import { Plus, Minus, Search, ChevronDown, ChevronUp } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════
    FAQ DATA
@@ -194,6 +194,15 @@ export const FaqSection: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<FaqCategory>('All');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
 
   const filteredFaqs = useMemo(() => {
     let result = faqData;
@@ -260,17 +269,35 @@ export const FaqSection: React.FC = () => {
       </div>
 
       {/* ── FAQ Accordions ── */}
-      <div className="max-w-3xl mx-auto space-y-4">
-        {filteredFaqs.length > 0 ? (
-          filteredFaqs.map((faq, index) => (
-            <FaqAccordionItem
-              key={faq.question}
-              item={faq}
-              isOpen={openIndex === index}
-              onToggle={() => handleToggle(index)}
-            />
-          ))
-        ) : (
+      <motion.div layout className="max-w-3xl mx-auto space-y-4">
+        <AnimatePresence mode="popLayout">
+          {filteredFaqs.length > 0 ? (
+            filteredFaqs.map((faq, index) => {
+              const shouldRender = isDesktop || isExpanded || index < 4;
+              if (!shouldRender) return null;
+
+              return (
+                <motion.div
+                  key={faq.question}
+                  layout
+                  initial={!isDesktop && index >= 4 ? { opacity: 0, y: 30 } : false}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: !isDesktop && index >= 4 ? (index - 4) * 0.1 : 0 
+                  }}
+                  className="w-full"
+                >
+                  <FaqAccordionItem
+                    item={faq}
+                    isOpen={openIndex === index}
+                    onToggle={() => handleToggle(index)}
+                  />
+                </motion.div>
+              );
+            })
+          ) : (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -287,7 +314,29 @@ export const FaqSection: React.FC = () => {
             </p>
           </motion.div>
         )}
-      </div>
+        </AnimatePresence>
+      </motion.div>
+
+      {/* View More Toggle */}
+      {!isDesktop && filteredFaqs.length > 4 && (
+        <motion.button
+          layout
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="mt-8 mb-4 max-w-3xl mx-auto w-full flex items-center justify-center gap-2 py-4 border-y border-outline-variant/30 text-[#C98B1A] hover:bg-[#C98B1A]/5 active:bg-[#C98B1A]/10 transition-colors focus-ring min-h-[44px]"
+        >
+          {isExpanded ? (
+            <>
+              <ChevronUp className="w-5 h-5" />
+              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+            </>
+          ) : (
+            <>
+              <ChevronDown className="w-5 h-5" />
+              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View More Questions</span>
+            </>
+          )}
+        </motion.button>
+      )}
     </section>
   );
 };

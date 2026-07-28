@@ -75,9 +75,14 @@ export const AuthSplitLayout: React.FC<AuthSplitLayoutProps> = ({ children }) =>
             </span>
 
             {/* 2. Primary heading */}
-            <h1 className="font-display-lg text-3xl sm:text-4xl lg:text-5xl text-white font-bold tracking-tight leading-tight drop-shadow-md">
-              Welcome to माँ वैष्णवी टूरिज़्म
-            </h1>
+            <div className="flex flex-col items-center justify-center text-center">
+              <span className="font-display-lg text-2xl md:text-3xl font-medium text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                Welcome to
+              </span>
+              <h1 className="font-display-lg text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-wide mt-2 pb-1 drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)]">
+                माँ वैष्णवी टूरिज़्म
+              </h1>
+            </div>
 
             {/* 3. Supporting description */}
             <p className="font-body-lg text-sm sm:text-base text-white/85 leading-relaxed font-light max-w-sm mx-auto lg:max-w-none">

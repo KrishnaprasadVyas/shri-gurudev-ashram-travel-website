@@ -46,7 +46,7 @@ export const Hero: React.FC = () => {
 
         {/* Main Heading */}
         <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl lg:text-[64px] text-white font-bold tracking-tight mb-4 drop-shadow-md">
-          Sacred Yatras
+          Maa Vaishnavi Tourism
         </h1>
 
         <p className="font-body-lg text-base sm:text-lg md:text-xl text-white/85 leading-relaxed max-w-2xl mx-auto font-medium">
