@@ -463,6 +463,107 @@ bookingsRouter.get('/:id', requireAuth, async (request, response, next) => {
   }
 })
 
+// POST /api/bookings/:id/submit - Submit draft/pending booking and transition to payment_pending
+bookingsRouter.post('/:id/submit', requireAuth, async (request, response, next) => {
+  try {
+    const authRequest = request as AuthenticatedRequest
+    const { id } = request.params
+
+    const { data: booking, error: fetchError } = await supabaseAdmin
+      .from('bookings')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (fetchError || !booking) {
+      throw new HttpError(404, 'Booking not found')
+    }
+
+    if (booking.user_id !== authRequest.userId) {
+      throw new HttpError(403, 'Unauthorized')
+    }
+
+    if (!['draft', 'documents_pending', 'payment_pending'].includes(booking.status)) {
+      throw new HttpError(400, `Booking cannot be submitted in state: ${booking.status}`)
+    }
+
+    // Load travel package
+    const { data: travelPackage, error: pkgError } = await supabaseAdmin
+      .from('travel_packages')
+      .select('*')
+      .eq('id', booking.package_id)
+      .single()
+
+    if (pkgError || !travelPackage) {
+      throw new HttpError(404, 'Travel package not found')
+    }
+
+    if (!travelPackage.is_active) {
+      throw new HttpError(400, 'Travel package is not active')
+    }
+
+    const count = Number(booking.traveler_count || 1)
+
+    if (travelPackage.remaining_seats < count) {
+      throw new HttpError(400, 'Not enough seats available')
+    }
+
+    // Price calculations
+    const basePrice = Number(travelPackage.price || 0)
+    const transportType = booking.transport_type
+    const busType = booking.bus_type
+    const roomType = booking.room_type
+
+    const flightSurcharge = transportType === 'Flight' ? Number(travelPackage.flight_price || 0) : 0
+    const trainAcSurcharge = transportType === 'Train' && busType === 'AC Train' ? Number(travelPackage.train_ac_price || 0) : 0
+    const trainNonAcSurcharge = transportType === 'Train' && busType === 'Non-AC Train' ? Number(travelPackage.train_non_ac_price || 0) : 0
+    const transportAmountPerPerson = flightSurcharge + trainAcSurcharge + trainNonAcSurcharge
+
+    const acRoomSurcharge = roomType === 'AC Room' ? Number(travelPackage.room_ac_price || 0) : 0
+    const nonAcRoomSurcharge = roomType === 'Non-AC Room' ? Number(travelPackage.room_non_ac_price || 0) : 0
+    const roomAmountPerPerson = acRoomSurcharge + nonAcRoomSurcharge
+
+    const baseAmountTotal = basePrice * count
+    const transportAmountTotal = transportAmountPerPerson * count
+    const roomAmountTotal = roomAmountPerPerson * count
+    const sevaFee = Number(booking.additional_seva_amount || 0)
+
+    const subtotalAmount = baseAmountTotal + transportAmountTotal + roomAmountTotal
+    const totalAmount = subtotalAmount + sevaFee
+
+    const gatewayFee = Math.round(totalAmount * 0.02)
+    const payableAmount = totalAmount + gatewayFee
+
+    const expiresAt = new Date(Date.now() + PAYMENT_TTL_MINUTES * 60 * 1000).toISOString()
+
+    const { data: updatedBooking, error: updateError } = await supabaseAdmin
+      .from('bookings')
+      .update({
+        status: 'payment_pending',
+        base_amount: baseAmountTotal,
+        transport_amount: transportAmountTotal,
+        room_amount: roomAmountTotal,
+        subtotal_amount: subtotalAmount,
+        total_amount: totalAmount,
+        gateway_fee: gatewayFee,
+        payable_amount: payableAmount,
+        expires_at: expiresAt,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (updateError || !updatedBooking) {
+      throw new HttpError(500, updateError?.message ?? 'Failed to submit booking')
+    }
+
+    response.json({ booking: updatedBooking })
+  } catch (error) {
+    next(error)
+  }
+})
+
 // POST /api/bookings/:id/cancel - Cancel booking
 bookingsRouter.post('/:id/cancel', requireAuth, async (request, response, next) => {
   try {
@@ -500,3 +601,42 @@ bookingsRouter.post('/:id/cancel', requireAuth, async (request, response, next) 
     next(error)
   }
 })
+
+// DELETE /api/bookings/:id - Cancel/delete booking
+bookingsRouter.delete('/:id', requireAuth, async (request, response, next) => {
+  try {
+    const authRequest = request as AuthenticatedRequest
+    const { id } = request.params
+
+    const { data: booking, error: fetchError } = await supabaseAdmin
+      .from('bookings')
+      .select('user_id, status, package_id, traveler_count')
+      .eq('id', id)
+      .single()
+
+    if (fetchError || !booking) throw new HttpError(404, 'Booking not found')
+    if (booking.user_id !== authRequest.userId) throw new HttpError(403, 'Unauthorized')
+
+    if (['cancelled', 'completed', 'refunded'].includes(booking.status)) {
+      throw new HttpError(400, 'Booking is already cancelled or completed')
+    }
+
+    const { error: cancelError } = await supabaseAdmin
+      .from('bookings')
+      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (cancelError) throw new HttpError(500, 'Failed to cancel booking')
+
+    // Increment seats RPC
+    await supabaseAdmin.rpc('increment_seats' as never, {
+      pid: booking.package_id,
+      count: booking.traveler_count,
+    } as never)
+
+    response.json({ success: true, message: 'Booking cancelled successfully' })
+  } catch (error) {
+    next(error)
+  }
+})
+
