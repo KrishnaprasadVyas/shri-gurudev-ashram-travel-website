@@ -94,6 +94,14 @@ usersRouter.get("/verification-file", async (request, response, next) => {
 
     // Set cache headers to match expiry
     response.set("Cache-Control", `private, max-age=${SIGNED_URL_EXPIRY_SECONDS}`);
+
+    // Force download (attachment) when ?download=1 is present, otherwise inline view
+    const forceDownload = request.query.download === '1';
+    if (forceDownload) {
+      const filename = path.basename(absolutePath);
+      response.set("Content-Disposition", `attachment; filename="${filename}"`);
+    }
+
     response.sendFile(absolutePath);
   } catch (error) {
     next(error);
