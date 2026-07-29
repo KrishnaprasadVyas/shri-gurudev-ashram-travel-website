@@ -64,8 +64,8 @@ function VerificationImage({ userId, filePath, label }: { userId: string; filePa
                 <span>Zoom</span>
               </button>
               <a
-                href={data.url}
-                target="_blank"
+                href={`${data.url}&download=1`}
+                download
                 rel="noreferrer noopener"
                 className="px-2.5 py-1 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[11px] font-bold flex items-center gap-1 transition-colors shadow-2xs"
               >
