@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from "react-i18next";
 
 // Ornamental Divider SVG
 const OrnamentalDivider = () => (
@@ -37,6 +38,7 @@ const BottomOrnament = () => (
 );
 
 export const SanskritQuote = () => {
+    const { t } = useTranslation();
   return (
     <section className="py-20 md:py-28 bg-[#fffdf8] flex flex-col items-center justify-center text-center px-margin-mobile relative overflow-hidden border-t border-outline-variant/30 min-h-[55vh]">
       {/* Background Image with Fade */}
@@ -77,7 +79,7 @@ export const SanskritQuote = () => {
 
         {/* Transliteration */}
         <p className="font-label-caps text-xs md:text-sm tracking-[0.45em] uppercase text-[#b88636] mt-10 mb-14 font-semibold">
-          ŚRADDHĀVĀN LABHATE JÑĀNAM
+          {t('public.faq.quoteTitle')}
         </p>
 
         {/* English Translation with Side Lotuses */}
@@ -85,8 +87,8 @@ export const SanskritQuote = () => {
           <LotusOutline className="hidden md:block w-12 h-12" />
 
           <p className="font-display-lg text-xl md:text-2xl lg:text-3xl text-[#3b3228] italic max-w-xl mx-auto leading-relaxed">
-            He who has faith<br />
-            attains true knowledge.
+            {t('public.faq.quoteLine1')}<br />
+            {t('public.faq.quoteLine2')}
           </p>
 
           <LotusOutline className="hidden md:block w-12 h-12 -scale-x-100" />

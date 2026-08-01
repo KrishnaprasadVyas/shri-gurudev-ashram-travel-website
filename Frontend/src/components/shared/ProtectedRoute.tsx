@@ -1,9 +1,11 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { useTranslation } from "react-i18next";
 
 /** Requires user to be authenticated. Redirects to /login otherwise. */
 export function ProtectedRoute() {
+    const { t } = useTranslation();
   const { user, loading } = useAuth()
   const location = useLocation()
 

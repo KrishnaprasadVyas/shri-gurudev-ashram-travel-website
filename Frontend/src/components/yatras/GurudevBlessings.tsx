@@ -1,8 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ReadMore } from '../shared/ReadMore';
+import { useTranslation } from "react-i18next";
 
 export const GurudevBlessings: React.FC = () => {
+    const { t } = useTranslation();
   return (
     <section className="py-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto bg-surface overflow-hidden border-b border-outline-variant/20">
       <motion.div 
@@ -20,7 +22,7 @@ export const GurudevBlessings: React.FC = () => {
             <img 
               className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-[1.03]" 
               style={{ objectPosition: 'center 20%' }}
-              alt="Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj" 
+              alt={"Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj"} 
               src="/assets/gurudev.jpg" 
               loading="lazy"
             />
@@ -29,23 +31,23 @@ export const GurudevBlessings: React.FC = () => {
           
           {/* Below image typography identical to About page */}
           <div className="mt-5 text-center font-display-lg text-[22px] sm:text-[28px] md:text-[32px] lg:text-[34px] leading-[1.2] font-semibold text-primary z-10">
-            <p>Param Pujya Shri Swami</p>
-            <p>Harichaitanyanand Saraswatiji Maharaj</p>
+            <p>{t('public.gurudev.swamijiLine1')}</p>
+            <p>{t('public.gurudev.swamijiLine2')}</p>
           </div>
         </div>
 
         {/* Right: Biography Content */}
         <div className="order-2 lg:col-span-7 lg:pl-10">
           <span className="font-label-caps text-xs tracking-[0.2em] text-secondary mb-4 block uppercase font-semibold">
-            Under the Blessings of Gurudev
+            {t('public.gurudev.blessings')}
           </span>
           <div className="space-y-6 text-on-surface-variant leading-relaxed font-body-md text-lg font-light">
             <ReadMore>
               <p>
-                Founder and spiritual guide of <strong className="font-medium text-on-surface">Shri Gurudev Ashram (Palaskhed Sapkal, Chikhli, Buldhana)</strong> and <strong className="font-medium text-on-surface">Swami Harichaitanya Shanti Ashram Trust (Datala, Malkapur)</strong>.
+                {t('public.gurudev.founder')} <strong className="font-medium text-on-surface">{t('public.gurudev.ashramLoc1')}</strong> {t('public.common.and', { defaultValue: 'and' })} <strong className="font-medium text-on-surface">{t('public.gurudev.ashramLoc2')}</strong>.
               </p>
               <p>
-                Gurudev Ji has guided countless devotees on the path of Bhakti, Gyan, Nishkam Seva and Sacred Yatras, inspiring thousands to live a life rooted in spirituality, compassion and discipline.
+                {t('public.gurudev.gurudevDesc')}
               </p>
             </ReadMore>
           </div>

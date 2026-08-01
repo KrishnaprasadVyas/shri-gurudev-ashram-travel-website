@@ -7,9 +7,11 @@ import { WhyTravelWithUs } from '@/components/about/WhyTravelWithUs'
 import { SacredDestinations } from '@/components/about/SacredDestinations'
 import { Testimonials } from '@/components/about/Testimonials'
 import { CallToAction } from '@/components/about/CallToAction'
+import { useTranslation } from "react-i18next";
 
 export function AboutPage() {
-  usePageTitle('About Us')
+  const { t } = useTranslation();
+  usePageTitle(t('about.hero.eyebrow'))
 
   return (
     <div className="font-body-md text-body-md bg-surface text-on-surface w-full ">

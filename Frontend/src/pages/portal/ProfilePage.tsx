@@ -3,11 +3,12 @@ import { Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import {
   CheckCircle, ShieldAlert, ShieldCheck, ShieldX, Loader2,
-  User, Phone, Mail, Calendar, Edit3, ChevronRight, Lock, Bell, Settings,
+  User, Phone, Mail, Calendar, Edit3,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
+import { useTranslation } from "react-i18next";
 
 const statusConfig = {
   not_submitted: {
@@ -37,7 +38,8 @@ const statusConfig = {
 }
 
 export function ProfilePage() {
-  usePageTitle('My Profile')
+    const { t } = useTranslation();
+  usePageTitle(t('profile.title'))
   const { user, userProfile, refreshProfile, loading } = useAuth()
 
   const [form, setForm] = useState({
@@ -65,10 +67,10 @@ export function ProfilePage() {
   const StatusInfo = statusConfig[verStatus]
 
   const completionItems = [
-    { done: true, label: 'Account created' },
-    { done: Boolean(displayProfile?.full_name), label: 'Name set' },
-    { done: Boolean(displayProfile?.phone), label: 'Phone added' },
-    { done: verStatus === 'verified', label: 'Identity verified' },
+    { done: true, label: t('profile.acctCreated') },
+    { done: Boolean(displayProfile?.full_name), label: t('profile.nameSet') },
+    { done: Boolean(displayProfile?.phone), label: t('profile.phoneAdded') },
+    { done: verStatus === 'verified', label: t('profile.idVerified') },
   ]
   const completionPct = Math.round((completionItems.filter(i => i.done).length / completionItems.length) * 100)
 
@@ -82,14 +84,14 @@ export function ProfilePage() {
 
   const memberSince = userProfile?.created_at
     ? new Date(userProfile.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
-    : 'Recently joined'
+    : t('profile.recentlyJoined')
 
   return (
     <div className="max-w-4xl space-y-8 animate-in fade-in duration-300">
       {/* ── Page Header ──────────────────────────────────── */}
       <div>
         <div className="flex items-center gap-3">
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#3E2B1F] tracking-tight">Profile</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#3E2B1F] tracking-tight">{t('profile.title')}</h1>
           <button
             onClick={() => {
               setForm({ full_name: displayProfile?.full_name ?? '', phone: displayProfile?.phone ?? '' })
@@ -101,7 +103,7 @@ export function ProfilePage() {
             <Edit3 className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
           </button>
         </div>
-        <p className="text-sm text-[#6F5B47] mt-1 font-normal">Manage your devotee information and account security</p>
+        <p className="text-sm text-[#6F5B47] mt-1 font-normal">{t('profile.desc')}</p>
       </div>
 
       {/* ── Top Profile Card ─────────────────────────────── */}
@@ -127,7 +129,7 @@ export function ProfilePage() {
                   {displayProfile?.full_name ?? 'Sacred Seeker'}
                 </h2>
                 <span className={`px-3 py-0.5 rounded-full font-label-caps text-[10px] font-bold uppercase tracking-wider border ${StatusInfo.bg} ${StatusInfo.color}`}>
-                  {StatusInfo.label}
+                  {StatusInfo.label === 'Not Submitted' ? t('profile.statusNotSubmitted') : StatusInfo.label === 'Under Review' ? t('profile.statusUnderReview') : StatusInfo.label === 'Verified' ? t('profile.statusVerified') : t('profile.statusRejected')}
                 </span>
               </div>
             </div>
@@ -147,7 +149,7 @@ export function ProfilePage() {
               )}
               <span className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-[#B8860B]" />
-                Member since {memberSince}
+                {t('profile.memberSince')} {memberSince}
               </span>
             </div>
           </div>
@@ -157,7 +159,7 @@ export function ProfilePage() {
       {/* ── Profile Completion ───────────────────────────── */}
       <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-display text-base font-bold text-[#3E2B1F]">Profile Completion</h3>
+          <h3 className="font-display text-base font-bold text-[#3E2B1F]">{t('profile.completion')}</h3>
           <span className="font-display text-base font-bold text-[#B8860B]">{completionPct}%</span>
         </div>
         {/* Progress bar */}
@@ -187,7 +189,7 @@ export function ProfilePage() {
       {/* ── Personal Information (two-column) ────────────── */}
       <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E9DCC5]">
-          <h3 className="font-display text-lg font-bold text-[#3E2B1F]">Personal Information</h3>
+          <h3 className="font-display text-lg font-bold text-[#3E2B1F]">{t('profile.personalInfo')}</h3>
           {!editing && (
             <button
               onClick={() => {
@@ -198,7 +200,8 @@ export function ProfilePage() {
               aria-label="Edit personal information"
             >
               <Edit3 className="h-3.5 w-3.5" />
-              Edit Details
+              
+              {t('profile.editDetails')}
             </button>
           )}
         </div>
@@ -210,7 +213,7 @@ export function ProfilePage() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">Full Name</label>
+                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">{t('profile.fullName')}</label>
                 <input
                   type="text"
                   value={form.full_name}
@@ -219,7 +222,7 @@ export function ProfilePage() {
                 />
               </div>
               <div>
-                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">Phone Number</label>
+                <label className="block font-label-caps text-[11px] font-bold text-[#6F5B47] mb-2 uppercase tracking-wider">{t('profile.phoneNum')}</label>
                 <input
                   type="tel"
                   value={form.phone}
@@ -235,24 +238,24 @@ export function ProfilePage() {
                 disabled={updateMutation.isPending}
                 className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#B8860B] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#D4AF37] disabled:opacity-50 transition-all cursor-pointer shadow-sm"
               >
-                {updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Changes'}
+                {updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : t('profile.saveChanges')}
               </button>
               <button
                 type="button"
                 onClick={() => setEditing(false)}
                 className="px-6 py-2.5 rounded-full border border-[#E9DCC5] bg-[#F5EFE4] text-[#6F5B47] text-xs font-bold uppercase tracking-wider hover:text-[#3E2B1F] hover:bg-[#FFF7E8] transition-all cursor-pointer"
               >
-                Cancel
+                {t('profile.cancel')}
               </button>
             </div>
           </form>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
             {[
-              { icon: User, label: 'Full Name', value: displayProfile?.full_name ?? '—' },
-              { icon: Phone, label: 'Phone', value: displayProfile?.phone ?? '—' },
-              { icon: Mail, label: 'Email', value: user?.email ?? '—' },
-              { icon: Calendar, label: 'Member Since', value: memberSince },
+              { icon: User, label: t('profile.fullName'), value: displayProfile?.full_name ?? '—' },
+              { icon: Phone, label: t('profile.phoneNum'), value: displayProfile?.phone ?? '—' },
+              { icon: Mail, label: t('profile.email'), value: user?.email ?? '—' },
+              { icon: Calendar, label: t('profile.memberSince'), value: memberSince },
             ].map((row) => (
               <div key={row.label} className="flex items-start gap-3.5">
                 <div className="w-10 h-10 rounded-xl bg-[#F5EFE4] border border-[#E9DCC5] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
@@ -276,32 +279,32 @@ export function ProfilePage() {
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2.5 mb-1.5">
-              <h3 className="font-display text-lg font-bold text-[#3E2B1F]">Identity Verification</h3>
+              <h3 className="font-display text-lg font-bold text-[#3E2B1F]">{t('profile.idVerification')}</h3>
               <span className={`font-label-caps text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider border ${StatusInfo.bg} ${StatusInfo.color}`}>
-                {StatusInfo.label}
+                {StatusInfo.label === 'Not Submitted' ? t('profile.statusNotSubmitted') : StatusInfo.label === 'Under Review' ? t('profile.statusUnderReview') : StatusInfo.label === 'Verified' ? t('profile.statusVerified') : t('profile.statusRejected')}
               </span>
             </div>
             {verStatus === 'not_submitted' && (
               <>
-                <p className="text-sm text-[#6F5B47] mb-4 leading-relaxed">Submit your Aadhaar and selfie to unlock pilgrimage reservations.</p>
+                <p className="text-sm text-[#6F5B47] mb-4 leading-relaxed">{t('profile.submitAadhaar')}</p>
                 <Link to="/portal/verify" className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full bg-[#B8860B] text-white hover:bg-[#D4AF37] transition-all shadow-sm">
-                  <ShieldCheck className="h-4 w-4" /> Verify Now
+                  <ShieldCheck className="h-4 w-4" /> {t('profile.verifyNow')}
                 </Link>
               </>
             )}
             {verStatus === 'submitted' && (
-              <p className="text-sm text-[#6F5B47] leading-relaxed">Your verification is under review. We&apos;ll notify you within 24 to 48 hours.</p>
+              <p className="text-sm text-[#6F5B47] leading-relaxed">{t('profile.underReviewDesc')}</p>
             )}
             {verStatus === 'verified' && (
-              <p className="text-sm text-[#6F5B47] leading-relaxed">Your identity has been verified by Ashram administration. You can now book all sacred Yatras.</p>
+              <p className="text-sm text-[#6F5B47] leading-relaxed">{t('profile.verifiedDesc')}</p>
             )}
             {verStatus === 'rejected' && (
               <>
                 <p className="text-sm text-[#6F5B47] mb-4 leading-relaxed">
-                  Verification was rejected. Please re-upload clearer documents.
+                  {t('profile.rejectedDesc')}
                 </p>
                 <Link to="/portal/verify" className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full bg-[#C0392B] text-white hover:opacity-90 transition-all shadow-sm">
-                  Resubmit Documents
+                  {t('profile.resubmitDocs')}
                 </Link>
               </>
             )}

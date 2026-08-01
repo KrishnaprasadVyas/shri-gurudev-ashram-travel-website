@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 // Exquisite Indian Temple Ornamental Divider SVG
 const OrnamentalDivider = () => (
@@ -42,6 +43,7 @@ const BottomOrnament = () => (
 );
 
 export const QuoteSection = () => {
+  const { t } = useTranslation();
   return (
     <section className="py-12 md:py-section-gap bg-[#fffdf8] flex flex-col items-center justify-center text-center px-margin-mobile relative overflow-visible border-t border-outline-variant/30 min-h-[50vh] md:min-h-[70vh]">
       
@@ -94,8 +96,7 @@ export const QuoteSection = () => {
           <LotusOutline className="hidden md:block w-14 h-14" />
           
           <p className="font-display-lg text-xl md:text-3xl text-[#3b3228] italic max-w-xl mx-auto leading-relaxed">
-            It is the devotion of pilgrims<br/>
-            that makes a pilgrimage truly sacred.
+            {t('home.quote.translation')}
           </p>
           
           <LotusOutline className="hidden md:block w-14 h-14 -scale-x-100" />

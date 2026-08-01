@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import apiClient from '@/lib/apiClient'
 import { toast } from 'sonner'
 import type { BookingRow } from '@/types/database.types'
+import { useTranslation } from "react-i18next";
 
 type TravelPackageInfo = {
   title?: string | null
@@ -50,6 +51,7 @@ const statusConfig: Record<string, { label: string, description?: string, icon: 
 }
 
 export function BookingDetailPage() {
+    const { t } = useTranslation();
   const { id } = useParams<{ id: string }>()
   const { data, isLoading, error } = useBooking(id)
   const { initiatePayment } = usePayment()
@@ -70,21 +72,21 @@ export function BookingDetailPage() {
   })
 
   const booking: EnrichedBooking = data?.booking as any
-  usePageTitle(booking ? `Booking #${booking.booking_reference}` : 'Booking Detail')
+  usePageTitle(booking ? `${t('portal.bookingDetail.bookingHash')}${booking.booking_reference}` : t('portal.bookingDetail.title'))
 
   if (isLoading) return <LoadingState variant="detail" />
   if (error) return (
     <div className="text-center py-16 space-y-3 animate-in fade-in duration-300">
-      <p className="text-[#6F5B47] text-sm font-medium">Failed to load booking details.</p>
+      <p className="text-[#6F5B47] text-sm font-medium">{t('portal.bookingDetail.failedLoad')}</p>
       <Link to="/portal/bookings" className="text-[#B8860B] hover:text-[#D4AF37] text-sm font-bold underline transition-colors">
-        Back to Bookings
+        {t('portal.bookingDetail.backToBookings')}
       </Link>
     </div>
   )
   if (!booking) return (
     <div className="text-center py-16 text-[#6F5B47] text-sm animate-in fade-in duration-300 font-medium">
-      <p>Booking not found.</p>
-      <Link to="/portal/bookings" className="text-[#B8860B] hover:text-[#D4AF37] text-sm font-bold underline mt-2 inline-block">Back to Bookings</Link>
+      <p>{t('portal.bookingDetail.notFound')}</p>
+      <Link to="/portal/bookings" className="text-[#B8860B] hover:text-[#D4AF37] text-sm font-bold underline mt-2 inline-block">{t('portal.bookingDetail.backToBookings')}</Link>
     </div>
   )
 
@@ -104,13 +106,13 @@ export function BookingDetailPage() {
             />
           )}
           <div className="flex-1 space-y-2">
-            <p className="font-label-caps text-[10px] font-bold uppercase tracking-[0.2em] text-[#B8860B]">Yatra Package</p>
+            <p className="font-label-caps text-[10px] font-bold uppercase tracking-[0.2em] text-[#B8860B]">{t('portal.bookingDetail.yatraPackage')}</p>
             <h2 className="font-display text-xl font-bold text-[#3E2B1F]">{booking.travel_packages.title}</h2>
             <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-1">
               {booking.travel_packages.start_date && (
                 <span className="flex items-center gap-1.5 text-xs text-[#6F5B47] font-medium">
                   <MapPin className="h-3.5 w-3.5 text-[#B8860B]" />
-                  Departure: {new Date(booking.travel_packages.start_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  {t('portal.bookingDetail.departure')} {new Date(booking.travel_packages.start_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </span>
               )}
               {booking.travel_packages.duration && (
@@ -147,11 +149,11 @@ export function BookingDetailPage() {
         </Link>
         <div>
           <h1 className="font-display text-3xl font-bold text-[#3E2B1F] tracking-tight">
-            Booking #{booking.booking_reference}
+            {t('portal.bookingDetail.bookingHash')}{booking.booking_reference}
           </h1>
           <p className="text-sm text-[#6F5B47] font-normal mt-0.5">
-            Reservation details & payment summary
-          </p>
+            {t('portal.bookingDetail.summary')}
+                                </p>
         </div>
       </div>
 
@@ -178,7 +180,7 @@ export function BookingDetailPage() {
               disabled={cancelMutation.isPending}
               className="px-5 py-3.5 rounded-full bg-[#FFFFFF]/50 text-[#C0392B] border border-[#C0392B]/20 font-bold text-xs uppercase tracking-wider hover:bg-[#C0392B]/10 hover:border-[#C0392B]/40 transition-all shadow-2xs"
             >
-              Cancel Booking
+              {t('portal.bookingDetail.cancelBooking')}
             </button>
           )}
           {booking.status === 'payment_pending' && (
@@ -188,7 +190,7 @@ export function BookingDetailPage() {
               className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#B8860B] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#D4AF37] transition-all duration-250 shrink-0 cursor-pointer shadow-sm hover:-translate-y-0.5"
             >
               <IndianRupee className="h-4 w-4" />
-              Pay ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
+              {t('portal.bookingDetail.pay')}{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
             </button>
           )}
         </div>
@@ -197,8 +199,8 @@ export function BookingDetailPage() {
       {/* ── Traveler Information ─────────────────────────── */}
       <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
         <h2 className="font-display text-lg font-bold text-[#3E2B1F] mb-4 pb-3 border-b border-[#E9DCC5]">
-          Traveler Information
-        </h2>
+            {t('portal.bookingDetail.travelerInfo')}
+                          </h2>
         <div className="divide-y divide-[#E9DCC5]/60">
           {booking.booking_passengers && booking.booking_passengers.length > 0 ? (
             booking.booking_passengers.map((p: any, idx: number) => (
@@ -207,16 +209,16 @@ export function BookingDetailPage() {
                   <span className="w-5 h-5 rounded-full bg-[#B8860B] text-white flex items-center justify-center text-xs">
                     {idx + 1}
                   </span>
-                  Traveler {idx + 1} {p.is_primary ? '(Primary)' : ''}
+                  {t('portal.bookingDetail.traveler')} {idx + 1} {p.is_primary ? `(${t('portal.bookingDetail.primary')})` : ''}
                 </p>
-                <InfoRow label="Name" value={p.full_name} />
-                <InfoRow label="Gender/Age" value={`${p.gender} • ${new Date().getFullYear() - new Date(p.dob).getFullYear()} yrs`} />
-                <InfoRow label="Phone" value={p.phone} />
-                <InfoRow label="Aadhaar" value={p.aadhaar_number} />
+                <InfoRow label={t('portal.bookingDetail.name')} value={p.full_name} />
+                <InfoRow label={t('portal.bookingDetail.genderAge')} value={`${p.gender} • ${new Date().getFullYear() - new Date(p.dob).getFullYear()} yrs`} />
+                <InfoRow label={t('portal.bookingDetail.phone')} value={p.phone} />
+                <InfoRow label={t('portal.bookingDetail.aadhaar')} value={p.aadhaar_number} />
               </div>
             ))
           ) : (
-            <div className="text-sm text-[#9A8A78]">Legacy booking format.</div>
+            <div className="text-sm text-[#9A8A78]">{t('portal.bookingDetail.legacyFormat')}</div>
           )}
         </div>
       </div>
@@ -224,50 +226,50 @@ export function BookingDetailPage() {
       {/* ── Travel Preferences ──────────────────────────── */}
       <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
         <h2 className="font-display text-lg font-bold text-[#3E2B1F] mb-4 pb-3 border-b border-[#E9DCC5]">
-          Travel Preferences
-        </h2>
-        <InfoRow label="Transport" value={booking.transport_type} />
-        {booking.bus_type && <InfoRow label="Train Class" value={booking.bus_type} />}
-        <InfoRow label="Room Type" value={booking.room_type} />
-        <InfoRow label="Travelers" value={`${booking.traveler_count} person${booking.traveler_count !== 1 ? 's' : ''}`} />
+            {t('portal.bookingDetail.travelPrefs')}
+                          </h2>
+        <InfoRow label={t('portal.bookingDetail.transport')} value={booking.transport_type} />
+        {booking.bus_type && <InfoRow label={t('portal.bookingDetail.trainClass')} value={booking.bus_type} />}
+        <InfoRow label={t('portal.bookingDetail.roomType')} value={booking.room_type} />
+        <InfoRow label={t('portal.bookingDetail.travelers')} value={`${booking.traveler_count} ${booking.traveler_count !== 1 ? t('portal.bookingDetail.persons') : t('portal.bookingDetail.person')}`} />
         {booking.additional_seva_type && (
           <InfoRow
-            label="Attached Seva"
+            label={t('portal.bookingDetail.attachedSeva')}
             value={`${booking.additional_seva_type.replace(/_/g, ' ').toUpperCase()}${booking.additional_seva_amount ? ` (+₹${booking.additional_seva_amount.toLocaleString('en-IN')})` : ''}`}
           />
         )}
-        {booking.special_notes && <InfoRow label="Special Notes" value={booking.special_notes} />}
+        {booking.special_notes && <InfoRow label={t('portal.bookingDetail.specialNotes')} value={booking.special_notes} />}
       </div>
 
       {/* ── Payment Summary ──────────────────────────────── */}
       <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(62,43,31,0.04)]">
         <h2 className="font-display text-lg font-bold text-[#3E2B1F] mb-4 pb-3 border-b border-[#E9DCC5]">
-          Payment Summary
-        </h2>
+            {t('portal.bookingDetail.paymentSummary')}
+                          </h2>
         <div className="space-y-1">
           {booking.base_amount != null && (
-            <InfoRow label="Base Fare" value={`₹${Number(booking.base_amount).toLocaleString('en-IN')} × ${booking.traveler_count}`} />
+            <InfoRow label={t('portal.bookingDetail.baseFare')} value={`₹${Number(booking.base_amount).toLocaleString('en-IN')} × ${booking.traveler_count}`} />
           )}
           {booking.transport_amount != null && Number(booking.transport_amount) > 0 && (
-            <InfoRow label="Transport" value={`+₹${Number(booking.transport_amount).toLocaleString('en-IN')}`} />
+            <InfoRow label={t('portal.bookingDetail.transport')} value={`+₹${Number(booking.transport_amount).toLocaleString('en-IN')}`} />
           )}
           {booking.room_amount != null && Number(booking.room_amount) > 0 && (
-            <InfoRow label="Room Upgrade" value={`+₹${Number(booking.room_amount).toLocaleString('en-IN')}`} />
+            <InfoRow label={t('portal.bookingDetail.roomUpgrade')} value={`+₹${Number(booking.room_amount).toLocaleString('en-IN')}`} />
           )}
           {booking.additional_seva_amount != null && Number(booking.additional_seva_amount) > 0 && (
-            <InfoRow label="Attached Seva" value={`+₹${Number(booking.additional_seva_amount).toLocaleString('en-IN')}`} />
+            <InfoRow label={t('portal.bookingDetail.attachedSeva')} value={`+₹${Number(booking.additional_seva_amount).toLocaleString('en-IN')}`} />
           )}
           {booking.gateway_fee != null && Number(booking.gateway_fee) > 0 && (
-            <InfoRow label="Gateway Fee" value={`+₹${Number(booking.gateway_fee).toLocaleString('en-IN')}`} />
+            <InfoRow label={t('portal.bookingDetail.gatewayFee')} value={`+₹${Number(booking.gateway_fee).toLocaleString('en-IN')}`} />
           )}
         </div>
         <div className="flex items-center justify-between py-4 mt-2 border-t border-[#E9DCC5]">
-          <span className="font-label-caps text-xs font-bold uppercase tracking-wider text-[#6F5B47]">Total Amount</span>
+          <span className="font-label-caps text-xs font-bold uppercase tracking-wider text-[#6F5B47]">{t('portal.bookingDetail.totalAmount')}</span>
           <span className="font-display text-3xl font-bold text-[#B8860B]">
             ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
           </span>
         </div>
-        <InfoRow label="Booked On" value={new Date(booking.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })} />
+        <InfoRow label={t('portal.bookingDetail.bookedOn')} value={new Date(booking.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })} />
       </div>
     </div>
   )

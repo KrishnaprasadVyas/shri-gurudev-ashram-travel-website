@@ -6,8 +6,10 @@ import { QUERY_KEYS } from '@/lib/queryKeys'
 import apiClient from '@/lib/apiClient'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
+import { useTranslation } from "react-i18next";
 
 export function AdminNewPackagePage() {
+    const { t } = useTranslation();
   usePageTitle('New Pilgrimage Package')
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -47,8 +49,9 @@ export function AdminNewPackagePage() {
 
         <div>
           <span className="font-label-caps text-[11px] font-bold uppercase tracking-[0.2em] text-[#B8860B] block">
-            Pilgrimage Catalog Creation
-          </span>
+            
+                                  {"Pilgrimage Catalog Creation"}
+                                </span>
           <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#3E2B1F] tracking-tight mt-0.5">
             Create New Yatra Package
           </h1>

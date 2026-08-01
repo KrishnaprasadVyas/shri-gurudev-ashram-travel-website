@@ -1,14 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-
-const stats = [
-  { value: '20+', label: 'Years of Seva' },
-  { value: '5000+', label: 'Devotees' },
-  { value: '100+', label: 'Spiritual Camps' },
-  { value: '50+', label: 'Sacred Yatras' },
-];
+import { useTranslation } from 'react-i18next';
 
 export const Statistics: React.FC = () => {
+  const { t } = useTranslation();
+  const stats = [
+    { value: '20+', label: t('home.stats.years') },
+    { value: '5000+', label: t('home.stats.devotees') },
+    { value: '100+', label: t('home.stats.camps') },
+    { value: '50+', label: t('home.stats.yatras') },
+  ];
   return (
     <section className="bg-surface pt-4 pb-16 md:pt-6 md:pb-20 border-b border-outline-variant/30">
       <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop">

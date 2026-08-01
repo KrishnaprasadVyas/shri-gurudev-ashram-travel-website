@@ -72,7 +72,7 @@ export function LoginPage() {
 
     setLoading(true)
     const result = await verifyOtp(phone, otp)
-    
+
     if (result.error) {
       setLoading(false)
       setError(result.error)
@@ -145,7 +145,7 @@ export function LoginPage() {
           {step === 3 ? 'Complete Profile' : 'Welcome Back'}
         </h2>
         <p className="font-body-md text-sm sm:text-base text-[#6F5B47] font-normal leading-relaxed">
-          {step === 3 
+          {step === 3
             ? 'Please provide your full name to complete your registration.'
             : 'Sign in using your registered 10-digit mobile number to access your pilgrimage account and administration dashboard.'
           }

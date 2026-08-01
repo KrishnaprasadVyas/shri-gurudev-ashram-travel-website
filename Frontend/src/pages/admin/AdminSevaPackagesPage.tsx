@@ -4,8 +4,10 @@ import type { SevaPackage } from '@/types/travel'
 import apiClient from '@/lib/apiClient'
 import { formatCurrency } from '@/lib/utils'
 import { usePageTitle } from '@/hooks/usePageTitle'
+import { useTranslation } from "react-i18next";
 
 export function AdminSevaPackagesPage() {
+    const { t } = useTranslation();
   usePageTitle('Manage Seva Packages')
   const [packages, setPackages] = useState<SevaPackage[]>([])
   const [loading, setLoading] = useState(true)
@@ -191,8 +193,9 @@ export function AdminSevaPackagesPage() {
             <div>
               <p className="font-semibold text-sm text-[#f2f0eb]">No dynamic Seva packages found in database.</p>
               <p className="text-xs text-[#f2f0eb]/50 mt-1">
-                You can populate standard Ashram Seva packages or create a custom package.
-              </p>
+                
+                                                  {"You can populate standard Ashram Seva packages or create a custom package."}
+                                                </p>
             </div>
             <button
               onClick={handleSeedDefaults}
@@ -212,7 +215,7 @@ export function AdminSevaPackagesPage() {
                   <th className="py-3.5 px-4">Category</th>
                   <th className="py-3.5 px-4">Price</th>
                   <th className="py-3.5 px-4">Daily Cap</th>
-                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4">{"Status"}</th>
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -279,7 +282,7 @@ export function AdminSevaPackagesPage() {
                             <button
                               onClick={() => handleDelete(pkg.id)}
                               className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all"
-                              title="Delete Package"
+                              title={"Delete Package"}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
@@ -312,7 +315,7 @@ export function AdminSevaPackagesPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#f2f0eb]/70 mb-1">Seva Type Key *</label>
+                <label className="block text-[#f2f0eb]/70 mb-1">{"Seva Type Key *"}</label>
                 <input
                   type="text"
                   value={formData.seva_type}
@@ -323,7 +326,7 @@ export function AdminSevaPackagesPage() {
               </div>
 
               <div>
-                <label className="block text-[#f2f0eb]/70 mb-1">Package Title *</label>
+                <label className="block text-[#f2f0eb]/70 mb-1">{"Package Title *"}</label>
                 <input
                   type="text"
                   value={formData.title}
@@ -335,7 +338,7 @@ export function AdminSevaPackagesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#f2f0eb]/70 mb-1">Price (₹) *</label>
+                  <label className="block text-[#f2f0eb]/70 mb-1">{"Price (₹) *"}</label>
                   <input
                     type="number"
                     value={formData.price}
@@ -345,7 +348,7 @@ export function AdminSevaPackagesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[#f2f0eb]/70 mb-1">Max Daily Capacity</label>
+                  <label className="block text-[#f2f0eb]/70 mb-1">{"Max Daily Capacity"}</label>
                   <input
                     type="number"
                     value={formData.max_bookings_per_day}
@@ -356,7 +359,7 @@ export function AdminSevaPackagesPage() {
               </div>
 
               <div>
-                <label className="block text-[#f2f0eb]/70 mb-1">Description</label>
+                <label className="block text-[#f2f0eb]/70 mb-1">{"Description"}</label>
                 <textarea
                   rows={3}
                   value={formData.description}
@@ -373,7 +376,7 @@ export function AdminSevaPackagesPage() {
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                     className="rounded bg-black/40 border-amber-900/40 text-amber-500 focus:ring-0"
                   />
-                  <span>Active Catalog</span>
+                  <span>{"Active Catalog"}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -382,7 +385,7 @@ export function AdminSevaPackagesPage() {
                     onChange={(e) => setFormData({ ...formData, booking_enabled: e.target.checked })}
                     className="rounded bg-black/40 border-amber-900/40 text-amber-500 focus:ring-0"
                   />
-                  <span>Allow Bookings</span>
+                  <span>{"Allow Bookings"}</span>
                 </label>
               </div>
 

@@ -21,8 +21,10 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 import { LoadingState } from '@/components/shared/States'
 import { toast } from 'sonner'
 import type { BookingRow, UserRow, TravelPackageRow, PaymentRow } from '@/types/database.types'
+import { useTranslation } from "react-i18next";
 
 function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
+    const { t } = useTranslation();
   if (value === null || value === undefined || value === '') return null
   return (
     <div className="flex gap-4 py-3 border-b border-[#F1E9D8] last:border-0 text-sm">
@@ -40,6 +42,7 @@ const statusBadge: Record<string, string> = {
 }
 
 function PassengerDocPreview({ passengerId, filePath, label }: { passengerId: string; filePath: string; label: string }) {
+    const { t } = useTranslation();
   const [imgError, setImgError] = useState(false)
   const [isZoomed, setIsZoomed] = useState(false)
 
@@ -67,7 +70,7 @@ function PassengerDocPreview({ passengerId, filePath, label }: { passengerId: st
                 className="px-2 py-0.5 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[10px] font-bold flex items-center gap-1 transition-colors"
               >
                 <ZoomIn className="h-3 w-3" />
-                <span>Zoom</span>
+                <span>{"Zoom"}</span>
               </button>
               <a
                 href={data.url}
@@ -76,7 +79,7 @@ function PassengerDocPreview({ passengerId, filePath, label }: { passengerId: st
                 className="px-2 py-0.5 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[10px] font-bold flex items-center gap-1 transition-colors"
               >
                 <Download className="h-3 w-3" />
-                <span>Open</span>
+                <span>{"Open"}</span>
               </a>
             </div>
           )}
@@ -86,7 +89,7 @@ function PassengerDocPreview({ passengerId, filePath, label }: { passengerId: st
           {isLoading ? (
             <div className="flex flex-col items-center gap-1 text-[#B8860B] text-xs">
               <Loader2 className="h-5 w-5 animate-spin" />
-              <span className="font-mono text-[10px]">Loading document...</span>
+              <span className="font-mono text-[10px]">{"Loading document..."}</span>
             </div>
           ) : data?.url && !imgError ? (
             <img
@@ -99,7 +102,7 @@ function PassengerDocPreview({ passengerId, filePath, label }: { passengerId: st
           ) : (
             <div className="flex flex-col items-center gap-1 text-[#9A8A78] text-xs">
               <FileText className="h-6 w-6 text-[#E9DCC5]" />
-              <span className="text-[11px] font-medium">No document preview</span>
+              <span className="text-[11px] font-medium">{"No document preview"}</span>
             </div>
           )}
         </div>
@@ -116,8 +119,9 @@ function PassengerDocPreview({ passengerId, filePath, label }: { passengerId: st
               className="absolute -top-12 right-0 px-4 py-1.5 rounded-full bg-[#FFFFFF] text-[#3E2B1F] font-bold text-xs uppercase tracking-wider hover:bg-[#B8860B] hover:text-[#FFFFFF] transition-colors"
               onClick={() => setIsZoomed(false)}
             >
-              Close Zoom ✕
-            </button>
+              
+                                        {"Close Zoom ✕"}
+                                      </button>
             <img
               src={data.url}
               alt={label}
@@ -131,6 +135,7 @@ function PassengerDocPreview({ passengerId, filePath, label }: { passengerId: st
 }
 
 export function AdminBookingDetailPage() {
+    const { t } = useTranslation();
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -191,7 +196,8 @@ export function AdminBookingDetailPage() {
           <div className="space-y-1">
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#3E2B1F] tracking-tight">
-                Booking #{booking.booking_reference}
+                
+                                              {"Booking #"}{booking.booking_reference}
               </h1>
               <span
                 className={`px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
@@ -202,7 +208,8 @@ export function AdminBookingDetailPage() {
               </span>
             </div>
             <p className="font-mono text-xs text-[#6F5B47]">
-              Database Record ID: #{booking.id} • Created on {new Date(booking.created_at).toLocaleDateString('en-IN')}
+              
+                                        {"Database Record ID: #"}{booking.id}  {"• Created on"} {new Date(booking.created_at).toLocaleDateString('en-IN')}
             </p>
           </div>
         </div>
@@ -211,16 +218,18 @@ export function AdminBookingDetailPage() {
           {payments.some(p => p.status === 'captured') || ['verification_pending', 'verified', 'ticket_generated', 'completed', 'paid'].includes(booking.status) ? (
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#2E7D32]/15 text-[#2E7D32] border border-[#2E7D32]/30 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#2E7D32]"></span>
-              PAYMENT VERIFIED (PAID)
-            </span>
+              
+                                        {"PAYMENT VERIFIED (PAID)"}
+                                      </span>
           ) : (
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#C68A00]/15 text-[#C68A00] border border-[#C68A00]/30 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#C68A00]"></span>
-              UNPAID (PENDING PAYMENT)
-            </span>
+              
+                                            {"UNPAID (PENDING PAYMENT)"}
+                                          </span>
           )}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#6F5B47] font-semibold">Total:</span>
+            <span className="text-xs text-[#6F5B47] font-semibold">{"Total:"}</span>
             <span className="font-display text-2xl font-bold text-[#B8860B]">
               ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
             </span>
@@ -242,7 +251,8 @@ export function AdminBookingDetailPage() {
                   <div key={p.id} className="py-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <p className="font-bold text-[#3E2B1F] text-sm">
-                        Traveler {idx + 1} {p.is_primary ? '(Primary Lead)' : ''}
+                        
+                                                        {"Traveler"} {idx + 1} {p.is_primary ? '(Primary Lead)' : ''}
                       </p>
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                         p.verification_status === 'verified'
@@ -255,16 +265,16 @@ export function AdminBookingDetailPage() {
                       </span>
                     </div>
 
-                    <InfoRow label="Name" value={p.full_name} />
-                    <InfoRow label="Gender/Age" value={`${p.gender} • ${new Date().getFullYear() - new Date(p.dob).getFullYear()} yrs`} />
-                    <InfoRow label="Phone" value={p.phone} />
-                    <InfoRow label="Aadhaar" value={p.aadhaar_number} />
-                    <InfoRow label="Address" value={p.address} />
+                    <InfoRow label={"Name"} value={p.full_name} />
+                    <InfoRow label={"Gender/Age"} value={`${p.gender} • ${new Date().getFullYear() - new Date(p.dob).getFullYear()} yrs`} />
+                    <InfoRow label={"Phone"} value={p.phone} />
+                    <InfoRow label={"Aadhaar"} value={p.aadhaar_number} />
+                    <InfoRow label={"Address"} value={p.address} />
 
                     {/* Passenger Identity Documents Viewer */}
                     {Array.isArray(p.passenger_documents) && p.passenger_documents.length > 0 ? (
                       <div className="pt-2">
-                        <p className="text-xs font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Submitted Identity Documents:</p>
+                        <p className="text-xs font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{"Submitted Identity Documents:"}</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {p.passenger_documents.map((doc: any) => (
                             <PassengerDocPreview
@@ -281,7 +291,7 @@ export function AdminBookingDetailPage() {
                         <PassengerDocPreview
                           passengerId={p.id}
                           filePath={p.aadhaar_image_path}
-                          label="Aadhaar Card Record"
+                          label={"Aadhaar Card Record"}
                         />
                       </div>
                     ) : null}
@@ -310,14 +320,14 @@ export function AdminBookingDetailPage() {
                           className="px-3.5 py-1.5 rounded-full bg-[#FFFFFF] border border-[#C0392B] text-[#C0392B] hover:bg-[#C0392B] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs"
                         >
                           <XCircle className="h-3.5 w-3.5" />
-                          <span>Reject ID</span>
+                          <span>{"Reject ID"}</span>
                         </button>
                       </div>
                     )}
                   </div>
                 ))
               ) : (
-                <div className="py-4 text-sm text-[#9A8A78]">Legacy booking format (details on user profile).</div>
+                <div className="py-4 text-sm text-[#9A8A78]">{"Legacy booking format (details on user profile)."}</div>
               )}
             </div>
           </div>
@@ -328,11 +338,11 @@ export function AdminBookingDetailPage() {
               <span>Logistics & Accommodation Preferences</span>
             </h2>
             <div className="divide-y divide-[#F1E9D8]">
-              <InfoRow label="Transport Preference" value={booking.transport_type} />
-              <InfoRow label="Train / Bus Class" value={booking.bus_type} />
-              <InfoRow label="Room & Lodging Type" value={booking.room_type} />
-              <InfoRow label="Emergency Contact" value={booking.emergency_contact_name ? `${booking.emergency_contact_name} (${booking.emergency_contact_relationship}) - ${booking.emergency_contact_phone}` : null} />
-              <InfoRow label="Special Requests / Notes" value={booking.special_notes} />
+              <InfoRow label={"Transport Preference"} value={booking.transport_type} />
+              <InfoRow label={"Train / Bus Class"} value={booking.bus_type} />
+              <InfoRow label={"Room & Lodging Type"} value={booking.room_type} />
+              <InfoRow label={"Emergency Contact"} value={booking.emergency_contact_name ? `${booking.emergency_contact_name} (${booking.emergency_contact_relationship}) - ${booking.emergency_contact_phone}` : null} />
+              <InfoRow label={"Special Requests / Notes"} value={booking.special_notes} />
             </div>
           </div>
         </div>
@@ -345,10 +355,10 @@ export function AdminBookingDetailPage() {
               <span>Pilgrimage Package</span>
             </h2>
             <div className="divide-y divide-[#F1E9D8]">
-              <InfoRow label="Sacred Destination" value={pkg?.title || 'Custom Pilgrimage Package'} />
-              <InfoRow label="Duration" value={pkg?.duration || 'Standard Schedule'} />
+              <InfoRow label={"Sacred Destination"} value={pkg?.title || 'Custom Pilgrimage Package'} />
+              <InfoRow label={"Duration"} value={pkg?.duration || 'Standard Schedule'} />
               <InfoRow
-                label="Per Seeker Price"
+                label={"Per Seeker Price"}
                 value={pkg?.price ? `₹${pkg.price.toLocaleString('en-IN')}` : 'Included'}
               />
             </div>
@@ -362,21 +372,22 @@ export function AdminBookingDetailPage() {
                   <span>Linked Seeker Account</span>
                 </span>
                 <span className="text-[11px] font-bold text-[#B8860B] bg-[#FFFFFF] px-2.5 py-0.5 rounded-full border border-[#E9DCC5] uppercase tracking-wider">
-                  Verified User
-                </span>
+                  
+                                                    {"Verified User"}
+                                                  </span>
               </h2>
 
               <div className="space-y-3 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#9A8A78] font-semibold">Registered Name:</span>
+                  <span className="text-[#9A8A78] font-semibold">{"Registered Name:"}</span>
                   <span className="font-bold text-[#3E2B1F]">{user.full_name}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#9A8A78] font-semibold">Account Email:</span>
+                  <span className="text-[#9A8A78] font-semibold">{"Account Email:"}</span>
                   <span className="font-mono text-[#3E2B1F] truncate max-w-[200px]">{user.email ?? '—'}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#9A8A78] font-semibold">Identity Status:</span>
+                  <span className="text-[#9A8A78] font-semibold">{"Identity Status:"}</span>
                   <span className="capitalize font-bold text-[#2E7D32]">
                     {user.verification_status.replace('_', ' ')}
                   </span>
@@ -399,8 +410,8 @@ export function AdminBookingDetailPage() {
             {payments.length === 0 ? (
               <div className="p-6 rounded-[16px] bg-[#FFFFFF] border border-[#E9DCC5] text-center space-y-1.5">
                 <FileText className="h-6 w-6 text-[#E9DCC5] mx-auto" />
-                <p className="font-display font-bold text-sm text-[#3E2B1F]">No payment receipts logged.</p>
-                <p className="text-xs text-[#6F5B47]">Transaction history will update when online or offline payments settle.</p>
+                <p className="font-display font-bold text-sm text-[#3E2B1F]">{"No payment receipts logged."}</p>
+                <p className="text-xs text-[#6F5B47]">{"Transaction history will update when online or offline payments settle."}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -419,7 +430,7 @@ export function AdminBookingDetailPage() {
                     </div>
                     {p.razorpay_payment_id && (
                       <div className="flex items-center justify-between text-xs text-[#6F5B47] font-mono pt-1 border-t border-[#E9DCC5]">
-                        <span>Razorpay ID:</span>
+                        <span>{"Razorpay ID:"}</span>
                         <span className="font-bold text-[#3E2B1F] truncate max-w-[160px]">{p.razorpay_payment_id}</span>
                       </div>
                     )}

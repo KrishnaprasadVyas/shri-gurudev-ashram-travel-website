@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { PortalSidebar } from './PortalSidebar'
+import { useTranslation } from "react-i18next";
 
 export function PortalLayout() {
+    const { t } = useTranslation();
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -28,11 +30,11 @@ export function PortalLayout() {
     <div className="min-h-screen bg-[#FAF7F2] text-[#3E2B1F] flex flex-col lg:flex-row font-body-md selection:bg-[#B8860B]/20 selection:text-[#3E2B1F]">
       {/* ── Mobile Top Nav (Hamburger) ───────────────────── */}
       <div className="lg:hidden flex justify-between items-center bg-[#FFFFFF] px-4 py-3 border-b border-[#E9DCC5] sticky top-0 z-30 shadow-sm shrink-0">
-        <div className="font-display font-bold text-[#3E2B1F] text-lg truncate">माँ वैष्णवी टूरिज़्म</div>
+        <div className="font-display font-bold text-[#3E2B1F] text-lg truncate">{t('navbar.maaVaishnaviTourism')}</div>
         <button
           className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-[#B8860B] hover:bg-[#F5EFE4] rounded-full transition-colors"
           onClick={() => setMobileMenuOpen(true)}
-          aria-label="Open portal menu"
+          aria-label={t('public.common.openPortalMenu')}
         >
           <Menu className="w-6 h-6" />
         </button>
@@ -54,11 +56,11 @@ export function PortalLayout() {
         className={`fixed top-0 right-0 h-full w-[280px] bg-[#FFFFFF] z-[110] transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="flex justify-between items-center p-4 border-b border-[#E9DCC5] shrink-0">
-          <span className="font-display font-bold text-[#3E2B1F] text-lg">Menu</span>
+          <span className="font-display font-bold text-[#3E2B1F] text-lg">{t('public.common.menu')}</span>
           <button 
             className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-[#B8860B] hover:bg-[#F5EFE4] rounded-full transition-colors"
             onClick={() => setMobileMenuOpen(false)}
-            aria-label="Close menu"
+            aria-label={t('public.common.closeMenu')}
           >
             <X className="w-6 h-6" />
           </button>

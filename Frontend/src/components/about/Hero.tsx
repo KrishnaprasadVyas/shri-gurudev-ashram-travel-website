@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SpiritualDivider = () => (
   <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-6 pb-4">
@@ -9,6 +10,7 @@ const SpiritualDivider = () => (
 );
 
 export const Hero: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <section className="relative min-h-[400px] md:min-h-[600px] flex flex-col items-center justify-start text-center px-4 md:px-6 overflow-hidden bg-surface border-b border-outline-variant/20 pt-10 md:pt-16 pb-16 md:pb-20">
       {/* Editorial Ivory Background with Subtle Gradients */}
@@ -31,17 +33,15 @@ export const Hero: React.FC = () => {
         
         {/* Subtle Eyebrow */}
         <span className="font-label-caps text-sm text-secondary uppercase tracking-[0.3em] mb-4 block font-semibold">
-          About Us
+          {t('about.hero.eyebrow')}
         </span>
         
         {/* Elegant Heading */}
-        <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-primary mb-4 font-bold tracking-tight leading-tight">
-          Where Every Journey <br className="hidden sm:block" /> Becomes a Spiritual Awakening
-        </h1>
+        <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-primary mb-4 font-bold tracking-tight leading-tight" dangerouslySetInnerHTML={{ __html: t('about.hero.title') }} />
         
         {/* Short Description */}
         <p className="font-body-lg text-lg sm:text-xl md:text-2xl text-on-surface-variant mb-8 leading-relaxed max-w-2xl mx-auto font-light">
-          "Every pilgrimage begins with faith and ends with inner transformation."
+          {t('about.hero.subtitle')}
         </p>
       </div>
       <SpiritualDivider />

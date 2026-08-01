@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navigation, Compass } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 export const VisitAshram: React.FC = () => {
+    const { t } = useTranslation();
   const scrollToMap = () => {
     const mapElement = document.getElementById('ashram-map-section');
     if (mapElement) {
@@ -26,7 +28,7 @@ export const VisitAshram: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
               <div className="absolute bottom-6 left-6 right-6">
                 <span className="bg-surface/90 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-label-caps uppercase tracking-widest text-primary shadow-sm inline-flex items-center gap-2">
-                  🙏 Palaskhed Sapkal, Maharashtra
+                  {t('public.contact.location')}
                 </span>
               </div>
             </div>
@@ -37,15 +39,15 @@ export const VisitAshram: React.FC = () => {
           {/* Right: Editorial Content (Col Span 6) */}
           <div className="lg:col-span-6 space-y-8 text-center lg:text-left">
             <span className="font-label-caps text-xs md:text-sm text-secondary uppercase tracking-[0.25em] block font-semibold">
-              Sacred Abode of Serenity
+              {t('public.contact.abodeTitle')}
             </span>
 
             <h2 className="font-display-lg text-3xl sm:text-4xl md:text-5xl text-primary font-bold tracking-tight leading-tight">
-              Experience the Peace of the Ashram
+              {t('public.contact.experiencePeace')}
             </h2>
 
             <p className="font-body-lg text-base sm:text-lg text-on-surface-variant leading-relaxed font-light">
-              We warmly invite devotees to visit the Ashram for Darshan, Satsang, Haripath, Gita Path, Annadan, and other spiritual activities under the divine blessings of Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj.
+              {t('public.contact.inviteDesc')}
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -54,14 +56,14 @@ export const VisitAshram: React.FC = () => {
                 className="inline-flex items-center justify-center gap-2.5 bg-primary text-on-primary px-8 py-4 rounded-xl font-label-caps text-xs tracking-widest uppercase hover:bg-secondary transition-all duration-300 shadow-md hover:shadow-lg active:scale-95"
               >
                 <Navigation className="w-4 h-4" />
-                Get Directions
+                {t('public.common.getDirections')}
               </button>
               <Link
                 to="/yatras"
                 className="inline-flex items-center justify-center gap-2.5 border border-primary text-primary hover:bg-primary hover:text-on-primary px-8 py-4 rounded-xl font-label-caps text-xs tracking-widest uppercase transition-all duration-300 shadow-sm active:scale-95"
               >
                 <Compass className="w-4 h-4" />
-                Explore Yatras
+                {t('about.cta.btn')}
               </Link>
             </div>
           </div>

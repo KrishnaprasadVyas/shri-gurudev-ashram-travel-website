@@ -55,9 +55,8 @@ export function AdminSidebar({ isCollapsed = false }: AdminSidebarProps) {
       <div className={`px-6 py-8 border-b border-[#E9DCC5] flex flex-col items-center text-center bg-[#FFFFFF] shrink-0 transition-all duration-300 ${isCollapsed ? 'px-3 py-6' : ''}`}>
         <div
           onClick={() => navigate('/')}
-          className={`rounded-2xl bg-[#F5EFE4] border border-[#E9DCC5] shadow-sm flex items-center justify-center p-3 mb-3.5 group cursor-pointer transition-transform duration-300 hover:scale-105 hover:bg-[#FFF7E8] ${
-            isCollapsed ? 'w-12 h-12 p-2 mb-1' : 'w-22 h-22 sm:w-24 sm:h-24'
-          }`}
+          className={`rounded-2xl bg-[#F5EFE4] border border-[#E9DCC5] shadow-sm flex items-center justify-center p-3 mb-3.5 group cursor-pointer transition-transform duration-300 hover:scale-105 hover:bg-[#FFF7E8] ${isCollapsed ? 'w-12 h-12 p-2 mb-1' : 'w-22 h-22 sm:w-24 sm:h-24'
+            }`}
           title="Return to Administration Dashboard"
         >
           <img
@@ -91,10 +90,9 @@ export function AdminSidebar({ isCollapsed = false }: AdminSidebarProps) {
               end={item.end}
               title={isCollapsed ? item.label : undefined}
               className={({ isActive }) =>
-                `group relative flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-body-md text-sm font-semibold transition-all duration-200 ease-out min-h-[46px] ${
-                  isActive
-                    ? 'bg-[#FFF7E8] text-[#B8860B] font-bold border border-[#E9DCC5] shadow-[0_2px_12px_rgba(184,134,11,0.06)]'
-                    : 'text-[#6F5B47] hover:text-[#3E2B1F] hover:bg-[#F5EFE4]/60'
+                `group relative flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-body-md text-sm font-semibold transition-all duration-200 ease-out min-h-[46px] ${isActive
+                  ? 'bg-[#FFF7E8] text-[#B8860B] font-bold border border-[#E9DCC5] shadow-[0_2px_12px_rgba(184,134,11,0.06)]'
+                  : 'text-[#6F5B47] hover:text-[#3E2B1F] hover:bg-[#F5EFE4]/60'
                 } ${isCollapsed ? 'justify-center px-2 py-3.5' : ''}`
               }
             >
@@ -105,20 +103,18 @@ export function AdminSidebar({ isCollapsed = false }: AdminSidebarProps) {
                   )}
 
                   <item.icon
-                    className={`h-5 w-5 shrink-0 transition-all duration-200 ${
-                      isActive
+                    className={`h-5 w-5 shrink-0 transition-all duration-200 ${isActive
                         ? 'text-[#B8860B] scale-105'
                         : 'text-[#B8860B]/70 group-hover:text-[#B8860B] group-hover:translate-x-0.5'
-                    }`}
+                      }`}
                   />
 
                   {!isCollapsed && <span className="flex-1 tracking-wide">{item.label}</span>}
 
                   {isPending && (
                     <span
-                      className={`flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-[#C68A00] text-white text-[11px] font-bold shadow-sm ${
-                        isCollapsed ? 'absolute top-2 right-2 min-w-[18px] h-[18px] text-[9px] px-1' : ''
-                      }`}
+                      className={`flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-[#C68A00] text-white text-[11px] font-bold shadow-sm ${isCollapsed ? 'absolute top-2 right-2 min-w-[18px] h-[18px] text-[9px] px-1' : ''
+                        }`}
                     >
                       {stats!.pendingVerifications > 9 ? '9+' : stats!.pendingVerifications}
                     </span>
@@ -136,9 +132,8 @@ export function AdminSidebar({ isCollapsed = false }: AdminSidebarProps) {
           <div className={`flex items-center justify-between gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
             <div className="flex items-center gap-3 min-w-0">
               <div
-                className={`rounded-2xl bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-white font-display font-bold shadow-sm shrink-0 ring-2 ring-[#B8860B]/20 ${
-                  isCollapsed ? 'w-9 h-9 text-base' : 'w-11 h-11 text-lg'
-                }`}
+                className={`rounded-2xl bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-white font-display font-bold shadow-sm shrink-0 ring-2 ring-[#B8860B]/20 ${isCollapsed ? 'w-9 h-9 text-base' : 'w-11 h-11 text-lg'
+                  }`}
                 title={userProfile?.full_name ?? 'Admin Profile'}
               >
                 {(userProfile?.full_name ?? 'A').charAt(0).toUpperCase()}
@@ -170,9 +165,8 @@ export function AdminSidebar({ isCollapsed = false }: AdminSidebarProps) {
           <button
             onClick={handleSignOut}
             title={isCollapsed ? 'Sign Out of Portal' : undefined}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-[#B8860B] bg-[#FFFFFF] border border-[#B8860B] hover:bg-[#FFF7E8] hover:text-[#3E2B1F] transition-all duration-200 min-h-[42px] shadow-2xs ${
-              isCollapsed ? 'px-2 py-2' : ''
-            }`}
+            className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-[#B8860B] bg-[#FFFFFF] border border-[#B8860B] hover:bg-[#FFF7E8] hover:text-[#3E2B1F] transition-all duration-200 min-h-[42px] shadow-2xs ${isCollapsed ? 'px-2 py-2' : ''
+              }`}
           >
             <LogOut className="h-4 w-4 shrink-0" />
             {!isCollapsed && <span>Sign Out</span>}

@@ -6,8 +6,10 @@ import { useAuth } from '@/context/AuthContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { LoadingState } from '@/components/shared/States'
 import { formatCurrency } from '@/lib/utils'
+import { useTranslation } from "react-i18next";
 
 export function YatraDetailPage() {
+    const { t } = useTranslation();
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -76,7 +78,7 @@ export function YatraDetailPage() {
           className="inline-flex items-center gap-1.5 text-sm text-[#f2f0eb]/50 hover:text-amber-400 transition-colors min-h-[44px]"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          Back to Yatras
+          {t('yatraDetail.backToYatras')}
         </Link>
       </div>
 
@@ -110,18 +112,18 @@ export function YatraDetailPage() {
               </span>
               <span className="flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-amber-400" />
-                {pkg.total_seats} total seats
+                {pkg.total_seats} {t('yatraDetail.totalSeats')}
               </span>
               <span className="flex items-center gap-1.5">
                 <IndianRupee className="h-4 w-4 text-amber-400" />
-                Base {formatCurrency(pkg.price)} per person
+                {t('yatraDetail.base')} {formatCurrency(pkg.price)} {t('yatraDetail.perPerson')}
               </span>
             </div>
           </div>
 
           {/* About Yatra */}
           <div className="p-6 rounded-2xl bg-[#121110] border border-amber-900/20">
-            <h2 className="text-[#f2f0eb] font-semibold text-lg mb-4">About This Yatra</h2>
+            <h2 className="text-[#f2f0eb] font-semibold text-lg mb-4">{t('yatraDetail.aboutYatra')}</h2>
             <p className="text-[#f2f0eb]/60 leading-relaxed whitespace-pre-line">
               {pkg.description}
             </p>
@@ -130,12 +132,12 @@ export function YatraDetailPage() {
           {/* Interactive Dynamic Price & Customization Calculator */}
           <div className="p-6 rounded-2xl bg-[#121110] border border-amber-900/20 space-y-6">
             <h2 className="text-[#f2f0eb] font-semibold text-lg flex items-center gap-2">
-              <span className="text-amber-400">⚡</span> Customize & Estimate Cost
+              <span className="text-amber-400">⚡</span> {t('yatraDetail.customizeCost')}
             </h2>
 
             {/* Travelers count */}
             <div>
-              <label className="block text-sm text-[#f2f0eb]/70 mb-2">Number of Travelers</label>
+              <label className="block text-sm text-[#f2f0eb]/70 mb-2">{t('yatraDetail.numTravelers')}</label>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setTravelerCount(Math.max(1, travelerCount - 1))}
@@ -155,7 +157,7 @@ export function YatraDetailPage() {
 
             {/* Transport Mode */}
             <div>
-              <label className="block text-sm text-[#f2f0eb]/70 mb-2">Mode of Transport</label>
+              <label className="block text-sm text-[#f2f0eb]/70 mb-2">{t('yatraDetail.modeTransport')}</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
@@ -166,7 +168,7 @@ export function YatraDetailPage() {
                       : 'bg-black/30 border-white/10 text-[#f2f0eb]/60 hover:border-white/20'
                   }`}
                 >
-                  <Train className="h-4 w-4" /> Train Journey
+                  <Train className="h-4 w-4" /> {t('yatraDetail.trainJourney')}
                 </button>
                 <button
                   type="button"
@@ -177,14 +179,14 @@ export function YatraDetailPage() {
                       : 'bg-black/30 border-white/10 text-[#f2f0eb]/60 hover:border-white/20'
                   }`}
                 >
-                  <Plane className="h-4 w-4" /> Flight Surcharge (+{formatCurrency(pkg.flight_price || 0)})
+                  <Plane className="h-4 w-4" /> {t('yatraDetail.flightSurcharge')} (+{formatCurrency(pkg.flight_price || 0)})
                 </button>
               </div>
             </div>
 
             {transportType === 'Train' && (
               <div>
-                <label className="block text-sm text-[#f2f0eb]/70 mb-2">Train Coach Type</label>
+                <label className="block text-sm text-[#f2f0eb]/70 mb-2">{t('yatraDetail.trainCoachType')}</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -195,7 +197,7 @@ export function YatraDetailPage() {
                         : 'bg-black/30 border-white/10 text-[#f2f0eb]/60'
                     }`}
                   >
-                    AC Train (+{formatCurrency(pkg.train_ac_price || 0)})
+                    {t('yatraDetail.acTrain')} (+{formatCurrency(pkg.train_ac_price || 0)})
                   </button>
                   <button
                     type="button"
@@ -206,7 +208,7 @@ export function YatraDetailPage() {
                         : 'bg-black/30 border-white/10 text-[#f2f0eb]/60'
                     }`}
                   >
-                    Non-AC Train (+{formatCurrency(pkg.train_non_ac_price || 0)})
+                    {t('yatraDetail.nonAcTrain')} (+{formatCurrency(pkg.train_non_ac_price || 0)})
                   </button>
                 </div>
               </div>
@@ -214,7 +216,7 @@ export function YatraDetailPage() {
 
             {/* Room Type */}
             <div>
-              <label className="block text-sm text-[#f2f0eb]/70 mb-2">Accommodation Choice</label>
+              <label className="block text-sm text-[#f2f0eb]/70 mb-2">{t('yatraDetail.accomChoice')}</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
@@ -225,7 +227,7 @@ export function YatraDetailPage() {
                       : 'bg-black/30 border-white/10 text-[#f2f0eb]/60'
                   }`}
                 >
-                  <Home className="h-4 w-4" /> AC Room (+{formatCurrency(pkg.room_ac_price || 0)})
+                  <Home className="h-4 w-4" /> {t('yatraDetail.acRoom')} (+{formatCurrency(pkg.room_ac_price || 0)})
                 </button>
                 <button
                   type="button"
@@ -236,14 +238,14 @@ export function YatraDetailPage() {
                       : 'bg-black/30 border-white/10 text-[#f2f0eb]/60'
                   }`}
                 >
-                  <Home className="h-4 w-4" /> Non-AC Room (+{formatCurrency(pkg.room_non_ac_price || 0)})
+                  <Home className="h-4 w-4" /> {t('yatraDetail.nonAcRoom')} (+{formatCurrency(pkg.room_non_ac_price || 0)})
                 </button>
               </div>
             </div>
 
             {/* Optional Attached Seva */}
             <div>
-              <label className="block text-sm text-[#f2f0eb]/70 mb-2">Optional Yatra Seva Attachment</label>
+              <label className="block text-sm text-[#f2f0eb]/70 mb-2">{t('yatraDetail.optionalSeva')}</label>
               <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
@@ -254,7 +256,7 @@ export function YatraDetailPage() {
                       : 'bg-black/30 border-white/10 text-[#f2f0eb]/60'
                   }`}
                 >
-                  No Extra Seva
+                  {t('yatraDetail.noExtraSeva')}
                 </button>
                 <button
                   type="button"
@@ -266,7 +268,7 @@ export function YatraDetailPage() {
                   }`}
                 >
                   <HeartHandshake className="h-3.5 w-3.5 mx-auto mb-1 text-amber-400" />
-                  Guruji Aarti (+₹2,100)
+                  {t('yatraDetail.gurujiAarti')} (+₹2,100)
                 </button>
                 <button
                   type="button"
@@ -278,7 +280,7 @@ export function YatraDetailPage() {
                   }`}
                 >
                   <HeartHandshake className="h-3.5 w-3.5 mx-auto mb-1 text-amber-400" />
-                  Yajman Seva (+₹5,100)
+                  {t('yatraDetail.yajmanSeva')} (+₹5,100)
                 </button>
               </div>
             </div>
@@ -289,44 +291,44 @@ export function YatraDetailPage() {
         <div className="lg:col-span-1">
           <div className="sticky top-20 p-6 rounded-2xl bg-[#121110] border border-amber-900/20 space-y-5">
             <div>
-              <p className="text-xs text-[#f2f0eb]/50 mb-1">Total Dynamic Calculation</p>
+              <p className="text-xs text-[#f2f0eb]/50 mb-1">{t('yatraDetail.totalDynamic')}</p>
               <div className="flex items-baseline gap-1">
                 <span className="text-3xl font-bold text-amber-400">
                   {formatCurrency(totalAmount)}
                 </span>
-                <span className="text-xs text-[#f2f0eb]/40">({travelerCount} traveler{travelerCount > 1 ? 's' : ''})</span>
+                <span className="text-xs text-[#f2f0eb]/40">({travelerCount} {travelerCount > 1 ? t('yatraDetail.travelers') : t('yatraDetail.traveler')})</span>
               </div>
             </div>
 
             <div className="space-y-2 text-xs border-t border-amber-900/20 pt-4">
               <div className="flex justify-between text-[#f2f0eb]/60">
-                <span>Base ({formatCurrency(basePrice)} x {travelerCount})</span>
+                <span>{t('yatraDetail.base')} ({formatCurrency(basePrice)} x {travelerCount})</span>
                 <span>{formatCurrency(basePrice * travelerCount)}</span>
               </div>
               {transportAddon > 0 && (
                 <div className="flex justify-between text-[#f2f0eb]/60">
-                  <span>Transport Add-on ({formatCurrency(transportAddon)} x {travelerCount})</span>
+                  <span>{t('yatraDetail.transportAddon')} ({formatCurrency(transportAddon)} x {travelerCount})</span>
                   <span>+{formatCurrency(transportAddon * travelerCount)}</span>
                 </div>
               )}
               {roomAddon > 0 && (
                 <div className="flex justify-between text-[#f2f0eb]/60">
-                  <span>Room Add-on ({formatCurrency(roomAddon)} x {travelerCount})</span>
+                  <span>{t('yatraDetail.roomAddon')} ({formatCurrency(roomAddon)} x {travelerCount})</span>
                   <span>+{formatCurrency(roomAddon * travelerCount)}</span>
                 </div>
               )}
               {sevaPrice > 0 && (
                 <div className="flex justify-between text-[#f2f0eb]/60">
-                  <span>Attached Seva</span>
+                  <span>{t('yatraDetail.attachedSeva')}</span>
                   <span>+{formatCurrency(sevaPrice)}</span>
                 </div>
               )}
               <div className="flex justify-between text-[#f2f0eb]/40 pt-2 border-t border-white/5">
-                <span>Est. Convenience Fee (2%)</span>
+                <span>{t('yatraDetail.estFee')}</span>
                 <span>+{formatCurrency(gatewayFee)}</span>
               </div>
               <div className="flex justify-between text-[#f2f0eb] font-semibold text-sm pt-1">
-                <span>Estimated Total Payable</span>
+                <span>{t('yatraDetail.estTotal')}</span>
                 <span className="text-amber-400">{formatCurrency(estimatedPayable)}</span>
               </div>
             </div>
@@ -335,14 +337,14 @@ export function YatraDetailPage() {
 
             {isSoldOut ? (
               <div className="text-center py-2">
-                <span className="text-red-400 font-medium text-sm">This Yatra is fully booked</span>
+                <span className="text-red-400 font-medium text-sm">{t('yatraDetail.fullyBooked')}</span>
               </div>
             ) : (
               <button
                 onClick={handleBook}
                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold hover:from-amber-600 hover:to-orange-700 transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)]"
               >
-                {user ? 'Proceed to Book' : 'Login to Book'}
+                {user ? t('yatraDetail.proceedBook') : t('yatraDetail.loginBook')}
               </button>
             )}
           </div>

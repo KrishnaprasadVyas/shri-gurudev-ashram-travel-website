@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Clock, IndianRupee, Users } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import type { TravelPackage } from '@/types/travel'
+import { useTranslation } from "react-i18next";
 
 interface PackageCardProps {
   package: TravelPackage
@@ -9,6 +10,7 @@ interface PackageCardProps {
 }
 
 function SeatsBadge({ remaining }: { remaining: number }) {
+    const { t } = useTranslation();
   if (remaining === 0) {
     return (
       <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-500/80 text-white">
@@ -31,6 +33,7 @@ function SeatsBadge({ remaining }: { remaining: number }) {
 }
 
 export function PackageCard({ package: pkg, showBookButton = true }: PackageCardProps) {
+    const { t } = useTranslation();
   const { user } = useAuth()
   const navigate = useNavigate()
 

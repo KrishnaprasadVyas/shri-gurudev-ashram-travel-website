@@ -9,6 +9,7 @@ import { LoadingState } from '@/components/shared/States'
 import apiClient from '@/lib/apiClient'
 import { toast } from 'sonner'
 import type { BookingRow } from '@/types/database.types'
+import { useTranslation } from "react-i18next";
 
 type Step = 1 | 2 | 3 | 4
 
@@ -27,6 +28,7 @@ type PassengerForm = {
 type DocState = Record<number, Record<string, File>>
 
 export function BookPage() {
+    const { t } = useTranslation();
   const { packageId } = useParams<{ packageId: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -49,7 +51,7 @@ export function BookPage() {
     }
   })
 
-  usePageTitle(pkg ? `Book ${pkg.title}` : 'Book Yatra')
+  usePageTitle(pkg ? `${t('portal.book.bookTitle')} ${pkg.title}` : t('portal.book.bookYatra'))
 
   const [step, setStep] = useState<Step>(1)
   const [booking, setBooking] = useState<BookingRow | null>(null)
@@ -258,8 +260,8 @@ export function BookPage() {
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#3E2B1F] tracking-tight">Book {pkg.title}</h1>
-            <p className="text-sm text-[#6F5B47] font-normal mt-0.5">Complete your pilgrimage reservation</p>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#3E2B1F] tracking-tight">{t('portal.book.bookTitle')} {pkg.title}</h1>
+            <p className="text-sm text-[#6F5B47] font-normal mt-0.5">{t('portal.book.completeReservation')}</p>
           </div>
         </div>
       </div>
@@ -290,14 +292,14 @@ export function BookPage() {
           <form onSubmit={(e) => { e.preventDefault(); step1Mutation.mutate(); }} className="p-6 sm:p-8 space-y-6">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-4 w-4 text-[#B8860B]" />
-              <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">Step 1 of 4</span>
+              <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">{t('portal.book.step1')}</span>
             </div>
-            <h2 className="font-display text-xl font-bold text-[#3E2B1F] mb-6">Setup your Yatra</h2>
+            <h2 className="font-display text-xl font-bold text-[#3E2B1F] mb-6">{t('portal.book.setupYatra')}</h2>
             
             <div className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-2">Transport Type</label>
+                  <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-2">{t('portal.book.transportType')}</label>
                   <div className="flex gap-3">
                     {(['Flight', 'Train'] as const).map(t => (
                       <button key={t} type="button" onClick={() => setPreferences({ ...preferences, transportType: t, busType: '' })} className={`flex-1 py-3 rounded-xl border text-sm font-bold transition-all ${preferences.transportType === t ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B]' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47]'}`}>
@@ -308,7 +310,7 @@ export function BookPage() {
                 </div>
                 {preferences.transportType === 'Train' ? (
                   <div>
-                    <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-2">Train Class</label>
+                    <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-2">{t('portal.book.trainClass')}</label>
                     <div className="flex gap-3">
                       {(['AC Train', 'Non-AC Train'] as const).map(c => (
                         <button key={c} type="button" onClick={() => setPreferences({ ...preferences, busType: c })} className={`flex-1 py-3 rounded-xl border text-sm font-bold transition-all ${preferences.busType === c ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B]' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47]'}`}>
@@ -319,7 +321,7 @@ export function BookPage() {
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-2">Room Type</label>
+                    <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-2">{t('portal.book.roomType')}</label>
                     <div className="flex gap-3">
                       {(['AC Room', 'Non-AC Room'] as const).map(r => (
                         <button key={r} type="button" onClick={() => setPreferences({ ...preferences, roomType: r })} className={`flex-1 py-3 rounded-xl border text-sm font-bold transition-all ${preferences.roomType === r ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B]' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47]'}`}>
@@ -333,7 +335,7 @@ export function BookPage() {
 
               {preferences.transportType === 'Train' && (
                 <div>
-                  <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-2">Room Type</label>
+                  <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-2">{t('portal.book.roomType')}</label>
                   <div className="flex gap-3 max-w-[50%]">
                       {(['AC Room', 'Non-AC Room'] as const).map(r => (
                       <button key={r} type="button" onClick={() => setPreferences({ ...preferences, roomType: r })} className={`flex-1 py-3 rounded-xl border text-sm font-bold transition-all ${preferences.roomType === r ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B]' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47]'}`}>
@@ -349,11 +351,11 @@ export function BookPage() {
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-bold text-[#3E2B1F] uppercase tracking-wider flex items-center gap-2">
                     <Gift className="h-4 w-4 text-[#B8860B]" />
-                    Attach Optional Seva (Devotional Offering)
+                    {t('portal.book.attachOptionalSeva')}
                   </label>
-                  <span className="text-[10px] font-bold text-[#B8860B] uppercase bg-[#FFF7E8] px-2 py-0.5 rounded-md border border-[#B8860B]/20">Optional</span>
+                  <span className="text-[10px] font-bold text-[#B8860B] uppercase bg-[#FFF7E8] px-2 py-0.5 rounded-md border border-[#B8860B]/20">{t('portal.book.optional')}</span>
                 </div>
-                <p className="text-xs text-[#6F5B47]">Enhance your Yatra experience by attaching an auspicious Seva offering to your pilgrimage booking.</p>
+                <p className="text-xs text-[#6F5B47]">{t('portal.book.sevaDesc')}</p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
                   <button
@@ -361,8 +363,8 @@ export function BookPage() {
                     onClick={() => setPreferences(prev => ({ ...prev, additionalSevaPackageId: '', additionalSevaType: '' }))}
                     className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${!preferences.additionalSevaPackageId ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B] ring-2 ring-[#B8860B]/20' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47] hover:border-[#B8860B]/40'}`}
                   >
-                    <div className="font-bold text-sm text-[#3E2B1F]">No Attached Seva</div>
-                    <div className="text-xs text-[#6F5B47] mt-1">Standard Yatra travel booking only</div>
+                    <div className="font-bold text-sm text-[#3E2B1F]">{t('portal.book.noAttachedSeva')}</div>
+                    <div className="text-xs text-[#6F5B47] mt-1">{t('portal.book.standardYatraDesc')}</div>
                     <div className="mt-2 text-xs font-bold text-[#B8860B]">₹0</div>
                   </button>
 
@@ -376,7 +378,7 @@ export function BookPage() {
                         className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${isSelected ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B] ring-2 ring-[#B8860B]/20' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47] hover:border-[#B8860B]/40'}`}
                       >
                         <div className="font-bold text-sm text-[#3E2B1F] line-clamp-1">{s.title}</div>
-                        <div className="text-xs text-[#6F5B47] mt-1 line-clamp-2">{s.description || 'Sacred Ashram Seva'}</div>
+                        <div className="text-xs text-[#6F5B47] mt-1 line-clamp-2">{s.description || t('portal.book.sacredAshramSeva')}</div>
                         <div className="mt-2 text-xs font-bold text-[#B8860B]">+ ₹{Number(s.price).toLocaleString('en-IN')}</div>
                       </button>
                     )
@@ -385,7 +387,7 @@ export function BookPage() {
 
                 {selectedSeva?.allow_date_selection && (
                   <div className="pt-2 max-w-xs">
-                    <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Seva Performing Date</label>
+                    <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.sevaDate')}</label>
                     <input
                       type="date"
                       value={preferences.additionalSevaDate}
@@ -398,30 +400,30 @@ export function BookPage() {
 
               <div className="p-5 rounded-2xl bg-[#FFF7E8] border border-[#B8860B]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-[#B8860B] uppercase tracking-wider mb-1">Travelers</label>
+                  <label className="block text-[10px] font-bold text-[#B8860B] uppercase tracking-wider mb-1">{t('portal.book.travelers')}</label>
                   <div className="w-full sm:w-32">
                     <input type="number" min={1} max={pkg.remaining_seats} value={travelerCount} onChange={(e) => setTravelerCount(Number(e.target.value))} className="w-full px-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#B8860B] focus:outline-none focus:ring-2 focus:ring-[#B8860B]/20 text-center text-lg font-bold shadow-2xs" />
                   </div>
-                  <span className="flex items-center gap-1.5 font-medium text-xs text-[#6F5B47] mt-2"><Users className="h-3 w-3 text-[#B8860B]" /> {pkg.remaining_seats} seats left</span>
+                  <span className="flex items-center gap-1.5 font-medium text-xs text-[#6F5B47] mt-2"><Users className="h-3 w-3 text-[#B8860B]" /> {pkg.remaining_seats} {t('portal.book.seatsLeft')}</span>
                 </div>
                 <div className="text-right space-y-1">
                   <div className="text-xs text-[#6F5B47]">
-                    Yatra ({travelerCount}x): ₹{totalBasePrice.toLocaleString('en-IN')}
-                    {sevaFee > 0 && <span className="ml-2 font-semibold text-[#B8860B]">+ Seva: ₹{sevaFee.toLocaleString('en-IN')}</span>}
+                    {t('portal.book.yatra')}{travelerCount}{"x): ₹"}{totalBasePrice.toLocaleString('en-IN')}
+                    {sevaFee > 0 && <span className="ml-2 font-semibold text-[#B8860B]">{t('portal.book.sevaFeeLabel')}{sevaFee.toLocaleString('en-IN')}</span>}
                   </div>
-                  <span className="block font-medium text-xs text-[#6F5B47]">Total Base Amount</span>
+                  <span className="block font-medium text-xs text-[#6F5B47]">{t('portal.book.totalBaseAmount')}</span>
                   <span className="flex items-center justify-end gap-1 font-display text-2xl font-bold text-[#B8860B]">
                     <IndianRupee className="h-5 w-5" />
                     {grandTotal.toLocaleString('en-IN')}
                   </span>
-                  <span className="block text-[10px] text-[#6F5B47]">+ 2.36% Gateway Fee</span>
+                  <span className="block text-[10px] text-[#6F5B47]">{t('portal.book.gatewayFeeAdd')}</span>
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end pt-4 border-t border-[#E9DCC5]">
               <button type="submit" disabled={step1Mutation.isPending || travelerCount > pkg.remaining_seats || travelerCount < 1} className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#B8860B] text-white font-bold text-sm tracking-wider uppercase hover:bg-[#D4AF37] disabled:opacity-50 transition-all shadow-md">
-                {step1Mutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Continue'} <ChevronRight className="h-4 w-4" />
+                {step1Mutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : t('portal.book.continue')} <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </form>
@@ -435,50 +437,50 @@ export function BookPage() {
           }} className="p-6 sm:p-8 space-y-8">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-4 w-4 text-[#B8860B]" />
-              <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">Step 2 of 4</span>
+              <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">{t('portal.book.step2')}</span>
             </div>
-            <h2 className="font-display text-xl font-bold text-[#3E2B1F]">Passenger Details</h2>
+            <h2 className="font-display text-xl font-bold text-[#3E2B1F]">{t('portal.book.passengerDetails')}</h2>
 
             <div className="space-y-6">
               {passengers.map((p, i) => (
                 <div key={i} className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#E9DCC5] space-y-4">
                   <h3 className="font-bold text-[#3E2B1F] flex items-center gap-2">
                     <span className="w-6 h-6 rounded-full bg-[#B8860B] text-white flex items-center justify-center text-xs">{i + 1}</span>
-                    Passenger {i + 1} {p.is_primary && <span className="text-[10px] uppercase bg-[#E9DCC5] text-[#6F5B47] px-2 py-0.5 rounded-full">Primary</span>}
+                    {t('portal.book.passenger')} {i + 1} {p.is_primary && <span className="text-[10px] uppercase bg-[#E9DCC5] text-[#6F5B47] px-2 py-0.5 rounded-full">{t('portal.book.primary')}</span>}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Full Name</label>
+                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.fullName')}</label>
                       <input type="text" value={p.full_name} onChange={(e) => handlePassengerChange(i, 'full_name', e.target.value)} className={inputClass(errors[`${i}_name`])} />
                       {errors[`${i}_name`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_name`]}</p>}
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Gender</label>
+                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.gender')}</label>
                       <select value={p.gender} onChange={(e) => handlePassengerChange(i, 'gender', e.target.value)} className={inputClass(errors[`${i}_gender`])}>
-                        <option value="">Select...</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
+                        <option value="">{t('portal.book.select')}</option>
+                        <option value="male">{t('portal.book.male')}</option>
+                        <option value="female">{t('portal.book.female')}</option>
+                        <option value="other">{t('portal.book.other')}</option>
                       </select>
                       {errors[`${i}_gender`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_gender`]}</p>}
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Date of Birth</label>
+                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.dob')}</label>
                       <input type="date" value={p.dob} onChange={(e) => handlePassengerChange(i, 'dob', e.target.value)} className={inputClass(errors[`${i}_dob`])} />
                       {errors[`${i}_dob`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_dob`]}</p>}
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Phone</label>
+                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.phone')}</label>
                       <input type="tel" maxLength={10} value={p.phone} onChange={(e) => handlePassengerChange(i, 'phone', e.target.value.replace(/\D/g, ''))} className={inputClass(errors[`${i}_phone`])} />
                       {errors[`${i}_phone`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_phone`]}</p>}
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Aadhaar Number</label>
+                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.aadhaarNumber')}</label>
                       <input type="text" maxLength={12} value={p.aadhaar_number} onChange={(e) => handlePassengerChange(i, 'aadhaar_number', e.target.value.replace(/\D/g, ''))} className={inputClass(errors[`${i}_aadhaar`])} />
                       {errors[`${i}_aadhaar`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_aadhaar`]}</p>}
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Address</label>
+                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.address')}</label>
                       <textarea rows={2} value={p.address} onChange={(e) => handlePassengerChange(i, 'address', e.target.value)} className={inputClass(errors[`${i}_address`])} />
                       {errors[`${i}_address`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_address`]}</p>}
                     </div>
@@ -488,9 +490,9 @@ export function BookPage() {
             </div>
 
             <div className="flex justify-between pt-4 border-t border-[#E9DCC5]">
-              <button type="button" onClick={() => setStep(1)} className="px-6 py-3 rounded-full text-[#6F5B47] font-bold text-sm tracking-wider uppercase hover:bg-[#FAF7F2] transition-colors">Back</button>
+              <button type="button" onClick={() => setStep(1)} className="px-6 py-3 rounded-full text-[#6F5B47] font-bold text-sm tracking-wider uppercase hover:bg-[#FAF7F2] transition-colors">{t('portal.book.back')}</button>
               <button type="submit" disabled={step2Mutation.isPending} className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#B8860B] text-white font-bold text-sm tracking-wider uppercase hover:bg-[#D4AF37] disabled:opacity-50 transition-all shadow-md">
-                {step2Mutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Continue'} <ChevronRight className="h-4 w-4" />
+                {step2Mutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : t('portal.book.continue')} <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </form>
@@ -501,15 +503,15 @@ export function BookPage() {
           <form onSubmit={(e) => { e.preventDefault(); step3Mutation.mutate(); }} className="p-6 sm:p-8 space-y-8">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-4 w-4 text-[#B8860B]" />
-              <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">Step 3 of 4</span>
+              <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">{t('portal.book.step3')}</span>
             </div>
-            <h2 className="font-display text-xl font-bold text-[#3E2B1F]">Document Uploads</h2>
-            <p className="text-sm text-[#6F5B47]">Please provide ID proof for each passenger (JPG, PNG, PDF &lt; 5MB).</p>
+            <h2 className="font-display text-xl font-bold text-[#3E2B1F]">{t('portal.book.docUploads')}</h2>
+            <p className="text-sm text-[#6F5B47]" dangerouslySetInnerHTML={{ __html: t('portal.book.docInfo') }}></p>
 
             <div className="space-y-6">
               {passengers.map((p, i) => (
                 <div key={p.id} className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#E9DCC5] space-y-4 shadow-sm">
-                  <h3 className="font-bold text-[#3E2B1F]">{p.full_name}'s Documents</h3>
+                  <h3 className="font-bold text-[#3E2B1F]">{p.full_name}{t('portal.book.sDocs')}</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
                       { key: 'aadhaar_front', label: 'Aadhaar Front' },
@@ -529,8 +531,8 @@ export function BookPage() {
                             </div>
                           ) : (
                             <label className="mt-2 flex items-center justify-center gap-2 px-3 py-1.5 border border-dashed border-[#B8860B] rounded-lg text-[#B8860B] hover:bg-[#FFF7E8] transition-colors cursor-pointer text-xs font-bold">
-                              <Upload className="h-3 w-3" /> Upload
-                              <input type="file" className="hidden" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(e) => {
+                              <Upload className="h-3 w-3" /> {t('portal.book.upload')}
+                                                                        <input type="file" className="hidden" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(e) => {
                                 if (e.target.files?.[0]) setFile(i, doc.key, e.target.files[0])
                               }} />
                             </label>
@@ -544,9 +546,9 @@ export function BookPage() {
             </div>
 
             <div className="flex justify-between pt-4 border-t border-[#E9DCC5]">
-              <button type="button" onClick={() => setStep(2)} className="px-6 py-3 rounded-full text-[#6F5B47] font-bold text-sm tracking-wider uppercase hover:bg-[#FAF7F2] transition-colors">Back</button>
+              <button type="button" onClick={() => setStep(2)} className="px-6 py-3 rounded-full text-[#6F5B47] font-bold text-sm tracking-wider uppercase hover:bg-[#FAF7F2] transition-colors">{t('portal.book.back')}</button>
               <button type="submit" disabled={step3Mutation.isPending} className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#B8860B] text-white font-bold text-sm tracking-wider uppercase hover:bg-[#D4AF37] disabled:opacity-50 transition-all shadow-md">
-                {step3Mutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Continue'} <ChevronRight className="h-4 w-4" />
+                {step3Mutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : t('portal.book.continue')} <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </form>
@@ -557,25 +559,25 @@ export function BookPage() {
           <form onSubmit={(e) => { e.preventDefault(); submitMutation.mutate(); }} className="p-6 sm:p-8 space-y-8">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-4 w-4 text-[#B8860B]" />
-              <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">Step 4 of 4</span>
+              <span className="font-label-caps text-[10px] font-bold text-[#B8860B] uppercase tracking-[0.16em]">{t('portal.book.step4')}</span>
             </div>
-            <h2 className="font-display text-xl font-bold text-[#3E2B1F]">Review & Submit</h2>
+            <h2 className="font-display text-xl font-bold text-[#3E2B1F]">{t('portal.book.reviewSubmit')}</h2>
 
             <div className="space-y-6">
               <div className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#E9DCC5]">
-                <h3 className="font-bold text-[#3E2B1F] mb-3 border-b border-[#E9DCC5] pb-2">Booking Summary</h3>
+                <h3 className="font-bold text-[#3E2B1F] mb-3 border-b border-[#E9DCC5] pb-2">{t('portal.book.bookingSummary')}</h3>
                 <div className="grid grid-cols-2 gap-y-2 text-sm">
-                  <span className="text-[#6F5B47]">Package</span>
+                  <span className="text-[#6F5B47]">{t('portal.book.package')}</span>
                   <span className="font-medium text-[#3E2B1F] text-right">{pkg.title}</span>
-                  <span className="text-[#6F5B47]">Travelers</span>
+                  <span className="text-[#6F5B47]">{t('portal.book.travelers')}</span>
                   <span className="font-medium text-[#3E2B1F] text-right">{travelerCount}</span>
-                  <span className="text-[#6F5B47]">Transport</span>
+                  <span className="text-[#6F5B47]">{t('portal.book.transport')}</span>
                   <span className="font-medium text-[#3E2B1F] text-right">{preferences.transportType} {preferences.busType ? `(${preferences.busType})` : ''}</span>
-                  <span className="text-[#6F5B47]">Room</span>
+                  <span className="text-[#6F5B47]">{t('portal.book.room')}</span>
                   <span className="font-medium text-[#3E2B1F] text-right">{preferences.roomType}</span>
                   {selectedSeva && (
                     <>
-                      <span className="text-[#6F5B47]">Attached Seva</span>
+                      <span className="text-[#6F5B47]">{t('portal.book.attachedSeva')}</span>
                       <span className="font-medium text-[#B8860B] text-right">{selectedSeva.title}</span>
                     </>
                   )}
@@ -584,20 +586,20 @@ export function BookPage() {
 
               <div className="p-5 rounded-2xl bg-[#FFF7E8] border border-[#B8860B]/30 shadow-sm space-y-2">
                 <div className="flex justify-between text-sm text-[#6F5B47]">
-                  <span className="font-medium">Yatra ({travelerCount} traveler{travelerCount > 1 ? 's' : ''})</span>
+                  <span className="font-medium">{t('portal.book.yatra')}{travelerCount} {t('portal.book.travelerStr')}{travelerCount > 1 ? 's' : ''})</span>
                   <span className="font-bold text-[#3E2B1F]">₹{totalBasePrice.toLocaleString('en-IN')}</span>
                 </div>
                 {selectedSeva && (
                   <div className="flex justify-between text-sm text-[#6F5B47]">
-                    <span className="font-medium">Seva ({selectedSeva.title})</span>
+                    <span className="font-medium">{t('portal.book.sevaLabel')}{selectedSeva.title})</span>
                     <span className="font-bold text-[#B8860B]">₹{sevaFee.toLocaleString('en-IN')}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-xs text-[#6F5B47] pt-1">
-                  <span>Payment Gateway Fee (2.36%) will be added</span>
+                  <span>{t('portal.book.paymentGatewayFeeAdded')}</span>
                 </div>
                 <div className="flex items-center justify-between pt-3 border-t border-[#B8860B]/20">
-                  <span className="font-display text-lg font-bold text-[#3E2B1F]">Total Subtotal</span>
+                  <span className="font-display text-lg font-bold text-[#3E2B1F]">{t('portal.book.totalSubtotal')}</span>
                   <div className="flex items-center gap-1 text-2xl font-bold text-[#B8860B]">
                     <IndianRupee className="h-5 w-5" />
                     {grandTotal.toLocaleString('en-IN')}
@@ -607,9 +609,9 @@ export function BookPage() {
             </div>
 
             <div className="flex justify-between pt-4 border-t border-[#E9DCC5]">
-              <button type="button" onClick={() => setStep(3)} className="px-6 py-3 rounded-full text-[#6F5B47] font-bold text-sm tracking-wider uppercase hover:bg-[#FAF7F2] transition-colors">Back</button>
+              <button type="button" onClick={() => setStep(3)} className="px-6 py-3 rounded-full text-[#6F5B47] font-bold text-sm tracking-wider uppercase hover:bg-[#FAF7F2] transition-colors">{t('portal.book.back')}</button>
               <button type="submit" disabled={submitMutation.isPending} className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#B8860B] text-white font-bold text-sm tracking-wider uppercase hover:bg-[#D4AF37] disabled:opacity-50 transition-all shadow-md">
-                {submitMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Confirm & Proceed to Pay'}
+                {submitMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : t('portal.book.confirmPay')}
               </button>
             </div>
           </form>

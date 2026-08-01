@@ -1,5 +1,6 @@
 import { Loader2, AlertCircle, Sparkles, RefreshCw } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useTranslation } from "react-i18next";
 
 // ─── LoadingState ─────────────────────────────────────────────────────────────
 
@@ -9,6 +10,7 @@ interface LoadingStateProps {
 }
 
 export function LoadingState({ variant = 'full-page', count = 3 }: LoadingStateProps) {
+    const { t } = useTranslation();
   if (variant === 'full-page') {
     return (
       <div className="min-h-[380px] flex flex-col items-center justify-center gap-4 p-8 sm:p-12 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] max-w-xl mx-auto my-12 shadow-[0_8px_30px_rgba(62,43,31,0.04)] animate-in fade-in duration-300">
@@ -16,8 +18,8 @@ export function LoadingState({ variant = 'full-page', count = 3 }: LoadingStateP
           <Loader2 className="h-6 w-6 animate-spin text-[#B8860B]" />
         </div>
         <div className="text-center space-y-1">
-          <p className="font-display text-xl font-bold text-[#3E2B1F]">Loading records...</p>
-          <p className="text-xs text-[#6F5B47]">Please wait while we retrieve sacred data.</p>
+          <p className="font-display text-xl font-bold text-[#3E2B1F]">{t('public.loading.records')}</p>
+          <p className="text-xs text-[#6F5B47]">{t('public.loading.waitData')}</p>
         </div>
       </div>
     )
@@ -101,13 +103,14 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ message = 'We encountered an issue while retrieving data.', onRetry }: ErrorStateProps) {
+    const { t } = useTranslation();
   return (
     <div className="min-h-[360px] flex flex-col items-center justify-center gap-5 text-center p-8 sm:p-12 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] max-w-lg mx-auto my-8 shadow-[0_8px_30px_rgba(62,43,31,0.04)] animate-in fade-in duration-300">
       <div className="w-14 h-14 rounded-2xl bg-[#C0392B]/15 border border-[#C0392B]/30 flex items-center justify-center text-[#C0392B] shadow-2xs">
         <AlertCircle className="h-7 w-7" />
       </div>
       <div className="space-y-1.5 max-w-md">
-        <h3 className="font-display text-xl font-bold text-[#3E2B1F]">Something went wrong</h3>
+        <h3 className="font-display text-xl font-bold text-[#3E2B1F]">{t('public.error.somethingWentWrong')}</h3>
         <p className="text-sm text-[#6F5B47] leading-relaxed font-normal">{message}</p>
       </div>
       {onRetry && (
@@ -116,7 +119,7 @@ export function ErrorState({ message = 'We encountered an issue while retrieving
           className="px-6 py-3 rounded-full bg-[#B8860B] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-[#D4AF37] transition-all duration-250 cursor-pointer shadow-sm"
         >
           <RefreshCw className="h-3.5 w-3.5" />
-          <span>Retry</span>
+          <span>{t('public.common.retry')}</span>
         </button>
       )}
     </div>
@@ -138,6 +141,7 @@ export function EmptyState({
   description = 'Content will appear here once records are available.',
   action,
 }: EmptyStateProps) {
+    const { t } = useTranslation();
   return (
     <div className="min-h-[360px] flex flex-col items-center justify-center gap-4 text-center p-8 sm:p-12 rounded-3xl bg-[#FFFFFF] border border-[#E9DCC5] max-w-xl mx-auto my-8 shadow-[0_8px_30px_rgba(62,43,31,0.04)] animate-in fade-in duration-300">
       <div className="w-16 h-16 rounded-2xl bg-[#F5EFE4] border border-[#E9DCC5] flex items-center justify-center text-3xl shadow-2xs">

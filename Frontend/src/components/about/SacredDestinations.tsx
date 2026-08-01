@@ -7,6 +7,7 @@ import {
   stoneTemple, 
   anandaRetreat 
 } from '@/assets/images';
+import { useTranslation } from "react-i18next";
 
 interface Destination {
   name: string;
@@ -14,27 +15,30 @@ interface Destination {
   image: string;
 }
 
-const destinations: Destination[] = [
-  {
-    name: 'Kedarnath',
-    description: 'A sacred sanctuary nestled in the snow-clad peaks, home to the eternal Lord Shiva.',
-    image: kedarnath,
-  },
-  {
-    name: 'Badrinath',
-    description: 'The ancient seat of Lord Vishnu, situated peacefully along the Alaknanda river.',
-    image: stoneTemple,
-  },
-  {
-    name: 'Dwarka',
-    description: 'The legendary golden kingdom of Lord Krishna standing majestic by the Arabian Sea.',
-    image: anandaRetreat,
-  },
-];
+
 
 export const SacredDestinations: React.FC = () => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
+
+  const destinations: Destination[] = [
+    {
+      name: t('public.about.destinations.kedarnath'),
+      description: t('public.about.destinations.kedarnathDesc'),
+      image: kedarnath,
+    },
+    {
+      name: t('public.about.destinations.badrinath'),
+      description: t('public.about.destinations.badrinathDesc'),
+      image: stoneTemple,
+    },
+    {
+      name: t('public.about.destinations.dwarka'),
+      description: t('public.about.destinations.dwarkaDesc'),
+      image: anandaRetreat,
+    },
+  ];
 
   useEffect(() => {
     const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
@@ -46,10 +50,10 @@ export const SacredDestinations: React.FC = () => {
   return (
     <section className="py-16 md:py-32 px-4 md:px-margin-desktop bg-surface-container-low max-w-container-max mx-auto overflow-hidden">
       <div className="text-center mb-16 max-w-2xl mx-auto">
-        <span className="section-eyebrow">Our Sacred Destinations</span>
-        <h2 className="section-heading">Our Sacred Destinations</h2>
+        <span className="section-eyebrow">{t('public.about.destinations.title')}</span>
+        <h2 className="section-heading">{t('public.about.destinations.title')}</h2>
         <p className="section-desc">
-          Discover the divine places where faith, history, and devotion come together.
+          {t('public.about.destinations.desc')}
         </p>
       </div>
 
@@ -85,11 +89,11 @@ export const SacredDestinations: React.FC = () => {
                 <div className="p-4 md:p-6 flex-1 flex flex-col justify-between border-t border-amber-900/5">
                   <div>
                     <h3 className="font-headline-sm text-2xl text-primary font-bold tracking-wide">{dest.name}</h3>
-                    <span className="font-label-caps text-xs text-secondary tracking-widest uppercase block mt-1.5 mb-3 font-semibold">Sacred Yatra</span>
+                    <span className="font-label-caps text-xs text-secondary tracking-widest uppercase block mt-1.5 mb-3 font-semibold">{t('public.about.destinations.sacredYatra')}</span>
                     <p className="text-sm text-on-surface-variant leading-relaxed font-light">{dest.description}</p>
                   </div>
                   <div className="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between">
-                    <span className="text-xs font-label-caps text-secondary font-bold tracking-wider">Coming Soon</span>
+                    <span className="text-xs font-label-caps text-secondary font-bold tracking-wider">{t('public.common.comingSoon')}</span>
                     <div className="w-1.5 h-1.5 rounded-full bg-[#C98B1A]" />
                   </div>
                 </div>
@@ -109,12 +113,12 @@ export const SacredDestinations: React.FC = () => {
           {isExpanded ? (
             <>
               <ChevronUp className="w-5 h-5" />
-              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('public.common.showLess')}</span>
             </>
           ) : (
             <>
               <ChevronDown className="w-5 h-5" />
-              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View More Destinations</span>
+              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('public.about.destinations.viewMore')}</span>
             </>
           )}
         </motion.button>
@@ -125,7 +129,7 @@ export const SacredDestinations: React.FC = () => {
           to="/yatras" 
           className="btn-primary"
         >
-          <span>Explore All Yatras</span>
+          <span>{t('public.about.destinations.exploreAll')}</span>
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>

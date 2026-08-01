@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 
 const SpiritualDivider = () => (
   <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-6 pb-4">
@@ -9,13 +10,14 @@ const SpiritualDivider = () => (
 );
 
 export const GalleryHero: React.FC = () => {
+    const { t } = useTranslation();
   return (
     <section className="relative flex flex-col items-center justify-start text-center px-4 sm:px-6 overflow-hidden pt-10 md:pt-16 pb-0">
       <div className="relative z-10 w-full max-w-4xl animate-fade-in-up flex flex-col items-center">
         {/* White Ashram Logo */}
         <img
           src="/assets/Ashram vector logo_2022_white-01.png"
-          alt="Shri Gurudev Ashram Official Logo"
+          alt={"Shri Gurudev Ashram Official Logo"}
           width={320}
           height={320}
           loading="eager"
@@ -24,7 +26,7 @@ export const GalleryHero: React.FC = () => {
         
         {/* Page Title */}
         <h1 className="font-label-caps text-xs md:text-sm text-amber-400 uppercase tracking-[0.25em] mb-0 block font-semibold">
-          Sacred Moments
+          {t('about.gallery.title')}
         </h1>
       </div>
     </section>

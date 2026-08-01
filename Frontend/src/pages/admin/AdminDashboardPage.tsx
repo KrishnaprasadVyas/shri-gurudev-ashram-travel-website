@@ -21,6 +21,7 @@ import { LoadingState } from '@/components/shared/States'
 import { useAuth } from '@/context/AuthContext'
 import type { AdminStats, AdminBooking, AdminUser } from '@/types/admin'
 import type { TravelPackage } from '@/types/travel'
+import { useTranslation } from "react-i18next";
 
 const statusStyles: Record<string, string> = {
   payment_pending: 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30 font-bold',
@@ -37,6 +38,7 @@ const statusBadgeLabels: Record<string, string> = {
 }
 
 export function AdminDashboardPage() {
+    const { t } = useTranslation();
   usePageTitle('Admin Dashboard')
   const navigate = useNavigate()
   const { userProfile } = useAuth()
@@ -105,19 +107,23 @@ export function AdminDashboardPage() {
                 ॐ
               </div>
               <span className="font-label-caps text-[11px] font-bold uppercase tracking-[0.2em] text-[#B8860B]">
-                Ashram Command Center
-              </span>
+                
+                                              {"Ashram Command Center"}
+                                            </span>
             </div>
 
             <div>
               <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-[#3E2B1F] tracking-tight">
-                Namaste, {firstName} 🙏
+                
+                                              {"Namaste,"} {firstName} 🙏
               </h1>
               <div className="h-px w-32 bg-gradient-to-r from-[#B8860B] via-[#E9DCC5] to-transparent my-3.5" />
               <p className="font-body-md text-base sm:text-lg text-[#6F5B47] leading-relaxed font-normal">
-                Welcome back to the माँ वैष्णवी टूरिज़्म Administration Portal. <br className="hidden sm:inline" />
-                Manage devotees, yatras, bookings and ashram activities from one place.
-              </p>
+                
+                                              {"Welcome back to the माँ वैष्णवी टूरिज़्म Administration Portal."} <br className="hidden sm:inline" />
+                
+                                              {"Manage devotees, yatras, bookings and ashram activities from one place."}
+                                            </p>
             </div>
           </div>
 
@@ -125,16 +131,16 @@ export function AdminDashboardPage() {
           <div className="sm:max-w-xs w-full p-5 rounded-[20px] bg-[#FFFFFF] border border-[#B8860B]/30 shadow-[0_6px_20px_rgba(140,106,10,0.06)] relative z-10 space-y-3 shrink-0">
             <div className="flex items-center gap-2.5 text-[#B8860B]">
               <Sparkles className="h-5 w-5 shrink-0" />
-              <h3 className="font-display text-lg font-bold text-[#3E2B1F]">Ashram Updates</h3>
+              <h3 className="font-display text-lg font-bold text-[#3E2B1F]">{"Ashram Updates"}</h3>
             </div>
             <p className="text-xs text-[#6F5B47] leading-relaxed">
-              <strong className="text-[#B8860B] font-bold">{stats?.activePackages ?? 0} Yatra packages</strong> are currently active across sacred routes.
-            </p>
+              <strong className="text-[#B8860B] font-bold">{stats?.activePackages ?? 0}  {"Yatra packages"}</strong>  {"are currently active across sacred routes."}
+                                      </p>
             <button
               onClick={() => navigate('/admin/packages')}
               className="w-full py-2 px-3 rounded-xl bg-[#B8860B]/10 text-[#B8860B] font-bold text-xs hover:bg-[#B8860B] hover:text-[#FFFFFF] transition-all duration-200 flex items-center justify-center gap-1.5"
             >
-              <span>Manage Packages</span>
+              <span>{"Manage Packages"}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -143,35 +149,35 @@ export function AdminDashboardPage() {
         {/* 2. Quick Overview Cards & 3. Statistics Layout (#2, #3, #9, #10) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           <StatsCard
-            title="Total Devotees"
+            title={"Total Devotees"}
             value={stats?.totalUsers ?? 0}
             icon={Users}
             footer="Registered devotees"
             onClick={() => navigate('/admin/users')}
           />
           <StatsCard
-            title="Active Bookings"
+            title={"Active Bookings"}
             value={stats?.totalBookings ?? 0}
             icon={BookOpen}
             footer="Upcoming yatras"
             onClick={() => navigate('/admin/bookings')}
           />
           <StatsCard
-            title="Pending Verifications"
+            title={"Pending Verifications"}
             value={stats?.pendingVerifications ?? 0}
             icon={ShieldAlert}
             footer="Awaiting review"
             onClick={() => navigate('/admin/verifications')}
           />
           <StatsCard
-            title="Active Yatras"
+            title={"Active Yatras"}
             value={stats?.activePackages ?? 0}
             icon={Map}
             footer="Available packages"
             onClick={() => navigate('/admin/packages')}
           />
           <StatsCard
-            title="Sacred Revenue"
+            title={"Sacred Revenue"}
             value={`₹${(stats?.totalRevenue ?? 0).toLocaleString('en-IN')}`}
             icon={IndianRupee}
             footer="Total offerings"
@@ -183,7 +189,7 @@ export function AdminDashboardPage() {
           <div className="flex items-center justify-between">
             <h2 className="font-display text-xl sm:text-2xl font-bold text-[#3E2B1F] flex items-center gap-2.5">
               <span className="w-2 h-2 rounded-full bg-[#B8860B]" />
-              <span>Quick Actions</span>
+              <span>{"Quick Actions"}</span>
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -196,9 +202,10 @@ export function AdminDashboardPage() {
               </div>
               <div>
                 <p className="font-bold text-sm text-[#3E2B1F] group-hover:text-[#B8860B] transition-colors">
-                  Add Package
-                </p>
-                <p className="text-xs text-[#9A8A78]">Create a new yatra route</p>
+                  
+                                                    {"Add Package"}
+                                                  </p>
+                <p className="text-xs text-[#9A8A78]">{"Create a new yatra route"}</p>
               </div>
             </button>
 
@@ -211,9 +218,10 @@ export function AdminDashboardPage() {
               </div>
               <div>
                 <p className="font-bold text-sm text-[#3E2B1F] group-hover:text-[#B8860B] transition-colors">
-                  Verify Users
-                </p>
-                <p className="text-xs text-[#9A8A78]">Review pending IDs ({stats?.pendingVerifications ?? 0})</p>
+                  
+                                                    {"Verify Users"}
+                                                  </p>
+                <p className="text-xs text-[#9A8A78]">{"Review pending IDs ("}{stats?.pendingVerifications ?? 0})</p>
               </div>
             </button>
 
@@ -226,9 +234,10 @@ export function AdminDashboardPage() {
               </div>
               <div>
                 <p className="font-bold text-sm text-[#3E2B1F] group-hover:text-[#B8860B] transition-colors">
-                  View Bookings
-                </p>
-                <p className="text-xs text-[#9A8A78]">Manage pilgrim seats</p>
+                  
+                                                    {"View Bookings"}
+                                                  </p>
+                <p className="text-xs text-[#9A8A78]">{"Manage pilgrim seats"}</p>
               </div>
             </button>
 
@@ -241,9 +250,10 @@ export function AdminDashboardPage() {
               </div>
               <div>
                 <p className="font-bold text-sm text-[#3E2B1F] group-hover:text-[#B8860B] transition-colors">
-                  Manage Users
-                </p>
-                <p className="text-xs text-[#9A8A78]">View devotee database</p>
+                  
+                                                    {"Manage Users"}
+                                                  </p>
+                <p className="text-xs text-[#9A8A78]">{"View devotee database"}</p>
               </div>
             </button>
           </div>
@@ -254,17 +264,19 @@ export function AdminDashboardPage() {
           <div className="flex items-center justify-between px-8 py-6 border-b border-[#E9DCC5]">
             <div>
               <h2 className="font-display text-xl font-bold text-[#3E2B1F] tracking-wide">
-                Recent Bookings
-              </h2>
+                
+                                              {"Recent Bookings"}
+                                            </h2>
               <p className="text-xs text-[#6F5B47] mt-0.5">
-                Latest sacred yatra reservations registered across the ashram
-              </p>
+                
+                                              {"Latest sacred yatra reservations registered across the ashram"}
+                                            </p>
             </div>
             <button
               onClick={() => navigate('/admin/bookings')}
               className="px-4 py-2 rounded-full bg-[#FFFFFF] text-[#B8860B] border-2 border-[#B8860B] font-bold text-xs hover:bg-[#B8860B] hover:text-[#FFFFFF] transition-all duration-200 shadow-sm flex items-center gap-1.5 shrink-0"
             >
-              <span>View All</span>
+              <span>{"View All"}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -324,18 +336,21 @@ export function AdminDashboardPage() {
                           </div>
                           <div>
                             <p className="font-display text-xl font-bold text-[#3E2B1F]">
-                              No pilgrim bookings yet.
-                            </p>
+                              
+                                                                                        {"No pilgrim bookings yet."}
+                                                                                      </p>
                             <p className="text-sm font-normal text-[#6F5B47] leading-relaxed mt-1">
-                              Bookings will appear here once devotees begin registering for upcoming yatras.
-                            </p>
+                              
+                                                                                        {"Bookings will appear here once devotees begin registering for upcoming yatras."}
+                                                                                      </p>
                           </div>
                           <button
                             onClick={() => navigate('/admin/packages')}
                             className="px-5 py-2.5 rounded-full bg-[#B8860B] text-[#FFFFFF] font-bold text-xs hover:bg-[#6F5200] transition-all duration-200 shadow-sm"
                           >
-                            Browse Packages
-                          </button>
+                            
+                                                                                  {"Browse Packages"}
+                                                                                </button>
                         </div>
                       </td>
                     </tr>
@@ -356,14 +371,15 @@ export function AdminDashboardPage() {
                   <span className="w-8 h-8 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] flex items-center justify-center text-sm text-[#B8860B]">
                     🛕
                   </span>
-                  <span>Upcoming Yatras</span>
+                  <span>{"Upcoming Yatras"}</span>
                 </h3>
                 <button
                   onClick={() => navigate('/admin/packages')}
                   className="text-xs font-bold text-[#B8860B] hover:underline"
                 >
-                  All →
-                </button>
+                  
+                                                    {"All →"}
+                                                  </button>
               </div>
 
               <div className="divide-y divide-[#F1E9D8] pt-2">
@@ -378,8 +394,8 @@ export function AdminDashboardPage() {
                         {pkg.title}
                       </p>
                       <p className="text-xs text-[#B8860B] font-semibold mt-0.5">
-                        {pkg.remaining_seats ?? 12} Seats Left
-                      </p>
+                        {pkg.remaining_seats ?? 12}  {"Seats Left"}
+                                                      </p>
                     </div>
                     <div className="flex items-center gap-1 text-xs text-[#9A8A78] font-mono bg-[#FFFFFF] px-2.5 py-1 rounded-full border border-[#E9DCC5] shrink-0">
                       <Calendar className="h-3 w-3 text-[#B8860B]" />
@@ -390,7 +406,7 @@ export function AdminDashboardPage() {
               </div>
             </div>
             <div className="pt-3 border-t border-[#E9DCC5] text-center">
-              <span className="text-[11px] text-[#9A8A78] font-normal">Active pilgrimage schedule</span>
+              <span className="text-[11px] text-[#9A8A78] font-normal">{"Active pilgrimage schedule"}</span>
             </div>
           </div>
 
@@ -402,14 +418,15 @@ export function AdminDashboardPage() {
                   <span className="w-8 h-8 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] flex items-center justify-center text-sm text-[#B8860B]">
                     👥
                   </span>
-                  <span>Latest Devotees</span>
+                  <span>{"Latest Devotees"}</span>
                 </h3>
                 <button
                   onClick={() => navigate('/admin/users')}
                   className="text-xs font-bold text-[#B8860B] hover:underline"
                 >
-                  All →
-                </button>
+                  
+                                                    {"All →"}
+                                                  </button>
               </div>
 
               <div className="divide-y divide-[#F1E9D8] pt-2">
@@ -446,7 +463,7 @@ export function AdminDashboardPage() {
               </div>
             </div>
             <div className="pt-3 border-t border-[#E9DCC5] text-center">
-              <span className="text-[11px] text-[#9A8A78] font-normal">Recently joined seekers</span>
+              <span className="text-[11px] text-[#9A8A78] font-normal">{"Recently joined seekers"}</span>
             </div>
           </div>
 
@@ -458,11 +475,12 @@ export function AdminDashboardPage() {
                   <span className="w-8 h-8 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] flex items-center justify-center text-sm text-[#B8860B]">
                     <Clock className="h-4 w-4 text-[#B8860B]" />
                   </span>
-                  <span>Recent Activities</span>
+                  <span>{"Recent Activities"}</span>
                 </h3>
                 <span className="text-[10px] font-bold font-label-caps uppercase text-[#B8860B] bg-[#FFFFFF] px-2 py-0.5 rounded border border-[#E9DCC5]">
-                  Live Feed
-                </span>
+                  
+                                                    {"Live Feed"}
+                                                  </span>
               </div>
 
               <div className="space-y-4 pt-3 pl-2">
@@ -472,9 +490,9 @@ export function AdminDashboardPage() {
                     ✔
                   </div>
                   <div>
-                    <p className="font-bold text-xs text-[#3E2B1F]">Devotee Verified</p>
-                    <p className="text-[11px] text-[#6F5B47] mt-0.5">Identity documents verified for new pilgrim.</p>
-                    <span className="text-[10px] text-[#9A8A78] font-mono mt-0.5 block">10 mins ago</span>
+                    <p className="font-bold text-xs text-[#3E2B1F]">{"Devotee Verified"}</p>
+                    <p className="text-[11px] text-[#6F5B47] mt-0.5">{"Identity documents verified for new pilgrim."}</p>
+                    <span className="text-[10px] text-[#9A8A78] font-mono mt-0.5 block">{"10 mins ago"}</span>
                   </div>
                 </div>
 
@@ -484,9 +502,9 @@ export function AdminDashboardPage() {
                     ✔
                   </div>
                   <div>
-                    <p className="font-bold text-xs text-[#3E2B1F]">New Booking Registered</p>
-                    <p className="text-[11px] text-[#6F5B47] mt-0.5">Sacred yatra seat reserved successfully.</p>
-                    <span className="text-[10px] text-[#9A8A78] font-mono mt-0.5 block">1 hr ago</span>
+                    <p className="font-bold text-xs text-[#3E2B1F]">{"New Booking Registered"}</p>
+                    <p className="text-[11px] text-[#6F5B47] mt-0.5">{"Sacred yatra seat reserved successfully."}</p>
+                    <span className="text-[10px] text-[#9A8A78] font-mono mt-0.5 block">{"1 hr ago"}</span>
                   </div>
                 </div>
 
@@ -495,15 +513,15 @@ export function AdminDashboardPage() {
                     ✔
                   </div>
                   <div>
-                    <p className="font-bold text-xs text-[#3E2B1F]">Yatra Package Updated</p>
-                    <p className="text-[11px] text-[#6F5B47] mt-0.5">Schedule synchronized for upcoming season.</p>
-                    <span className="text-[10px] text-[#9A8A78] font-mono mt-0.5 block">3 hrs ago</span>
+                    <p className="font-bold text-xs text-[#3E2B1F]">{"Yatra Package Updated"}</p>
+                    <p className="text-[11px] text-[#6F5B47] mt-0.5">{"Schedule synchronized for upcoming season."}</p>
+                    <span className="text-[10px] text-[#9A8A78] font-mono mt-0.5 block">{"3 hrs ago"}</span>
                   </div>
                 </div>
               </div>
             </div>
             <div className="pt-3 border-t border-[#E9DCC5] text-center">
-              <span className="text-[11px] text-[#9A8A78] font-normal">System audit log</span>
+              <span className="text-[11px] text-[#9A8A78] font-normal">{"System audit log"}</span>
             </div>
           </div>
         </div>

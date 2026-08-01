@@ -8,8 +8,10 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 import { LoadingState } from '@/components/shared/States'
 import { toast } from 'sonner'
 import type { TravelPackageRow } from '@/types/database.types'
+import { useTranslation } from "react-i18next";
 
 export function AdminEditPackagePage() {
+    const { t } = useTranslation();
   usePageTitle('Edit Pilgrimage Package')
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -46,14 +48,15 @@ export function AdminEditPackagePage() {
     return (
       <div className="p-16 rounded-[24px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(90,70,20,0.06)] text-center max-w-md mx-auto space-y-4">
         <span className="text-4xl">⚠️</span>
-        <h2 className="font-display text-2xl font-bold text-[#3E2B1F]">Package Not Found</h2>
-        <p className="text-sm text-[#6F5B47]">We could not locate this Yatra package record in the database.</p>
+        <h2 className="font-display text-2xl font-bold text-[#3E2B1F]">{"Package Not Found"}</h2>
+        <p className="text-sm text-[#6F5B47]">{"We could not locate this Yatra package record in the database."}</p>
         <button
           onClick={() => navigate('/admin/packages')}
           className="px-6 py-2.5 rounded-full bg-[#B8860B] text-[#FFFFFF] font-bold text-xs uppercase tracking-wider"
         >
-          Return to Catalog
-        </button>
+          
+                          {"Return to Catalog"}
+                        </button>
       </div>
     )
   }
@@ -79,8 +82,9 @@ export function AdminEditPackagePage() {
         <div>
           <div className="flex items-center gap-2">
             <span className="font-label-caps text-[11px] font-bold uppercase tracking-[0.2em] text-[#B8860B] block">
-              Catalog Modification
-            </span>
+              
+                                        {"Catalog Modification"}
+                                      </span>
             <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
               pkg.is_active ? 'bg-[#2E7D32]/15 text-[#2E7D32]' : 'bg-[#9A8A78]/15 text-[#6F5B47]'
             }`}>
@@ -88,7 +92,8 @@ export function AdminEditPackagePage() {
             </span>
           </div>
           <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#3E2B1F] tracking-tight mt-0.5">
-            Edit: {pkg.title}
+            
+                                  {"Edit:"} {pkg.title}
           </h1>
         </div>
       </div>

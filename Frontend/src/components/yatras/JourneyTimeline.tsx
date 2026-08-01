@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, MessageCircleQuestion, ClipboardCheck, Compass, Navigation, Landmark, Home } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
-const steps = [
-  { label: 'Inquiry', icon: MessageCircleQuestion },
-  { label: 'Registration', icon: ClipboardCheck },
-  { label: 'Preparation', icon: Compass },
-  { label: 'Departure', icon: Navigation },
-  { label: 'Pilgrimage', icon: Landmark },
-  { label: 'Return', icon: Home },
+export const getSteps = (t: any) => [
+  { label: t('public.yatras.timeline.steps.inquiry', { defaultValue: 'Inquiry' }), icon: MessageCircleQuestion },
+  { label: t('public.yatras.timeline.steps.registration', { defaultValue: 'Registration' }), icon: ClipboardCheck },
+  { label: t('public.yatras.timeline.steps.preparation', { defaultValue: 'Preparation' }), icon: Compass },
+  { label: t('public.yatras.timeline.steps.departure', { defaultValue: 'Departure' }), icon: Navigation },
+  { label: t('public.yatras.timeline.steps.pilgrimage', { defaultValue: 'Pilgrimage' }), icon: Landmark },
+  { label: t('public.yatras.timeline.steps.return', { defaultValue: 'Return' }), icon: Home },
 ];
 
 export const JourneyTimeline: React.FC = () => {
+  const { t } = useTranslation();
+  const steps = getSteps(t);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
 
@@ -27,10 +30,10 @@ export const JourneyTimeline: React.FC = () => {
       <div className="max-w-container-max mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="font-label-caps text-xs tracking-[0.2em] text-secondary mb-3 block uppercase font-semibold">
-            SACRED PROCESS
+            {t('public.yatras.timeline.sacredProcess')}
           </span>
           <h2 className="font-display-lg text-3xl sm:text-4xl font-bold text-primary">
-            Yatra Journey Timeline
+            {t('public.yatras.timeline.title')}
           </h2>
         </div>
 
@@ -74,7 +77,7 @@ export const JourneyTimeline: React.FC = () => {
                       </h4>
                       
                       <span className="text-[10px] font-semibold text-secondary tracking-widest uppercase opacity-75">
-                        Step 0{idx + 1}
+                        {t('public.yatras.timeline.stepNum', { defaultValue: 'Step 0{{num}}', num: idx + 1 })}
                       </span>
                     </div>
                   </motion.div>
@@ -99,7 +102,7 @@ export const JourneyTimeline: React.FC = () => {
             ) : (
               <>
                 <ChevronDown className="w-5 h-5" />
-                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View Full Timeline</span>
+                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('public.yatras.timeline.viewFull', { defaultValue: 'View Full Timeline' })}</span>
               </>
             )}
           </motion.button>

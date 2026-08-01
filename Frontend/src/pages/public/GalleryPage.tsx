@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { GalleryHero } from '@/components/gallery/GalleryHero'
+import { useTranslation } from "react-i18next";
 
 const photos = [
   'photo-1544620347-c4fd4a3d5957', // temple
@@ -75,7 +76,8 @@ function Lightbox({ index, onClose, onNext, onPrev, total, src }: LightboxProps)
 const heights = ['h-64', 'h-48', 'h-72', 'h-56', 'h-64', 'h-52', 'h-72', 'h-48', 'h-60', 'h-56', 'h-64', 'h-48']
 
 export function GalleryPage() {
-  usePageTitle('Gallery')
+  const { t } = useTranslation();
+  usePageTitle(t('footer.gallery'))
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   const [isDesktop, setIsDesktop] = useState(true)
@@ -143,12 +145,12 @@ export function GalleryPage() {
           {isExpanded ? (
             <>
               <ChevronUp className="w-5 h-5" />
-              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('gallery.showLess')}</span>
             </>
           ) : (
             <>
               <ChevronDown className="w-5 h-5" />
-              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View More Photos</span>
+              <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('gallery.viewMore')}</span>
             </>
           )}
         </motion.button>
