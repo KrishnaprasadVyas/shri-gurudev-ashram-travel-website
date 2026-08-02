@@ -6,9 +6,11 @@ import { QuoteSection } from '@/components/home/QuoteSection';
 import { Statistics } from '@/components/home/Statistics';
 import { Hero as HomeHero } from '@/components/home/Hero';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useTranslation } from "react-i18next";
 
 export const HomePage: React.FC = () => {
-  usePageTitle('माँ वैष्णवी टूरिज़्म');
+  const { t } = useTranslation();
+  usePageTitle(t('navbar.maaVaishnaviTourism'));
   useEffect(() => {
     // Entrance animation logic
     const observerOptions = {

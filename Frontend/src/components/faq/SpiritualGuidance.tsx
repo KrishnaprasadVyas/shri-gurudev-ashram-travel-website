@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from "react-i18next";
 
 export const SpiritualGuidance: React.FC = () => {
+    const { t } = useTranslation();
   return (
     <section className="py-20 md:py-28 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto bg-surface overflow-hidden">
       <motion.div
@@ -16,7 +18,7 @@ export const SpiritualGuidance: React.FC = () => {
         <div className="order-2 lg:order-1 rounded-2xl overflow-hidden shadow-lg aspect-[4/3] lg:aspect-square relative group">
           <img
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            alt="Sacred scripture and temple"
+            alt={t('public.faq.quoteAlt')}
             src="/assets/TULSI MALA.jpg"
             loading="lazy"
           />
@@ -27,17 +29,17 @@ export const SpiritualGuidance: React.FC = () => {
         {/* Right: Content */}
         <div className="order-1 lg:order-2">
           <span className="font-label-caps text-xs tracking-[0.2em] text-secondary mb-4 block uppercase font-semibold">
-            PERSONAL ASSISTANCE
+            {t('public.faq.personalAssistance')}
           </span>
           <h2 className="font-display-lg text-3xl sm:text-4xl md:text-[42px] font-bold text-primary mb-6 leading-tight tracking-tight">
-            Need Personal Guidance?
+            {t('public.faq.needGuidance')}
           </h2>
           <div className="space-y-5 text-on-surface-variant leading-relaxed font-body-md text-lg font-light mb-10">
             <p>
-              If your question is not answered here, our Ashram volunteers are always happy to guide devotees regarding Yatras, registration, seva opportunities and Ashram visits.
+              {t('public.faq.guidanceDesc1')}
             </p>
             <p>
-              You may reach out to us through any of the channels below, or visit the Ashram directly at <strong className="font-medium text-on-surface">Palaskhed Sapkal, Chikhli, Buldhana</strong>.
+              {t('public.faq.guidanceDesc2')} <strong className="font-medium text-on-surface">{t('public.common.addressBuldhana')}</strong>.
             </p>
           </div>
 
@@ -46,13 +48,13 @@ export const SpiritualGuidance: React.FC = () => {
               to="/contact"
               className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary px-8 py-4 rounded-xl font-bold hover:bg-primary/90 transition-all hover:-translate-y-1 shadow-lg tracking-wider text-sm select-none"
             >
-              Contact Ashram
+              {t('public.common.contactAshram')}
             </Link>
             <Link
               to="/yatras"
               className="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary hover:bg-primary hover:text-on-primary px-8 py-4 rounded-xl font-bold transition-all hover:-translate-y-1 shadow-md tracking-wider text-sm select-none"
             >
-              Explore Yatras
+              {t('about.cta.btn')}
             </Link>
           </div>
         </div>

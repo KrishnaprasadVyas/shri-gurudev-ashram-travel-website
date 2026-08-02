@@ -344,11 +344,10 @@ export function AdminBookingsPage() {
                   setStatusFilter(tab.value)
                   setPage(1)
                 }}
-                className={`px-3.5 py-2 rounded-full text-xs font-bold transition-all duration-200 border ${
-                  statusFilter === tab.value
+                className={`px-3.5 py-2 rounded-full text-xs font-bold transition-all duration-200 border ${statusFilter === tab.value
                     ? 'bg-[#B8860B] text-[#FFFFFF] border-[#B8860B] shadow-sm ring-2 ring-[#B8860B]/20'
                     : 'bg-[#FFFFFF] border-[#E9DCC5] text-[#6F5B47] hover:border-[#B8860B] hover:text-[#B8860B]'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
@@ -622,11 +621,10 @@ export function AdminBookingsPage() {
                       {showEllipsis && <span className="text-xs text-[#9A8A78] px-1 font-mono">…</span>}
                       <button
                         onClick={() => setPage(n)}
-                        className={`w-8 h-8 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-center ${
-                          n === page
+                        className={`w-8 h-8 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-center ${n === page
                             ? 'bg-[#B8860B] text-[#FFFFFF] shadow-sm ring-2 ring-[#B8860B]/20'
                             : 'bg-[#FFFFFF] border border-[#E9DCC5] text-[#6F5B47] hover:border-[#B8860B] hover:text-[#B8860B]'
-                        }`}
+                          }`}
                       >
                         {n}
                       </button>

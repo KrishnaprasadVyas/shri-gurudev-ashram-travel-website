@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
+import { useTranslation } from "react-i18next";
 
 interface StatsCardProps {
   title: string
@@ -17,6 +18,7 @@ export function StatsCard({
   footer,
   onClick,
 }: StatsCardProps) {
+    const { t } = useTranslation();
   return (
     <div
       onClick={onClick}

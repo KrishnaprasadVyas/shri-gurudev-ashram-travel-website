@@ -23,6 +23,7 @@ import apiClient from '@/lib/apiClient'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
 import type { TravelPackageRow } from '@/types/database.types'
+import { useTranslation } from "react-i18next";
 
 function AlertDialog({
   title,
@@ -39,6 +40,7 @@ function AlertDialog({
   onConfirm: () => void
   onCancel: () => void
 }) {
+    const { t } = useTranslation();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
       <div className="w-full max-w-md rounded-[24px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_20px_60px_rgba(90,70,20,0.18)] p-8 space-y-5 text-[#3E2B1F]">
@@ -79,6 +81,7 @@ function AlertDialog({
 }
 
 export function AdminPackagesPage() {
+    const { t } = useTranslation();
   usePageTitle('Yatra Packages Management')
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -290,17 +293,19 @@ export function AdminPackagesPage() {
             🛕
           </div>
           <h2 className="font-display text-2xl font-bold text-[#3E2B1F]">
-            No Yatra Packages Found
-          </h2>
+            
+                                  {"No Yatra Packages Found"}
+                                </h2>
           <p className="text-sm font-normal text-[#6F5B47] leading-relaxed max-w-md">
-            No pilgrimage packages match your filter selection. Create your first sacred Yatra package to make it available for devotees.
-          </p>
+            
+                                  {"No pilgrimage packages match your filter selection. Create your first sacred Yatra package to make it available for devotees."}
+                                </p>
           <button
             onClick={() => navigate('/admin/packages/new')}
             className="px-6 py-3 rounded-full bg-[#B8860B] text-[#FFFFFF] font-bold text-xs uppercase tracking-wider hover:bg-[#6F5200] transition-all duration-200 shadow-sm mt-2 flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            <span>Create First Pilgrimage Package</span>
+            <span>{"Create First Pilgrimage Package"}</span>
           </button>
         </div>
       ) : (
@@ -351,8 +356,9 @@ export function AdminPackagesPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute bottom-3 left-4 right-4 text-white pointer-events-none">
                     <span className="font-label-caps text-[10px] uppercase tracking-widest text-amber-300 block font-bold">
-                      Sacred Pilgrimage
-                    </span>
+                      
+                                                      {"Sacred Pilgrimage"}
+                                                    </span>
                     <h3 className="font-display text-xl font-bold line-clamp-1 leading-snug">
                       {pkg.title}
                     </h3>
@@ -374,8 +380,8 @@ export function AdminPackagesPage() {
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4 text-[#B8860B]" />
                         <span className={isSeatsLow ? 'text-[#C0392B] font-bold' : ''}>
-                          {pkg.remaining_seats}/{pkg.total_seats} Seats left
-                        </span>
+                          {pkg.remaining_seats}/{pkg.total_seats}  {"Seats left"}
+                                                                </span>
                       </div>
                     </div>
                   </div>
@@ -387,7 +393,7 @@ export function AdminPackagesPage() {
                       className="flex-1 py-2 px-3 rounded-full bg-[#FFFFFF] border border-[#B8860B] text-[#B8860B] hover:bg-[#B8860B] hover:text-[#FFFFFF] transition-all duration-200 text-xs font-bold flex items-center justify-center gap-1.5 shadow-2xs"
                     >
                       <Edit className="h-3.5 w-3.5" />
-                      <span>Edit Yatra</span>
+                      <span>{"Edit Yatra"}</span>
                     </button>
 
                     <button
@@ -406,7 +412,7 @@ export function AdminPackagesPage() {
 
                     <button
                       onClick={() => setDialog({ pkg, action: 'delete' })}
-                      title="Delete Package"
+                      title={"Delete Package"}
                       className="w-9 h-9 rounded-full bg-[#FFFFFF] border border-[#C0392B]/30 text-[#C0392B] hover:bg-[#C0392B] hover:text-[#FFFFFF] transition-all duration-200 flex items-center justify-center shadow-2xs"
                     >
                       <Trash2 className="h-4 w-4" />

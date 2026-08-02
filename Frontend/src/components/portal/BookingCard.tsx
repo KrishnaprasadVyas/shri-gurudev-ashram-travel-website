@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { IndianRupee, Calendar, Users, ArrowRight } from 'lucide-react'
 import type { BookingRow } from '@/types/database.types'
+import { useTranslation } from "react-i18next";
 
 type BookingWithTitle = BookingRow & {
   packageTitle?: string | null
@@ -25,6 +26,7 @@ const statusConfig: Record<string, { label: string, className: string }> = {
 }
 
 export function BookingCard({ booking }: { booking: BookingWithTitle }) {
+    const { t } = useTranslation();
   const status = statusConfig[booking.status] ?? statusConfig.payment_pending
 
   return (
@@ -40,7 +42,8 @@ export function BookingCard({ booking }: { booking: BookingWithTitle }) {
             </span>
           </div>
           <p className="text-[11px] text-[#6F5B47] font-mono font-bold">
-            Ref: #{booking.booking_reference}
+            
+                                  {"Ref: #"}{booking.booking_reference}
           </p>
           {(booking.transport_type || booking.room_type) && (
             <p className="text-[11px] text-[#9A8A78] font-medium">
@@ -53,7 +56,7 @@ export function BookingCard({ booking }: { booking: BookingWithTitle }) {
         <div className="flex flex-wrap items-center gap-5 text-[13px] text-[#6F5B47]">
           <span className="flex items-center gap-1.5 font-medium">
             <Users className="h-4 w-4 text-[#B8860B]" />
-            {booking.traveler_count} traveler{booking.traveler_count !== 1 ? 's' : ''}
+            {booking.traveler_count}  {"traveler"}{booking.traveler_count !== 1 ? 's' : ''}
           </span>
           <span className="flex items-center gap-1 font-bold text-[#3E2B1F]">
             <IndianRupee className="h-4 w-4 text-[#B8860B]" />

@@ -4,8 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import ashramlogo from '../../assets/Logo.png';
+import { useTranslation } from 'react-i18next';
 
 export const Navbar: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, userProfile } = useAuth();
   const isAdmin = userProfile?.role === 'admin';
@@ -13,7 +15,6 @@ export const Navbar: React.FC = () => {
   const closeMobile = () => setMobileOpen(false);
 
   const [langOpen, setLangOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState('English 🇬🇧');
   const langDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,6 +66,7 @@ export const Navbar: React.FC = () => {
     { code: 'hi', label: 'हिन्दी 🇮🇳' },
     { code: 'mr', label: 'मराठी 🇮🇳' },
   ];
+  const selectedLang = languages.find(l => l.code === i18n.language)?.label || 'English 🇬🇧';
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -96,126 +98,126 @@ export const Navbar: React.FC = () => {
         ref={headerRef}
         className={`fixed top-0 z-[100] w-full bg-[#F8F3EA] border-b border-[#D6B36A] shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition-transform duration-300 ${isVisible || mobileOpen ? 'translate-y-0' : '-translate-y-full'}`}
       >
-      <nav className="flex justify-between items-center px-6 md:px-10 lg:px-16 py-1 md:py-1 max-w-[1600px] mx-auto w-full gap-4">
+        <nav className="flex justify-between items-center px-6 md:px-10 lg:px-16 py-1 md:py-1 max-w-[1600px] mx-auto w-full gap-4">
 
-        {/* Left Side: Navigation Links (Desktop) */}
-        <div className="hidden lg:flex flex-1 items-center gap-8 xl:gap-10">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              className={({ isActive }) =>
-                `group relative font-display text-[17px] lg:text-[18px] font-semibold transition-colors duration-300 cursor-pointer whitespace-nowrap ${isActive
-                  ? 'text-[#B8860B]'
-                  : 'text-[#4B3621] hover:text-[#B8860B]'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  {link.name}
-                  <span className={`absolute -bottom-1.5 left-0 h-[2px] bg-[#D6B36A] transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
-                </>
-              )}
-            </NavLink>
-          ))}
-        </div>
-
-        {/* Center: Large Ashram Logo */}
-        <div className="flex justify-center lg:flex-none">
-          <Link to="/" className="flex flex-col items-center group cursor-pointer shrink-0">
-            <img
-              src={ashramlogo}
-              alt="Shri Gurudev Ashram Logo"
-              style={{ filter: 'brightness(1.1) contrast(1.15)' }}
-              className="h-[66px] md:h-[92px] w-auto object-contain drop-shadow-sm transition-transform group-hover:scale-105 duration-500"
-            />
-            <div className="text-[#4B3621] font-bold text-[13px] md:text-[15px] leading-tight text-center mt-1 tracking-normal">
-              माँ वैष्णवी टूरिज़्म
-            </div>
-          </Link>
-        </div>
-
-        {/* Right Side: Actions (Desktop) */}
-        <div className="hidden lg:flex flex-1 justify-end items-center gap-4 shrink-0">
-          {user ? (
-            <>
-              {isAdmin && (
-                <Link
-                  to="/admin"
-                  className="font-label-caps text-xs xl:text-sm text-amber-600 hover:text-amber-500 border border-amber-600/40 px-5 py-2 rounded-full transition-colors whitespace-nowrap"
-                >
-                  ADMIN DASHBOARD
-                </Link>
-              )}
-              <Link
-                to="/portal"
-                className="bg-[#3E2B1F] text-[#FAF7F2] px-6 py-2.5 rounded-full font-label-caps text-xs xl:text-sm hover:bg-[#B8860B] transition-all duration-300 shadow-sm active:scale-95 whitespace-nowrap"
+          {/* Left Side: Navigation Links (Desktop) */}
+          <div className="hidden lg:flex flex-1 items-center gap-8 xl:gap-10">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                className={({ isActive }) =>
+                  `group relative font-display text-[17px] lg:text-[18px] font-semibold transition-colors duration-300 cursor-pointer whitespace-nowrap ${isActive
+                    ? 'text-[#B8860B]'
+                    : 'text-[#4B3621] hover:text-[#B8860B]'
+                  }`
+                }
               >
-                MY PORTAL
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="font-display text-[17px] lg:text-[18px] text-[#4B3621] hover:text-[#B8860B] transition-colors whitespace-nowrap px-4 font-semibold"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="bg-[#D6B36A] hover:bg-[#B8860B] text-white h-[46px] px-8 rounded-full flex items-center justify-center font-display text-[17px] font-semibold transition-colors duration-300 whitespace-nowrap"
-              >
-                REGISTER
-              </Link>
-            </>
-          )}
-          {/* Desktop Language Selector */}
-          <div className="relative ml-2" ref={langDropdownRef}>
-            <button
-              onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-2 text-[#4B3621] hover:text-[#B8860B] transition-colors font-display text-[17px] font-semibold"
-            >
-              <Globe className="w-5 h-5" />
-              <span>{selectedLang.split(' ')[0]}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${langOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {langOpen && (
-              <div className="absolute top-full right-0 mt-3 w-40 bg-[#F8F3EA] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#D6B36A]/30 overflow-hidden py-2 animate-fade-in-up">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => {
-                      setSelectedLang(lang.label);
-                      setLangOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2.5 text-[#4B3621] hover:bg-[#D6B36A]/10 hover:text-[#B8860B] transition-colors font-display text-[16px] font-medium"
-                  >
-                    {lang.label}
-                  </button>
-                ))}
-              </div>
-            )}
+                {({ isActive }) => (
+                  <>
+                    {t(`navbar.${link.name.toLowerCase()}`)}
+                    <span className={`absolute -bottom-1.5 left-0 h-[2px] bg-[#D6B36A] transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                  </>
+                )}
+              </NavLink>
+            ))}
           </div>
-        </div>
 
-        {/* Mobile Hamburger Button */}
-        <div className="flex flex-1 justify-end lg:hidden">
-          <button
-            className="text-[#3E2B1F] p-2 shrink-0 hover:bg-[#3E2B1F]/5 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-            onClick={() => setMobileOpen((prev) => !prev)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          >
-            {mobileOpen ? (
-              <X className="w-6 h-6 sm:w-7 sm:h-7 transition-all duration-300" />
+          {/* Center: Large Ashram Logo */}
+          <div className="flex justify-center lg:flex-none">
+            <Link to="/" className="flex flex-col items-center group cursor-pointer shrink-0">
+              <img
+                src={ashramlogo}
+                alt="Shri Gurudev Ashram Logo"
+                style={{ filter: 'brightness(1.1) contrast(1.15)' }}
+                className="h-[66px] md:h-[92px] w-auto object-contain drop-shadow-sm transition-transform group-hover:scale-105 duration-500"
+              />
+              <div className="text-[#4B3621] font-bold text-[13px] md:text-[15px] leading-tight text-center mt-1 tracking-normal">
+                {t('navbar.maaVaishnaviTourism')}
+              </div>
+            </Link>
+          </div>
+
+          {/* Right Side: Actions (Desktop) */}
+          <div className="hidden lg:flex flex-1 justify-end items-center gap-4 shrink-0">
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="font-label-caps text-xs xl:text-sm text-amber-600 hover:text-amber-500 border border-amber-600/40 px-5 py-2 rounded-full transition-colors whitespace-nowrap"
+                  >
+                    {t('navbar.adminDashboard')}
+                  </Link>
+                )}
+                <Link
+                  to="/portal"
+                  className="bg-[#3E2B1F] text-[#FAF7F2] px-6 py-2.5 rounded-full font-label-caps text-xs xl:text-sm hover:bg-[#B8860B] transition-all duration-300 shadow-sm active:scale-95 whitespace-nowrap"
+                >
+                  {t('navbar.myPortal')}
+                </Link>
+              </>
             ) : (
-              <Menu className="w-6 h-6 sm:w-7 sm:h-7 transition-all duration-300" />
+              <>
+                <Link
+                  to="/login"
+                  className="font-display text-[17px] lg:text-[18px] text-[#4B3621] hover:text-[#B8860B] transition-colors whitespace-nowrap px-4 font-semibold"
+                >
+                  {t('navbar.login')}
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-[#D6B36A] hover:bg-[#B8860B] text-white h-[46px] px-8 rounded-full flex items-center justify-center font-display text-[17px] font-semibold transition-colors duration-300 whitespace-nowrap"
+                >
+                  {t('navbar.register')}
+                </Link>
+              </>
             )}
-          </button>
-        </div>
-      </nav>
+            {/* Desktop Language Selector */}
+            <div className="relative ml-2" ref={langDropdownRef}>
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-2 text-[#4B3621] hover:text-[#B8860B] transition-colors font-display text-[17px] font-semibold"
+              >
+                <Globe className="w-5 h-5" />
+                <span>{selectedLang.split(' ')[0]}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${langOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {langOpen && (
+                <div className="absolute top-full right-0 mt-3 w-40 bg-[#F8F3EA] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#D6B36A]/30 overflow-hidden py-2 animate-fade-in-up">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        i18n.changeLanguage(lang.code);
+                        setLangOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-[#4B3621] hover:bg-[#D6B36A]/10 hover:text-[#B8860B] transition-colors font-display text-[16px] font-medium"
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Hamburger Button */}
+          <div className="flex flex-1 justify-end lg:hidden">
+            <button
+              className="text-[#3E2B1F] p-2 shrink-0 hover:bg-[#3E2B1F]/5 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              onClick={() => setMobileOpen((prev) => !prev)}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            >
+              {mobileOpen ? (
+                <X className="w-6 h-6 sm:w-7 sm:h-7 transition-all duration-300" />
+              ) : (
+                <Menu className="w-6 h-6 sm:w-7 sm:h-7 transition-all duration-300" />
+              )}
+            </button>
+          </div>
+        </nav>
       </header>
 
       {/* Mobile Right-Slide Drawer via Framer Motion */}
@@ -252,7 +254,7 @@ export const Navbar: React.FC = () => {
               </div>
 
               <div className="flex flex-col px-4 sm:px-6 py-6 gap-3 overflow-y-auto flex-1">
-                <motion.div 
+                <motion.div
                   initial="closed"
                   animate="open"
                   exit="closed"
@@ -284,14 +286,14 @@ export const Navbar: React.FC = () => {
                           }`
                         }
                       >
-                        {link.name === 'Yatras' ? 'Maa Vaishnavi Tourism' : link.name}
+                        {link.name === 'Yatras' ? t('navbar.maaVaishnaviTourism') : t(`navbar.${link.name.toLowerCase()}`)}
                       </NavLink>
                     </motion.div>
                   ))}
                 </motion.div>
 
                 {/* Mobile Auth Buttons */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -305,7 +307,7 @@ export const Navbar: React.FC = () => {
                           onClick={closeMobile}
                           className="border-2 border-amber-600/40 text-amber-600 px-6 py-3.5 rounded-full font-label-caps text-sm hover:bg-amber-600/10 transition-all duration-300 text-center min-h-[48px] flex items-center justify-center font-bold"
                         >
-                          ADMIN DASHBOARD
+                          {t('navbar.adminDashboard')}
                         </Link>
                       )}
                       <Link
@@ -313,7 +315,7 @@ export const Navbar: React.FC = () => {
                         onClick={closeMobile}
                         className="bg-[#3E2B1F] text-[#FAF7F2] px-6 py-3.5 rounded-full font-label-caps text-sm hover:bg-[#B8860B] transition-all duration-300 shadow-md text-center min-h-[48px] flex items-center justify-center font-bold"
                       >
-                        MY PORTAL
+                        {t('navbar.myPortal')}
                       </Link>
                     </>
                   ) : (
@@ -323,28 +325,28 @@ export const Navbar: React.FC = () => {
                         onClick={closeMobile}
                         className="font-label-caps text-sm text-[#4B3621] hover:text-[#B8860B] hover:bg-[#4B3621]/5 rounded-xl transition-colors py-3.5 px-4 text-center min-h-[48px] flex items-center justify-center font-bold"
                       >
-                        LOGIN
+                        {t('navbar.loginMobile')}
                       </Link>
                       <Link
                         to="/login"
                         onClick={closeMobile}
                         className="bg-[#D6B36A] text-white px-6 py-3.5 rounded-full font-display text-[17px] font-semibold hover:bg-[#B8860B] transition-all duration-300 shadow-md text-center min-h-[48px] flex items-center justify-center"
                       >
-                        REGISTER FREE
+                        {t('navbar.registerFree')}
                       </Link>
 
                       {/* Mobile Language Selector */}
                       <div className="mt-4 border-t border-[#D6B36A]/30 pt-6 pb-2">
                         <div className="flex items-center gap-2 mb-3 px-4 text-[#4B3621] font-display text-[17px] font-semibold">
                           <Globe className="w-5 h-5" />
-                          <span>Language</span>
+                          <span>{t('navbar.language')}</span>
                         </div>
                         <div className="flex flex-col gap-1 pl-4 pr-4">
                           {languages.map((lang) => (
                             <button
                               key={lang.code}
                               onClick={() => {
-                                setSelectedLang(lang.label);
+                                i18n.changeLanguage(lang.code);
                                 closeMobile();
                               }}
                               className={`text-left py-3.5 px-4 rounded-xl font-display text-[16px] transition-colors min-h-[48px] flex items-center w-full ${selectedLang === lang.label

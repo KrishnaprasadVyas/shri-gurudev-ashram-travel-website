@@ -6,9 +6,11 @@ import { WhyTravelWithUs } from '@/components/about/WhyTravelWithUs';
 import { JourneyTimeline } from '@/components/yatras/JourneyTimeline';
 import { YatrasCta } from '@/components/yatras/YatrasCta';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useTranslation } from "react-i18next";
 
 export const YatrasPage: React.FC = () => {
-  usePageTitle('Sacred Yatras');
+  const { t } = useTranslation();
+  usePageTitle(t('public.common.sacredYatras'));
 
   return (
     <main className="pb-section-gap bg-surface text-on-surface ">

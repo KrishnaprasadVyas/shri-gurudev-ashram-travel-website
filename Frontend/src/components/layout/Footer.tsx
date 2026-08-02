@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import ashramlogo from '../../assets/ashramlogo.png';
 import whitelogo from '../../assets/whitelogo.svg';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 /* ─── Inline SVG Icons ─── */
 const FacebookIcon = () => (
@@ -69,13 +70,16 @@ const ChevronIcon = () => (
   </svg>
 );
 
-const AshramLogo = () => (
+const AshramLogo = () => {
+  const { t } = useTranslation();
+  return (
   <img
     src={whitelogo}
-    alt="Shri Gurudev Ashram Logo"
+    alt={"Shri Gurudev Ashram Logo"}
     className="w-40 sm:w-44 md:w-52 lg:w-60 xl:w-[280px] h-auto object-contain drop-shadow-[0_6px_20px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:scale-105"
   />
-);
+  );
+};
 
 /* ─── Ornamental Bottom SVG ─── */
 const OrnamentDivider = () => (
@@ -126,6 +130,7 @@ const QuickLink: React.FC<{ to: string; label: string }> = ({ to, label }) => (
    FOOTER COMPONENT
    ═══════════════════════════════════════════════════════════════ */
 export const Footer: React.FC = () => {
+    const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
 
@@ -181,25 +186,25 @@ export const Footer: React.FC = () => {
               <AshramLogo />
 
               <h3 className="mt-2.5 font-display-lg text-2xl lg:text-[26px] text-[#F5EFE4] font-bold leading-tight">
-                माँ वैष्णवी टूरिज़्म
+                {t('navbar.maaVaishnaviTourism')}
               </h3>
             </div>
 
             <p className="text-[13px] leading-[1.65] text-[#C9B79D] max-w-[350px] text-center lg:text-left mx-auto lg:mx-0">
-              Dedicated to sacred yatras and spiritual pilgrimages. Seeking the Divine within through tradition, service, and devotion.
+              {t('footer.tagline')}
             </p>
             {/* Social */}
             <div className="flex justify-center lg:justify-start gap-3 mt-5">
-              <SocialBtn href="https://www.facebook.com/SwamiHarichaitanyanandS/" label="Facebook">
+              <SocialBtn href="https://www.facebook.com/SwamiHarichaitanyanandS/" label={"Facebook"}>
                 <FacebookIcon />
               </SocialBtn>
-              <SocialBtn href="https://www.youtube.com/@shrigurudevashram" label="YouTube">
+              <SocialBtn href="https://www.youtube.com/@shrigurudevashram" label={"YouTube"}>
                 <YoutubeIcon />
               </SocialBtn>
-              <SocialBtn href="https://www.instagram.com/swami_harichaitanyaji_/" label="Instagram">
+              <SocialBtn href="https://www.instagram.com/swami_harichaitanyaji_/" label={"Instagram"}>
                 <InstagramIcon />
               </SocialBtn>
-              <SocialBtn href="https://x.com/Harichaitanyaji" label="X (Twitter)">
+              <SocialBtn href="https://x.com/Harichaitanyaji" label={"X (Twitter)"}>
                 <TwitterIcon />
               </SocialBtn>
             </div>
@@ -210,15 +215,18 @@ export const Footer: React.FC = () => {
 
           {/* ── Col 2 : Contact ── */}
           <div className="flex flex-col lg:px-8 xl:px-10">
-            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">Contact Information</h4>
+            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">{t('footer.contactTitle')}</h4>
             <ul className="space-y-3.5 text-[13px] text-[#C9B79D]">
               <li className="flex items-start gap-3">
                 <LocationIcon />
                 <span className="leading-[1.7]">
-                  माँ वैष्णवी टूरिज़्म, Palaskhed Sapkal,<br />
-                  Tehsil Chikhli, District Buldhana,<br />
-                  Maharashtra - 443001
-                </span>
+                  
+                                                    {"माँ वैष्णवी टूरिज़्म, Palaskhed Sapkal,"}<br />
+                  
+                                                    {"Tehsil Chikhli, District Buldhana,"}<br />
+                  
+                                                    {"Maharashtra - 443001"}
+                                                  </span>
               </li>
               <li className="flex items-start gap-3">
                 <PhoneIcon />
@@ -230,8 +238,8 @@ export const Footer: React.FC = () => {
               <li className="flex items-start gap-3">
                 <MailIcon />
                 <div className="flex flex-col gap-1">
-                  <a href="mailto:info@shrigurudevashram.org" className="hover:text-[#C98B1A] transition-colors text-[#C98B1A]">info@shrigurudevashram.org</a>
-                  <a href="mailto:info@shantiashramtrust.org" className="hover:text-[#C98B1A] transition-colors text-[#C98B1A]">info@shantiashramtrust.org</a>
+                  <a href="mailto:info@shrigurudevashram.org" className="hover:text-[#C98B1A] transition-colors text-[#C98B1A]">{"info@shrigurudevashram.org"}</a>
+                  <a href="mailto:info@shantiashramtrust.org" className="hover:text-[#C98B1A] transition-colors text-[#C98B1A]">{"info@shantiashramtrust.org"}</a>
                 </div>
               </li>
             </ul>
@@ -242,16 +250,16 @@ export const Footer: React.FC = () => {
 
           {/* ── Col 3 : Quick Links ── */}
           <div className="flex flex-col lg:px-8 xl:px-10">
-            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">Quick Links</h4>
+            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">{t('footer.quickLinks')}</h4>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-              <QuickLink to="/" label="Home" />
-              <QuickLink to="/faq" label="FAQ" />
-              <QuickLink to="/about" label="About" />
-              <QuickLink to="/contact" label="Contact" />
-              <QuickLink to="/yatras" label="Yatras" />
-              <QuickLink to="/login" label="Login" />
-              <QuickLink to="/gallery" label="Gallery" />
-              <QuickLink to="/signup" label="Register Free" />
+              <QuickLink to="/" label={t('footer.home')} />
+              <QuickLink to="/faq" label={t('footer.faq')} />
+              <QuickLink to="/about" label={t('footer.about')} />
+              <QuickLink to="/contact" label={t('footer.contact')} />
+              <QuickLink to="/yatras" label={t('footer.yatras')} />
+              <QuickLink to="/login" label={t('footer.login')} />
+              <QuickLink to="/gallery" label={t('footer.gallery')} />
+              <QuickLink to="/signup" label={t('footer.registerFree')} />
             </div>
           </div>
 
@@ -260,30 +268,30 @@ export const Footer: React.FC = () => {
 
           {/* ── Col 4 : Temple Information ── */}
           <div className="flex flex-col lg:px-8 xl:px-10">
-            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">Temple Information</h4>
-            <h5 className="text-[11px] tracking-[0.15em] uppercase text-[#C98B1A] font-bold mb-3">Darshan Timings</h5>
+            <h4 className="font-display-lg text-[16px] text-[#F5EFE4] font-bold mb-4 tracking-wide">{t('footer.templeInfo')}</h4>
+            <h5 className="text-[11px] tracking-[0.15em] uppercase text-[#C98B1A] font-bold mb-3">{t('footer.darshanTimings')}</h5>
 
             <div className="space-y-3 text-[13px]">
               {/* Morning */}
               <div className="flex items-start gap-2.5">
                 <SunIcon />
                 <div className="flex flex-col">
-                  <span className="text-[#F5EFE4] font-medium">Morning Session</span>
-                  <span className="text-[#C9B79D] text-[12px]">04:30 AM to 01:00 PM</span>
+                  <span className="text-[#F5EFE4] font-medium">{t('footer.morningSession')}</span>
+                  <span className="text-[#C9B79D] text-[12px]">{t('footer.morningTime')}</span>
                 </div>
               </div>
               {/* Evening */}
               <div className="flex items-start gap-2.5">
                 <MoonIcon />
                 <div className="flex flex-col">
-                  <span className="text-[#F5EFE4] font-medium">Evening Session</span>
-                  <span className="text-[#C9B79D] text-[12px]">04:30 PM to 09:00 PM</span>
+                  <span className="text-[#F5EFE4] font-medium">{t('footer.eveningSession')}</span>
+                  <span className="text-[#C9B79D] text-[12px]">{t('footer.eveningTime')}</span>
                 </div>
               </div>
             </div>
 
             <p className="text-[11px] text-[#C9B79D]/60 mt-4 leading-relaxed italic">
-              * Temple timings may be<br />changed on special occasions.
+              {t('footer.timingNote')}
             </p>
           </div>
 
@@ -292,14 +300,14 @@ export const Footer: React.FC = () => {
 
           {/* ── Col 5 : Aartis & Discourses ── */}
           <div className="flex flex-col lg:pl-8 xl:pl-10">
-            <h4 className="font-display-lg text-[11px] tracking-[0.15em] uppercase text-[#C98B1A] font-bold mb-4">Aartis and Discourses</h4>
+            <h4 className="font-display-lg text-[11px] tracking-[0.15em] uppercase text-[#C98B1A] font-bold mb-4">{t('footer.aartisTitle')}</h4>
 
             <div className="space-y-3 text-[13px]">
               {[
-                { name: 'Kakda Aarti', time: '04:00 AM' },
-                { name: 'Daily Morning Aarti', time: '06:00 AM' },
-                { name: 'Haripath', time: '06:00 PM' },
-                { name: 'Gita Path', time: '08:00 PM' },
+                { name: t('footer.kakdaAarti'), time: '04:00 AM' },
+                { name: t('footer.morningAarti'), time: '06:00 AM' },
+                { name: t('footer.haripath'), time: '06:00 PM' },
+                { name: t('footer.gitaPath'), time: '08:00 PM' },
               ].map((row) => (
                 <div key={row.name} className="flex justify-between items-center gap-4">
                   <span className="text-[#C9B79D]">{row.name}</span>
@@ -320,12 +328,12 @@ export const Footer: React.FC = () => {
             {isExpanded ? (
               <>
                 <ChevronUp className="w-5 h-5" />
-                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('footer.showLess')}</span>
               </>
             ) : (
               <>
                 <ChevronDown className="w-5 h-5" />
-                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View More</span>
+                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('footer.viewMore')}</span>
               </>
             )}
           </motion.button>
@@ -337,7 +345,7 @@ export const Footer: React.FC = () => {
 
       <div className="w-full max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-[12px] text-[#C9B79D]/70 text-center md:text-left">
-          © 2026 माँ वैष्णवी टूरिज़्म. All rights reserved.
+          {t('footer.copyright')}
         </p>
 
         <div className="hidden md:block">
@@ -347,10 +355,10 @@ export const Footer: React.FC = () => {
         <div className="flex items-center gap-3 text-[12px] text-[#C9B79D]/70">
           <a href="https://shrigurudevashram.org" target="_blank" rel="noreferrer"
             className="hover:text-[#C98B1A] transition-colors">
-            Official Website
+            {t('footer.officialWebsite')}
           </a>
           <span className="w-px h-3 bg-[#C9B79D]/30" />
-          <span>Designed with <span className="text-red-500">❤️</span> for Devotees</span>
+          <span>{t('footer.designedFor').split('❤️')[0]} <span className="text-red-500">❤️</span> {t('footer.designedFor').split('❤️')[1]}</span>
         </div>
       </div>
     </footer>

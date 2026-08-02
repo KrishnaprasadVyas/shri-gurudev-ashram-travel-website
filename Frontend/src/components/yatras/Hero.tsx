@@ -1,6 +1,7 @@
 import React from 'react';
 import { kedarnath } from '@/assets/images';
 import whitelogo from '@/assets/whitelogo.svg';
+import { useTranslation } from "react-i18next";
 
 const SpiritualDivider = () => (
   <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-6 pb-4">
@@ -11,13 +12,14 @@ const SpiritualDivider = () => (
 );
 
 export const Hero: React.FC = () => {
+    const { t } = useTranslation();
   return (
     <section className="relative min-h-[540px] md:min-h-[620px] flex flex-col items-center justify-start text-center px-4 sm:px-6 overflow-hidden pt-10 md:pt-16 pb-8 md:pb-12">
       {/* Pilgrimage Background — Kedarnath */}
       <div className="absolute inset-0 z-0">
         <img
           className="w-full h-full object-cover object-center transform scale-105"
-          alt="Sacred Kedarnath Pilgrimage — माँ वैष्णवी टूरिज़्म Yatra"
+          alt={"Sacred Kedarnath Pilgrimage — माँ वैष्णवी टूरिज़्म Yatra"}
           src={kedarnath}
           loading="eager"
           fetchPriority="high"
@@ -32,7 +34,7 @@ export const Hero: React.FC = () => {
         {/* White Ashram Logo — Primary Brand Identity */}
         <img
           src={whitelogo}
-          alt="Shri Gurudev Ashram Official Logo"
+          alt={"Shri Gurudev Ashram Official Logo"}
           width={320}
           height={320}
           loading="eager"
@@ -41,16 +43,16 @@ export const Hero: React.FC = () => {
         
         {/* Small Label */}
         <span className="font-label-caps text-xs sm:text-sm text-[#d48c29] uppercase tracking-[0.25em] mb-4 block font-semibold">
-          Sacred Pilgrimages Under Gurudev's Blessings
+          {t('public.yatras.hero.title')}
         </span>
 
         {/* Main Heading */}
         <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl lg:text-[64px] text-white font-bold tracking-tight mb-4 drop-shadow-md">
-          Maa Vaishnavi Tourism
+          {t('public.common.maaVaishnaviTourism')}
         </h1>
 
         <p className="font-body-lg text-base sm:text-lg md:text-xl text-white/85 leading-relaxed max-w-2xl mx-auto font-medium">
-          Walk the timeless paths of Bharat through sacred pilgrimages guided by Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj.
+          {t('public.yatras.hero.desc')}
         </p>
       </div>
       <SpiritualDivider />

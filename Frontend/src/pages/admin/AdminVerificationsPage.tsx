@@ -20,6 +20,7 @@ import apiClient from '@/lib/apiClient'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
 import type { AdminUser, AdminStats } from '@/types/admin'
+import { useTranslation } from "react-i18next";
 
 function SignedUrlImagePreview({
   userId,
@@ -32,6 +33,7 @@ function SignedUrlImagePreview({
   filePath: string
   label: string
 }) {
+    const { t } = useTranslation();
   const [imgError, setImgError] = useState(false)
   const [isZoomed, setIsZoomed] = useState(false)
 
@@ -69,7 +71,7 @@ function SignedUrlImagePreview({
                 className="px-2.5 py-1 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[11px] font-bold flex items-center gap-1 transition-colors shadow-2xs"
               >
                 <ZoomIn className="h-3 w-3" />
-                <span>Zoom</span>
+                <span>{"Zoom"}</span>
               </button>
               <a
                 href={`${data.url}&download=1`}
@@ -78,7 +80,7 @@ function SignedUrlImagePreview({
                 className="px-2.5 py-1 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[11px] font-bold flex items-center gap-1 transition-colors shadow-2xs"
               >
                 <Download className="h-3 w-3" />
-                <span>Download</span>
+                <span>{"Download"}</span>
               </a>
             </div>
           )}
@@ -88,7 +90,7 @@ function SignedUrlImagePreview({
           {isLoading ? (
             <div className="flex flex-col items-center gap-2 text-[#B8860B]">
               <Loader2 className="h-6 w-6 animate-spin" />
-              <span className="text-xs font-mono">Decrypting signed document...</span>
+              <span className="text-xs font-mono">{"Decrypting signed document..."}</span>
             </div>
           ) : data?.url && !imgError ? (
             <img
@@ -101,7 +103,7 @@ function SignedUrlImagePreview({
           ) : (
             <div className="flex flex-col items-center gap-2 text-[#9A8A78]">
               <FileText className="h-8 w-8 text-[#E9DCC5]" />
-              <span className="text-xs font-semibold text-[#6F5B47]">No preview available or file error</span>
+              <span className="text-xs font-semibold text-[#6F5B47]">{"No preview available or file error"}</span>
             </div>
           )}
         </div>
@@ -119,8 +121,9 @@ function SignedUrlImagePreview({
               className="absolute -top-12 right-0 px-4 py-1.5 rounded-full bg-[#FFFFFF] text-[#3E2B1F] font-bold text-xs uppercase tracking-wider hover:bg-[#B8860B] hover:text-[#FFFFFF] transition-colors"
               onClick={() => setIsZoomed(false)}
             >
-              Close Zoom ✕
-            </button>
+              
+                                        {"Close Zoom ✕"}
+                                      </button>
             <img
               src={data.url}
               alt={label}
@@ -134,6 +137,7 @@ function SignedUrlImagePreview({
 }
 
 export function AdminVerificationsPage() {
+    const { t } = useTranslation();
   usePageTitle('Verification Management')
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -261,12 +265,13 @@ export function AdminVerificationsPage() {
         <div className="p-6 rounded-[20px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(90,70,20,0.06)] flex items-start justify-between gap-4">
           <div>
             <p className="font-label-caps text-[11px] uppercase tracking-[0.15em] font-bold text-[#6F5B47]">
-              Pending Reviews
-            </p>
+              
+                                        {"Pending Reviews"}
+                                      </p>
             <p className="font-display text-3xl sm:text-4xl font-bold text-[#C68A00] mt-1.5">
               {stats?.pendingVerifications ?? (passengerQueue.length + userQueue.length)}
             </p>
-            <span className="text-xs text-[#9A8A78] font-normal mt-1 block">Awaiting administrative decision</span>
+            <span className="text-xs text-[#9A8A78] font-normal mt-1 block">{"Awaiting administrative decision"}</span>
           </div>
           <div className="w-12 h-12 rounded-full bg-[#C68A00]/15 border border-[#C68A00]/30 flex items-center justify-center text-[#C68A00] shrink-0">
             <Clock className="h-6 w-6" />
@@ -276,12 +281,13 @@ export function AdminVerificationsPage() {
         <div className="p-6 rounded-[20px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(90,70,20,0.06)] flex items-start justify-between gap-4">
           <div>
             <p className="font-label-caps text-[11px] uppercase tracking-[0.15em] font-bold text-[#6F5B47]">
-              Approved Reviews
-            </p>
+              
+                                        {"Approved Reviews"}
+                                      </p>
             <p className="font-display text-3xl sm:text-4xl font-bold text-[#2E7D32] mt-1.5">
               {stats?.approvedVerifications ?? 0}
             </p>
-            <span className="text-xs text-[#9A8A78] font-normal mt-1 block">Verified identity profiles</span>
+            <span className="text-xs text-[#9A8A78] font-normal mt-1 block">{"Verified identity profiles"}</span>
           </div>
           <div className="w-12 h-12 rounded-full bg-[#2E7D32]/15 border border-[#2E7D32]/30 flex items-center justify-center text-[#2E7D32] shrink-0">
             <UserCheck className="h-6 w-6" />
@@ -291,12 +297,13 @@ export function AdminVerificationsPage() {
         <div className="p-6 rounded-[20px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(90,70,20,0.06)] flex items-start justify-between gap-4">
           <div>
             <p className="font-label-caps text-[11px] uppercase tracking-[0.15em] font-bold text-[#6F5B47]">
-              Rejected Reviews
-            </p>
+              
+                                        {"Rejected Reviews"}
+                                      </p>
             <p className="font-display text-3xl sm:text-4xl font-bold text-[#C0392B] mt-1.5">
               {stats?.rejectedVerifications ?? 0}
             </p>
-            <span className="text-xs text-[#9A8A78] font-normal mt-1 block">Unclear or mismatched IDs</span>
+            <span className="text-xs text-[#9A8A78] font-normal mt-1 block">{"Unclear or mismatched IDs"}</span>
           </div>
           <div className="w-12 h-12 rounded-full bg-[#C0392B]/15 border border-[#C0392B]/30 flex items-center justify-center text-[#C0392B] shrink-0">
             <AlertCircle className="h-6 w-6" />
@@ -306,12 +313,13 @@ export function AdminVerificationsPage() {
         <div className="p-6 rounded-[20px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_8px_30px_rgba(90,70,20,0.06)] flex items-start justify-between gap-4">
           <div>
             <p className="font-label-caps text-[11px] uppercase tracking-[0.15em] font-bold text-[#6F5B47]">
-              Total Verifications
-            </p>
+              
+                                        {"Total Verifications"}
+                                      </p>
             <p className="font-display text-3xl sm:text-4xl font-bold text-[#3E2B1F] mt-1.5">
               {(stats?.approvedVerifications ?? 0) + (stats?.rejectedVerifications ?? 0) + (stats?.pendingVerifications ?? 0)}
             </p>
-            <span className="text-xs text-[#9A8A78] font-normal mt-1 block">Processed identity submissions</span>
+            <span className="text-xs text-[#9A8A78] font-normal mt-1 block">{"Processed identity submissions"}</span>
           </div>
           <div className="w-12 h-12 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] flex items-center justify-center text-[#B8860B] shrink-0">
             <ShieldCheck className="h-6 w-6" />
@@ -333,7 +341,8 @@ export function AdminVerificationsPage() {
               : 'text-[#6F5B47] hover:text-[#3E2B1F]'
           }`}
         >
-          Passenger Yatra Queue ({passengerQueue.length})
+          
+                            {"Passenger Yatra Queue ("}{passengerQueue.length})
         </button>
 
         <button
@@ -348,7 +357,8 @@ export function AdminVerificationsPage() {
               : 'text-[#6F5B47] hover:text-[#3E2B1F]'
           }`}
         >
-          User Accounts Queue ({userQueue.length})
+          
+                            {"User Accounts Queue ("}{userQueue.length})
         </button>
       </div>
 
@@ -362,14 +372,16 @@ export function AdminVerificationsPage() {
             No pending verifications in this queue 🎉
           </h2>
           <p className="text-sm font-normal text-[#6F5B47] leading-relaxed max-w-md">
-            All submitted identity documents in the {isPassengerQueue ? 'Passenger Yatra' : 'User Account'} queue have been reviewed. New submissions will appear automatically.
-          </p>
+            
+                                  {"All submitted identity documents in the"} {isPassengerQueue ? 'Passenger Yatra' : 'User Account'}  {"queue have been reviewed. New submissions will appear automatically."}
+                                </p>
           <button
             onClick={() => navigate('/admin/users')}
             className="px-6 py-3 rounded-full bg-[#B8860B] text-[#FFFFFF] font-bold text-xs uppercase tracking-wider hover:bg-[#6F5200] transition-all duration-200 shadow-sm mt-2"
           >
-            View Devotees Directory
-          </button>
+            
+                                  {"View Devotees Directory"}
+                                </button>
         </div>
       ) : (
         /* Responsive Desktop Cards + Side Preview Layout */
@@ -378,11 +390,13 @@ export function AdminVerificationsPage() {
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-[#E9DCC5]">
               <h2 className="font-display text-xl font-bold text-[#3E2B1F]">
-                Pending {isPassengerQueue ? 'Passenger' : 'User'} Submissions ({isPassengerQueue ? passengerQueue.length : userQueue.length})
+                
+                                                  {"Pending"} {isPassengerQueue ? 'Passenger' : 'User'}  {"Submissions ("}{isPassengerQueue ? passengerQueue.length : userQueue.length})
               </h2>
               <span className="text-xs font-bold text-[#B8860B] uppercase tracking-wider">
-                Select to review
-              </span>
+                
+                                                  {"Select to review"}
+                                                </span>
             </div>
 
             <div className="space-y-3.5 max-h-[750px] overflow-y-auto pr-1 admin-sidebar-scroll">
@@ -411,14 +425,16 @@ export function AdminVerificationsPage() {
                                 {pass.full_name}
                               </h3>
                               <p className="text-xs text-[#6F5B47] truncate mt-0.5 font-mono">
-                                Booking #{bookingRef} • {pass.gender}
+                                
+                                                                            {"Booking #"}{bookingRef} • {pass.gender}
                               </p>
                             </div>
                           </div>
 
                           <span className="px-2.5 py-1 rounded-full bg-[#C68A00]/15 text-[#C68A00] border border-[#C68A00]/30 text-[10px] font-bold uppercase tracking-wider shrink-0">
-                            Pending ID
-                          </span>
+                            
+                                                                {"Pending ID"}
+                                                              </span>
                         </div>
 
                         <div className="mt-3.5 pt-3.5 border-t border-[#E9DCC5] flex items-center justify-between text-xs text-[#6F5B47]">
@@ -445,12 +461,12 @@ export function AdminVerificationsPage() {
                             }}
                             className="text-[11px] font-bold text-[#B8860B] hover:underline flex items-center gap-1"
                           >
-                            <span>View Linked Booking</span>
+                            <span>{"View Linked Booking"}</span>
                             <ArrowRight className="h-3 w-3" />
                           </button>
                           {isSelected && (
                             <span className="text-[11px] font-bold text-[#2E7D32] flex items-center gap-1">
-                              <span>Active Review</span>
+                              <span>{"Active Review"}</span>
                               <span className="w-2 h-2 rounded-full bg-[#2E7D32]" />
                             </span>
                           )}
@@ -495,8 +511,9 @@ export function AdminVerificationsPage() {
                           </div>
 
                           <span className="px-2.5 py-1 rounded-full bg-[#C68A00]/15 text-[#C68A00] border border-[#C68A00]/30 text-[10px] font-bold uppercase tracking-wider shrink-0">
-                            Pending Profile
-                          </span>
+                            
+                                                                {"Pending Profile"}
+                                                              </span>
                         </div>
 
                         <div className="mt-3.5 pt-3.5 border-t border-[#E9DCC5] flex items-center justify-between text-xs text-[#6F5B47]">
@@ -528,7 +545,7 @@ export function AdminVerificationsPage() {
                           </button>
                           {isSelected && (
                             <span className="text-[11px] font-bold text-[#2E7D32] flex items-center gap-1">
-                              <span>Active Review</span>
+                              <span>{"Active Review"}</span>
                               <span className="w-2 h-2 rounded-full bg-[#2E7D32]" />
                             </span>
                           )}
@@ -553,7 +570,8 @@ export function AdminVerificationsPage() {
                         {activePassenger.full_name}
                       </h2>
                       <p className="text-xs text-[#6F5B47] font-mono mt-0.5">
-                        Booking #{activePassenger.bookings?.booking_reference || 'N/A'} • Passenger ID: #{activePassenger.id.slice(0, 8)}
+                        
+                                                                          {"Booking #"}{activePassenger.bookings?.booking_reference || 'N/A'}  {"• Passenger ID: #"}{activePassenger.id.slice(0, 8)}
                       </p>
                     </div>
                   </div>
@@ -563,17 +581,18 @@ export function AdminVerificationsPage() {
                     className="px-4 py-2 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] font-bold text-xs flex items-center gap-1.5 transition-all duration-200 shrink-0 shadow-2xs"
                   >
                     <Eye className="h-3.5 w-3.5" />
-                    <span>Booking details</span>
+                    <span>{"Booking details"}</span>
                   </Link>
                 </div>
 
                 {/* Document Preview Section */}
                 <div className="space-y-5">
                   <h3 className="font-display text-lg font-bold text-[#3E2B1F] flex items-center justify-between">
-                    <span>Submitted Passenger Identity Documents</span>
+                    <span>{"Submitted Passenger Identity Documents"}</span>
                     {activePassenger.aadhaar_number && (
                       <span className="font-mono text-xs font-normal text-[#6F5B47]">
-                        Aadhaar: <strong className="text-[#3E2B1F]">{activePassenger.aadhaar_number}</strong>
+                        
+                                                                          {"Aadhaar:"} <strong className="text-[#3E2B1F]">{activePassenger.aadhaar_number}</strong>
                       </span>
                     )}
                   </h3>
@@ -592,12 +611,12 @@ export function AdminVerificationsPage() {
                       <SignedUrlImagePreview
                         passengerId={activePassenger.id}
                         filePath={activePassenger.aadhaar_image_path}
-                        label="Passenger Aadhaar Card"
+                        label={"Passenger Aadhaar Card"}
                       />
                     ) : (
                       <div className="col-span-2 h-44 rounded-[16px] bg-[#FFFFFF] border border-[#E9DCC5] p-4 flex flex-col items-center justify-center text-center text-[#9A8A78]">
                         <FileText className="h-8 w-8 text-[#E9DCC5] mb-2" />
-                        <span className="text-xs font-semibold text-[#6F5B47]">No digital file uploaded for this passenger</span>
+                        <span className="text-xs font-semibold text-[#6F5B47]">{"No digital file uploaded for this passenger"}</span>
                       </div>
                     )}
                   </div>
@@ -654,7 +673,7 @@ export function AdminVerificationsPage() {
                         {activeUser.full_name}
                       </h2>
                       <p className="text-xs text-[#6F5B47] font-mono mt-0.5">
-                        {activeUser.email ?? activeUser.phone} • Account ID: #{activeUser.id.slice(0, 8)}
+                        {activeUser.email ?? activeUser.phone}  {"• Account ID: #"}{activeUser.id.slice(0, 8)}
                       </p>
                     </div>
                   </div>
@@ -671,10 +690,11 @@ export function AdminVerificationsPage() {
                 {/* Document Preview Section */}
                 <div className="space-y-5">
                   <h3 className="font-display text-lg font-bold text-[#3E2B1F] flex items-center justify-between">
-                    <span>Submitted User Identity Documents</span>
+                    <span>{"Submitted User Identity Documents"}</span>
                     {activeUser.aadhaar_number && (
                       <span className="font-mono text-xs font-normal text-[#6F5B47]">
-                        Aadhaar No: <strong className="text-[#3E2B1F]">{activeUser.aadhaar_number}</strong>
+                        
+                                                                              {"Aadhaar No:"} <strong className="text-[#3E2B1F]">{activeUser.aadhaar_number}</strong>
                       </span>
                     )}
                   </h3>
@@ -684,12 +704,12 @@ export function AdminVerificationsPage() {
                       <SignedUrlImagePreview
                         userId={activeUser.id}
                         filePath={activeUser.aadhaar_image_path}
-                        label="Aadhaar Card Record"
+                        label={"Aadhaar Card Record"}
                       />
                     ) : (
                       <div className="h-56 rounded-[16px] bg-[#FFFFFF] border border-[#E9DCC5] p-4 flex flex-col items-center justify-center text-center text-[#9A8A78]">
                         <FileText className="h-8 w-8 text-[#E9DCC5] mb-2" />
-                        <span className="text-xs font-semibold text-[#6F5B47]">No Aadhaar card uploaded</span>
+                        <span className="text-xs font-semibold text-[#6F5B47]">{"No Aadhaar card uploaded"}</span>
                       </div>
                     )}
 
@@ -697,12 +717,12 @@ export function AdminVerificationsPage() {
                       <SignedUrlImagePreview
                         userId={activeUser.id}
                         filePath={activeUser.selfie_image_path}
-                        label="Devotee Selfie / Photo"
+                        label={"Devotee Selfie / Photo"}
                       />
                     ) : (
                       <div className="h-56 rounded-[16px] bg-[#FFFFFF] border border-[#E9DCC5] p-4 flex flex-col items-center justify-center text-center text-[#9A8A78]">
                         <UserCheck className="h-8 w-8 text-[#E9DCC5] mb-2" />
-                        <span className="text-xs font-semibold text-[#6F5B47]">No selfie photo uploaded</span>
+                        <span className="text-xs font-semibold text-[#6F5B47]">{"No selfie photo uploaded"}</span>
                       </div>
                     )}
                   </div>

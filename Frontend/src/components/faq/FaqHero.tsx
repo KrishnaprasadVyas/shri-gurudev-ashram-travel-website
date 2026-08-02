@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 
 const SpiritualDivider = () => (
   <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-6 pb-4">
@@ -22,6 +23,7 @@ const MinimalistGeometryTexture = () => (
 );
 
 export const FaqHero: React.FC = () => {
+    const { t } = useTranslation();
   return (
     <section className="relative min-h-[480px] md:min-h-[540px] flex flex-col items-center justify-start text-center px-4 md:px-6 overflow-hidden pt-10 md:pt-16 pb-8 md:pb-12 bg-surface border-b border-outline-variant/20">
       {/* Warm Ivory Background & Soft Saffron Radial Gradients */}
@@ -37,7 +39,7 @@ export const FaqHero: React.FC = () => {
         {/* White Ashram Logo sitting naturally in generous whitespace */}
         <img
           src="/assets/Ashram vector logo_2022_white-01.png"
-          alt="Shri Gurudev Ashram Official Logo"
+          alt={"Shri Gurudev Ashram Official Logo"}
           width={320}
           height={320}
           loading="eager"
@@ -47,17 +49,17 @@ export const FaqHero: React.FC = () => {
         
         {/* Small Eyebrow Label */}
         <span className="font-label-caps text-xs md:text-sm text-secondary uppercase tracking-[0.25em] mb-4 block font-semibold">
-          Sacred Knowledge Under Gurudev's Blessings
+          {t('public.faq.heroTitle')}
         </span>
 
         {/* Large Heading */}
         <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl text-primary font-bold tracking-tight mb-4">
-          Frequently Asked Questions
+          {t('public.faq.title')}
         </h1>
 
         {/* Short Description */}
         <p className="font-body-lg text-base sm:text-lg md:text-xl text-on-surface-variant leading-relaxed max-w-2xl mx-auto font-light">
-          Find answers to common questions regarding Sacred Yatras, Ashram visits, registration, accommodation, and spiritual guidance.
+          {t('public.faq.desc')}
         </p>
       </div>
       <SpiritualDivider />

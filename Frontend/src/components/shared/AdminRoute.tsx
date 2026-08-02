@@ -1,9 +1,11 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { useTranslation } from "react-i18next";
 
 /** Requires user to be an admin. Redirects to /portal if not admin. */
 export function AdminRoute() {
+    const { t } = useTranslation();
   const { user, userProfile, loading } = useAuth()
 
   if (loading) {

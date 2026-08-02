@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Loader2, Image as ImageIcon, CheckCircle, AlertCircle, Calendar, IndianRupee, Users, Sparkles } from 'lucide-react'
 import type { TravelPackageRow } from '@/types/database.types'
+import { useTranslation } from "react-i18next";
 
 interface PackageFormData {
   title: string
@@ -25,6 +26,7 @@ interface PackageFormProps {
 }
 
 export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormProps) {
+    const { t } = useTranslation();
   const [form, setForm] = useState<PackageFormData>({
     title: initialData?.title ?? '',
     description: initialData?.description ?? '',
@@ -93,21 +95,22 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
             <Sparkles className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-display text-xl font-bold text-[#3E2B1F]">Basic Yatra Details</h3>
-            <p className="text-xs text-[#6F5B47]">Set the sacred pilgrimage title and comprehensive spiritual itinerary</p>
+            <h3 className="font-display text-xl font-bold text-[#3E2B1F]">{"Basic Yatra Details"}</h3>
+            <p className="text-xs text-[#6F5B47]">{"Set the sacred pilgrimage title and comprehensive spiritual itinerary"}</p>
           </div>
         </div>
 
         <div className="space-y-5">
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Pilgrimage Package Title *
-            </label>
+              
+                                        {"Pilgrimage Package Title *"}
+                                      </label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="e.g. Char Dham & Kashi Sacred Yatra 2026"
+              placeholder={"e.g. Char Dham & Kashi Sacred Yatra 2026"}
               className={inputClass('title')}
             />
             {renderError('title')}
@@ -115,13 +118,14 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
 
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Spiritual Itinerary & Description * (Min 50 chars)
-            </label>
+              
+                                        {"Spiritual Itinerary & Description * (Min 50 chars)"}
+                                      </label>
             <textarea
               rows={5}
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              placeholder="Provide full details of the holy darshan, accommodation inclusions, transport luxury, and daily schedule..."
+              placeholder={"Provide full details of the holy darshan, accommodation inclusions, transport luxury, and daily schedule..."}
               className={`${inputClass('description')} resize-y min-h-[120px]`}
             />
             <div className="flex items-center justify-between mt-1.5 text-xs">
@@ -141,16 +145,17 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
             <Calendar className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-display text-xl font-bold text-[#3E2B1F]">Pricing & Pilgrimage Schedule</h3>
-            <p className="text-xs text-[#6F5B47]">Define per-devotee contribution tier and journey duration</p>
+            <h3 className="font-display text-xl font-bold text-[#3E2B1F]">{"Pricing & Pilgrimage Schedule"}</h3>
+            <p className="text-xs text-[#6F5B47]">{"Define per-devotee contribution tier and journey duration"}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Per Devotee Price (₹) *
-            </label>
+              
+                                        {"Per Devotee Price (₹) *"}
+                                      </label>
             <div className="relative">
               <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#B8860B]" />
               <input
@@ -167,13 +172,14 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
 
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Journey Duration *
-            </label>
+              
+                                        {"Journey Duration *"}
+                                      </label>
             <input
               type="text"
               value={form.duration}
               onChange={(e) => setForm({ ...form, duration: e.target.value })}
-              placeholder="e.g. 7 Days / 6 Nights"
+              placeholder={"e.g. 7 Days / 6 Nights"}
               className={inputClass('duration')}
             />
             {renderError('duration')}
@@ -181,12 +187,13 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
         </div>
 
         <div className="pt-4 border-t border-[#E9DCC5]">
-          <h4 className="text-sm font-bold text-[#3E2B1F] mb-4">Travel Preference Surcharges (Optional Add-ons)</h4>
+          <h4 className="text-sm font-bold text-[#3E2B1F] mb-4">{"Travel Preference Surcharges (Optional Add-ons)"}</h4>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div>
               <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-                Flight (+₹)
-              </label>
+                
+                                              {"Flight (+₹)"}
+                                            </label>
               <div className="relative">
                 <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
                 <input type="number" min={0} value={form.flight_price || ''} onChange={(e) => setForm({ ...form, flight_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('flight_price')} pl-8 py-2 text-xs`} />
@@ -194,8 +201,9 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
             </div>
             <div>
               <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-                AC Train (+₹)
-              </label>
+                
+                                              {"AC Train (+₹)"}
+                                            </label>
               <div className="relative">
                 <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
                 <input type="number" min={0} value={form.train_ac_price || ''} onChange={(e) => setForm({ ...form, train_ac_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('train_ac_price')} pl-8 py-2 text-xs`} />
@@ -203,8 +211,9 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
             </div>
             <div>
               <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-                Non-AC Train (+₹)
-              </label>
+                
+                                              {"Non-AC Train (+₹)"}
+                                            </label>
               <div className="relative">
                 <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
                 <input type="number" min={0} value={form.train_non_ac_price || ''} onChange={(e) => setForm({ ...form, train_non_ac_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('train_non_ac_price')} pl-8 py-2 text-xs`} />
@@ -212,8 +221,9 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
             </div>
             <div>
               <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-                AC Room (+₹)
-              </label>
+                
+                                              {"AC Room (+₹)"}
+                                            </label>
               <div className="relative">
                 <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
                 <input type="number" min={0} value={form.room_ac_price || ''} onChange={(e) => setForm({ ...form, room_ac_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('room_ac_price')} pl-8 py-2 text-xs`} />
@@ -221,8 +231,9 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
             </div>
             <div>
               <label className="block text-[10px] font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-                Non-AC Room (+₹)
-              </label>
+                
+                                              {"Non-AC Room (+₹)"}
+                                            </label>
               <div className="relative">
                 <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B8860B]" />
                 <input type="number" min={0} value={form.room_non_ac_price || ''} onChange={(e) => setForm({ ...form, room_non_ac_price: Number(e.target.value) })} placeholder="0" className={`${inputClass('room_non_ac_price')} pl-8 py-2 text-xs`} />
@@ -239,16 +250,17 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
             <ImageIcon className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-display text-xl font-bold text-[#3E2B1F]">Banner Media & Visual Presentation</h3>
-            <p className="text-xs text-[#6F5B47]">High-resolution holy temple photograph for public Yatra card display</p>
+            <h3 className="font-display text-xl font-bold text-[#3E2B1F]">{"Banner Media & Visual Presentation"}</h3>
+            <p className="text-xs text-[#6F5B47]">{"High-resolution holy temple photograph for public Yatra card display"}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Direct Image URL / Media Asset Link
-            </label>
+              
+                                        {"Direct Image URL / Media Asset Link"}
+                                      </label>
             <input
               type="url"
               value={form.image_url}
@@ -265,7 +277,7 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
                 <div className="h-52 rounded-[16px] overflow-hidden border border-[#E9DCC5] shadow-md max-w-lg mx-auto">
                   <img
                     src={form.image_url}
-                    alt="Yatra Banner Preview"
+                    alt={"Yatra Banner Preview"}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       ;(e.target as HTMLImageElement).style.display = 'none'
@@ -274,7 +286,7 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
                 </div>
                 <p className="text-xs font-bold text-[#2E7D32] flex items-center justify-center gap-1">
                   <CheckCircle className="h-3.5 w-3.5" />
-                  <span>Banner loaded successfully. This exact image will appear on the public Yatras catalog.</span>
+                  <span>{"Banner loaded successfully. This exact image will appear on the public Yatras catalog."}</span>
                 </p>
               </div>
             ) : (
@@ -283,11 +295,13 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
                   🪷
                 </div>
                 <p className="font-display text-base font-bold text-[#3E2B1F]">
-                  Paste image URL above to preview banner
-                </p>
+                  
+                                                        {"Paste image URL above to preview banner"}
+                                                      </p>
                 <p className="text-xs text-[#6F5B47] max-w-sm mx-auto">
-                  Use clear, serene photography of sacred shrines or spiritual landscapes in 16:9 aspect ratio.
-                </p>
+                  
+                                                        {"Use clear, serene photography of sacred shrines or spiritual landscapes in 16:9 aspect ratio."}
+                                                      </p>
               </div>
             )}
           </div>
@@ -301,16 +315,17 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
             <Users className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-display text-xl font-bold text-[#3E2B1F]">Seat Quotas & Live Status</h3>
-            <p className="text-xs text-[#6F5B47]">Manage total capacity and real-time public catalog availability</p>
+            <h3 className="font-display text-xl font-bold text-[#3E2B1F]">{"Seat Quotas & Live Status"}</h3>
+            <p className="text-xs text-[#6F5B47]">{"Manage total capacity and real-time public catalog availability"}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Total Seat Capacity *
-            </label>
+              
+                                        {"Total Seat Capacity *"}
+                                      </label>
             <input
               type="number"
               min={1}
@@ -323,8 +338,9 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
 
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Remaining Available Seats *
-            </label>
+              
+                                        {"Remaining Available Seats *"}
+                                      </label>
             <input
               type="number"
               min={0}
@@ -378,7 +394,7 @@ export function PackageForm({ initialData, onSubmit, submitLabel }: PackageFormP
           {submitting ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Saving Pilgrimage Package...</span>
+              <span>{"Saving Pilgrimage Package..."}</span>
             </>
           ) : (
             <>

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from "react-i18next";
 
 export const Newsletter: React.FC = () => {
+    const { t } = useTranslation();
   return (
     <section className="mt-section-gap max-w-container-max mx-auto px-margin-desktop text-center">
       <motion.div 
@@ -20,19 +22,19 @@ export const Newsletter: React.FC = () => {
           <div className="mb-6">
             <img
               src="/assets/Ashram vector logo_2022_white-01.png"
-              alt="Shri Gurudev Ashram Logo"
+              alt={"Shri Gurudev Ashram Logo"}
               className="h-20 w-20 object-contain select-none drop-shadow-[0_3px_10px_rgba(117,91,0,0.22)] filter brightness-95"
             />
           </div>
           
           <h2 className="font-display-lg text-primary text-[28px] sm:text-[34px] md:text-[38px] font-bold mb-6 leading-tight">
-            Take the First Step Towards a Sacred Journey
+            {t('public.yatras.cta.firstStep')}
           </h2>
           
           <p className="font-body-lg text-on-surface-variant mb-10 max-w-2xl text-center leading-relaxed">
-            Every Yatra begins with a single step of faith.
+            {t('public.yatras.cta.faith')}
             <span className="block mt-2">
-              Join माँ वैष्णवी टूरिज़्म and experience sacred pilgrimages guided by devotion, discipline, and selfless service. Travel alongside fellow devotees to some of Bharat's holiest destinations under the blessings of Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj.
+              {t('public.yatras.cta.desc')}
             </span>
           </p>
           
@@ -41,13 +43,15 @@ export const Newsletter: React.FC = () => {
               to="/yatras"
               className="btn-primary w-full sm:w-auto justify-center"
             >
-              Explore Upcoming Yatras
+              
+              {t('public.yatras.cta.exploreUpcoming', { defaultValue: 'Explore Upcoming Yatras' })}
             </Link>
             <Link 
               to="/contact"
               className="btn-outline w-full sm:w-auto justify-center"
             >
-              Contact the Ashram
+              
+              {t('public.yatras.cta.contactAshram', { defaultValue: 'Contact the Ashram' })}
             </Link>
           </div>
         </div>

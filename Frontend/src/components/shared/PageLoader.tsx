@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
+import { useTranslation } from "react-i18next";
 
 export function PageLoader() {
+    const { t } = useTranslation();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <motion.div
@@ -16,7 +18,7 @@ export function PageLoader() {
         >
           <Sparkles className="h-5 w-5 text-primary" />
         </motion.div>
-        <p className="text-sm text-muted-foreground">Loading sanctuary...</p>
+        <p className="text-sm text-muted-foreground">{t('public.loading.sanctuary')}</p>
       </motion.div>
     </div>
   )

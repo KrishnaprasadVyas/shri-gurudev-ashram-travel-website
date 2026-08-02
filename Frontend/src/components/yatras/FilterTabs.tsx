@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 
 interface FilterTabsProps {
   activeTab: 'upcoming' | 'past';
@@ -6,6 +7,7 @@ interface FilterTabsProps {
 }
 
 export const FilterTabs: React.FC<FilterTabsProps> = ({ activeTab, onTabChange }) => {
+    const { t } = useTranslation();
   return (
     <section className="max-w-container-max mx-auto px-margin-desktop mb-12">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-outline-variant/30 pb-6">
@@ -18,7 +20,7 @@ export const FilterTabs: React.FC<FilterTabsProps> = ({ activeTab, onTabChange }
                 : 'text-on-surface-variant hover:text-primary'
             }`}
           >
-            UPCOMING
+            {t('public.yatras.filters.upcoming')}
           </button>
           <button
             onClick={() => onTabChange('past')}
@@ -28,16 +30,16 @@ export const FilterTabs: React.FC<FilterTabsProps> = ({ activeTab, onTabChange }
                 : 'text-on-surface-variant hover:text-primary'
             }`}
           >
-            PAST JOURNEYS
+            {t('public.yatras.filters.pastJourneys')}
           </button>
         </div>
         
         <div className="flex items-center gap-4 text-on-surface-variant">
-          <span className="font-label-caps">SORT BY</span>
+          <span className="font-label-caps">{t('public.yatras.filters.sortBy')}</span>
           <select className="bg-transparent border-none focus:ring-0 font-body-md text-primary cursor-pointer outline-none">
-            <option>Date: Soonest first</option>
-            <option>Price: Low to High</option>
-            <option>Duration</option>
+            <option>{t('public.yatras.filters.sortDateAsc')}</option>
+            <option>{t('public.yatras.filters.sortPriceAsc')}</option>
+            <option>{t('public.yatras.filters.sortDuration')}</option>
           </select>
         </div>
       </div>

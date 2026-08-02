@@ -3,8 +3,10 @@ import { Download, FileSpreadsheet, Calendar, Filter, Sparkles } from 'lucide-re
 import apiClient from '@/lib/apiClient'
 import { exportToCsv } from '@/lib/csvExporter'
 import { usePageTitle } from '@/hooks/usePageTitle'
+import { useTranslation } from "react-i18next";
 
 export function AdminReportsPage() {
+    const { t } = useTranslation();
   usePageTitle('Reports & Manifest Exports')
   const [packages, setPackages] = useState<{ id: string; title: string }[]>([])
   const [selectedPackageId, setSelectedPackageId] = useState('')
@@ -148,8 +150,9 @@ export function AdminReportsPage() {
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#B8860B]" />
             <span className="font-label-caps text-[11px] font-bold uppercase tracking-[0.2em] text-[#B8860B]">
-              Sacred Administration • Export Center
-            </span>
+              
+                                        {"Sacred Administration • Export Center"}
+                                      </span>
           </div>
 
           <h1 className="font-display text-2xl sm:text-4xl font-bold text-[#3E2B1F] tracking-tight">

@@ -100,10 +100,6 @@ export function SevaPage() {
   const [selectedPackage, setSelectedPackage] = useState<SevaPackage | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  useEffect(() => {
-    fetchSevaPackages()
-  }, [])
-
   const fetchSevaPackages = async () => {
     try {
       setLoading(true)
@@ -119,6 +115,10 @@ export function SevaPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchSevaPackages()
+  }, [])
 
   const handleOpenBooking = (pkg: SevaPackage) => {
     setSelectedPackage(pkg)

@@ -13,6 +13,7 @@ import { usePhoneAuth } from '@/hooks/usePhoneAuth'
 import type { UserRow } from '@/types/database.types'
 import type { AuthUser } from '@/types'
 import apiClient from '@/lib/apiClient'
+import { useTranslation } from "react-i18next";
 
 const LOG = import.meta.env.DEV
 
@@ -37,6 +38,7 @@ interface AuthContextValue {
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+    const { t } = useTranslation();
   const [user, setUser] = useState<AuthUser | null>(null)
   const [userProfile, setUserProfile] = useState<UserRow | null>(null)
   const [loading, setLoading] = useState(true)

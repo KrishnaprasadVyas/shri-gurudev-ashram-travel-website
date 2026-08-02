@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 
 export interface YatraCardProps {
   id: string;
@@ -20,6 +21,7 @@ export const YatraCard: React.FC<YatraCardProps> = ({
   price,
   imageUrl,
 }) => {
+    const { t } = useTranslation();
   return (
     <div className="yatra-card group bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/30 flex flex-col hover:shadow-lg transition-all duration-500">
       <div className="relative h-56 md:h-64 overflow-hidden">
@@ -51,7 +53,7 @@ export const YatraCard: React.FC<YatraCardProps> = ({
             to={`/yatras/${id}`}
             className="flex items-center gap-2 text-primary font-bold hover:text-secondary transition-colors group"
           >
-            <span className="font-label-caps">VIEW DETAILS</span>
+            <span className="font-label-caps">{t('public.yatras.yatraCard.viewDetails', { defaultValue: 'VIEW DETAILS' })}</span>
             <svg className="w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-300 ease-out" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7v10" /></svg>
           </Link>
         </div>

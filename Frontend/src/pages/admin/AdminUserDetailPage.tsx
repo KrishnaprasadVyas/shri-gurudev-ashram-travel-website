@@ -24,6 +24,7 @@ import { LoadingState } from '@/components/shared/States'
 import { toast } from 'sonner'
 import type { AdminUser } from '@/types/admin'
 import type { BookingRow } from '@/types/database.types'
+import { useTranslation } from "react-i18next";
 
 const statusBadge: Record<string, string> = {
   payment_pending: 'bg-[#C68A00]/15 text-[#C68A00] border border-[#C68A00]/30 font-bold',
@@ -33,6 +34,7 @@ const statusBadge: Record<string, string> = {
 }
 
 function VerificationImage({ userId, filePath, label }: { userId: string; filePath: string; label: string }) {
+    const { t } = useTranslation();
   const [imgError, setImgError] = useState(false)
   const [isZoomed, setIsZoomed] = useState(false)
 
@@ -61,7 +63,7 @@ function VerificationImage({ userId, filePath, label }: { userId: string; filePa
                 className="px-2.5 py-1 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[11px] font-bold flex items-center gap-1 transition-colors shadow-2xs"
               >
                 <ZoomIn className="h-3 w-3" />
-                <span>Zoom</span>
+                <span>{"Zoom"}</span>
               </button>
               <a
                 href={`${data.url}&download=1`}
@@ -70,7 +72,7 @@ function VerificationImage({ userId, filePath, label }: { userId: string; filePa
                 className="px-2.5 py-1 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-[11px] font-bold flex items-center gap-1 transition-colors shadow-2xs"
               >
                 <Download className="h-3 w-3" />
-                <span>Download</span>
+                <span>{"Download"}</span>
               </a>
             </div>
           )}
@@ -80,7 +82,7 @@ function VerificationImage({ userId, filePath, label }: { userId: string; filePa
           {isLoading ? (
             <div className="flex flex-col items-center gap-2 text-[#B8860B]">
               <Loader2 className="h-6 w-6 animate-spin" />
-              <span className="text-xs font-mono">Decrypting signed file...</span>
+              <span className="text-xs font-mono">{"Decrypting signed file..."}</span>
             </div>
           ) : data?.url && !imgError ? (
             <img
@@ -93,7 +95,7 @@ function VerificationImage({ userId, filePath, label }: { userId: string; filePa
           ) : (
             <div className="flex flex-col items-center gap-2 text-[#9A8A78]">
               <ImageOff className="h-6 w-6" />
-              <span className="text-xs">Unable to load image record</span>
+              <span className="text-xs">{"Unable to load image record"}</span>
             </div>
           )}
         </div>
@@ -109,8 +111,9 @@ function VerificationImage({ userId, filePath, label }: { userId: string; filePa
               className="absolute -top-12 right-0 px-4 py-1.5 rounded-full bg-[#FFFFFF] text-[#3E2B1F] font-bold text-xs uppercase tracking-wider hover:bg-[#B8860B] hover:text-[#FFFFFF] transition-colors"
               onClick={() => setIsZoomed(false)}
             >
-              Close Zoom ✕
-            </button>
+              
+                                        {"Close Zoom ✕"}
+                                      </button>
             <img
               src={data.url}
               alt={label}
@@ -124,6 +127,7 @@ function VerificationImage({ userId, filePath, label }: { userId: string; filePa
 }
 
 export function AdminUserDetailPage() {
+    const { t } = useTranslation();
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -167,7 +171,7 @@ export function AdminUserDetailPage() {
           <button
             onClick={() => navigate(-1)}
             className="w-11 h-11 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] flex items-center justify-center transition-all duration-200 shadow-sm shrink-0 hover:scale-105"
-            title="Go Back"
+            title={"Go Back"}
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -200,7 +204,8 @@ export function AdminUserDetailPage() {
               </span>
             </div>
             <p className="font-mono text-xs text-[#6F5B47]">
-              Seeker ID: #{user.id} • Joined on {new Date(user.created_at).toLocaleDateString('en-IN')}
+              
+                                        {"Seeker ID: #"}{user.id}  {"• Joined on"} {new Date(user.created_at).toLocaleDateString('en-IN')}
             </p>
           </div>
         </div>
@@ -219,7 +224,7 @@ export function AdminUserDetailPage() {
               <div className="py-3 flex items-center justify-between gap-4">
                 <span className="flex items-center gap-2 text-[#9A8A78] font-semibold">
                   <Mail className="h-4 w-4 text-[#B8860B]" />
-                  <span>Email Address</span>
+                  <span>{"Email Address"}</span>
                 </span>
                 <span className="font-mono font-bold text-[#3E2B1F]">{user.email ?? 'Not provided'}</span>
               </div>
@@ -227,7 +232,7 @@ export function AdminUserDetailPage() {
               <div className="py-3 flex items-center justify-between gap-4">
                 <span className="flex items-center gap-2 text-[#9A8A78] font-semibold">
                   <Phone className="h-4 w-4 text-[#B8860B]" />
-                  <span>Phone Number</span>
+                  <span>{"Phone Number"}</span>
                 </span>
                 <span className="font-mono font-bold text-[#3E2B1F]">{user.phone || '—'}</span>
               </div>
@@ -235,7 +240,7 @@ export function AdminUserDetailPage() {
               <div className="py-3 flex items-center justify-between gap-4">
                 <span className="flex items-center gap-2 text-[#9A8A78] font-semibold">
                   <ShieldCheck className="h-4 w-4 text-[#B8860B]" />
-                  <span>Assigned Role</span>
+                  <span>{"Assigned Role"}</span>
                 </span>
                 <span className="px-3 py-1 rounded-full bg-[#B8860B]/12 text-[#B8860B] font-bold text-xs uppercase tracking-wider">
                   {user.role}
@@ -263,15 +268,15 @@ export function AdminUserDetailPage() {
             <div className="flex items-center justify-between pb-3 border-b border-[#E9DCC5]">
               <h2 className="font-display text-xl font-bold text-[#3E2B1F] flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-[#B8860B]" />
-                <span>Pilgrimage Bookings ({bookings.length})</span>
+                <span>{"Pilgrimage Bookings ("}{bookings.length})</span>
               </h2>
             </div>
 
             {bookings.length === 0 ? (
               <div className="p-8 rounded-[16px] bg-[#FFFFFF] border border-[#E9DCC5] text-center space-y-2">
                 <span className="text-2xl">📖</span>
-                <p className="font-display text-base font-bold text-[#3E2B1F]">No yatras reserved yet.</p>
-                <p className="text-xs text-[#6F5B47]">This devotee has not registered for any upcoming pilgrimage packages.</p>
+                <p className="font-display text-base font-bold text-[#3E2B1F]">{"No yatras reserved yet."}</p>
+                <p className="text-xs text-[#6F5B47]">{"This devotee has not registered for any upcoming pilgrimage packages."}</p>
               </div>
             ) : (
               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 admin-sidebar-scroll">
@@ -289,7 +294,8 @@ export function AdminUserDetailPage() {
                     </div>
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#E9DCC5]">
                       <span className="text-xs text-[#6F5B47]">
-                        Reserved on {new Date(b.created_at).toLocaleDateString('en-IN')}
+                        
+                                                        {"Reserved on"} {new Date(b.created_at).toLocaleDateString('en-IN')}
                       </span>
                       <span className="font-display font-bold text-base text-[#3E2B1F]">
                         ₹{b.total_amount.toLocaleString('en-IN')}
@@ -308,38 +314,40 @@ export function AdminUserDetailPage() {
             <h2 className="font-display text-xl font-bold text-[#3E2B1F] flex items-center justify-between pb-3 border-b border-[#E9DCC5]">
               <span className="flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-[#B8860B]" />
-                <span>Identity Verification Documents</span>
+                <span>{"Identity Verification Documents"}</span>
               </span>
               {user.aadhaar_number && (
                 <span className="font-mono text-xs font-normal text-[#6F5B47]">
-                  Aadhaar No: <strong className="text-[#3E2B1F]">{user.aadhaar_number}</strong>
+                  
+                                                    {"Aadhaar No:"} <strong className="text-[#3E2B1F]">{user.aadhaar_number}</strong>
                 </span>
               )}
             </h2>
 
             {user.aadhaar_image_path && id ? (
-              <VerificationImage userId={id} filePath={user.aadhaar_image_path} label="Aadhaar Card Record" />
+              <VerificationImage userId={id} filePath={user.aadhaar_image_path} label={"Aadhaar Card Record"} />
             ) : (
               <div className="h-40 rounded-[16px] bg-[#FFFFFF] border border-[#E9DCC5] p-4 flex flex-col items-center justify-center text-center text-[#9A8A78]">
                 <FileText className="h-7 w-7 text-[#E9DCC5] mb-2" />
-                <span className="text-xs font-semibold text-[#6F5B47]">No Aadhaar card uploaded by devotee</span>
+                <span className="text-xs font-semibold text-[#6F5B47]">{"No Aadhaar card uploaded by devotee"}</span>
               </div>
             )}
 
             {user.selfie_image_path && id ? (
-              <VerificationImage userId={id} filePath={user.selfie_image_path} label="Devotee Selfie / Photo Record" />
+              <VerificationImage userId={id} filePath={user.selfie_image_path} label={"Devotee Selfie / Photo Record"} />
             ) : (
               <div className="h-40 rounded-[16px] bg-[#FFFFFF] border border-[#E9DCC5] p-4 flex flex-col items-center justify-center text-center text-[#9A8A78]">
                 <FileText className="h-7 w-7 text-[#E9DCC5] mb-2" />
-                <span className="text-xs font-semibold text-[#6F5B47]">No selfie photo uploaded by devotee</span>
+                <span className="text-xs font-semibold text-[#6F5B47]">{"No selfie photo uploaded by devotee"}</span>
               </div>
             )}
 
             {user.verification_status === 'submitted' && (
               <div className="pt-4 border-t border-[#E9DCC5] space-y-3">
                 <p className="font-label-caps text-[11px] uppercase tracking-[0.15em] font-bold text-[#6F5B47]">
-                  Administrative Decision
-                </p>
+                  
+                                                    {"Administrative Decision"}
+                                                  </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <button
                     onClick={() => verifyMutation.mutate('verified')}

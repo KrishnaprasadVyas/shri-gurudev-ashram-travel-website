@@ -15,9 +15,11 @@ import {
 import { useAuth } from '@/context/AuthContext'
 import { useMyBookings } from '@/hooks/useBookings'
 import { usePageTitle } from '@/hooks/usePageTitle'
+import { useTranslation } from "react-i18next";
 
 export function PortalHomePage() {
-  usePageTitle('My Portal')
+    const { t } = useTranslation();
+  usePageTitle(t('portal.title'))
   const { userProfile } = useAuth()
   const { data: bookings, isLoading } = useMyBookings()
 
@@ -44,14 +46,14 @@ export function PortalHomePage() {
       <div className="space-y-3">
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#F5EFE4] border border-[#E9DCC5] text-[#B8860B] font-label-caps text-[11px] font-bold tracking-[0.16em] uppercase shadow-2xs">
           <Sparkles className="h-3 w-3" />
-          <span>Devotee Portal</span>
+          <span>{t('portal.devoteePortal')}</span>
         </div>
         <h1 className="font-display text-4xl sm:text-5xl font-bold text-[#3E2B1F] tracking-tight leading-[1.15]">
           {getGreetingTime()}, {name} 🙏
         </h1>
         <p className="text-sm sm:text-base text-[#6F5B47] font-normal max-w-xl leading-relaxed">
-          Continue your spiritual journey through sacred pilgrimages under Gurudev Ji&apos;s divine guidance.
-        </p>
+          {t('portal.heroDesc')}
+                          </p>
       </div>
 
       {/* ── Verification Alerts ──────────────────────────── */}
@@ -66,8 +68,8 @@ export function PortalHomePage() {
                 <div className="flex items-center gap-2.5 mb-1">
                   <h2 className="font-display text-lg font-bold text-[#3E2B1F]">Complete Identity Verification</h2>
                   <span className="px-2.5 py-0.5 rounded-full bg-[#C68A00]/15 text-[#C68A00] font-label-caps text-[10px] font-bold uppercase tracking-wider">
-                    Required
-                  </span>
+                    {t('portal.required')}
+                                                        </span>
                 </div>
                 <p className="text-sm text-[#6F5B47] max-w-lg leading-relaxed">
                   Verify your identity before booking any sacred Yatra. Takes less than 3 minutes.
@@ -78,7 +80,7 @@ export function PortalHomePage() {
               to="/portal/verify"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#B8860B] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#D4AF37] transition-all duration-250 shrink-0 shadow-sm hover:-translate-y-0.5"
             >
-              Verify Now <ArrowRight className="h-3.5 w-3.5" />
+              {t('portal.verifyNow')} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>
@@ -92,12 +94,12 @@ export function PortalHomePage() {
             </div>
             <div>
               <div className="flex items-center gap-2.5 mb-0.5">
-                <h2 className="font-display text-lg font-bold text-[#3E2B1F]">Verification Under Review</h2>
+                <h2 className="font-display text-lg font-bold text-[#3E2B1F]">{t('portal.verifyReview')}</h2>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#C68A00]/15 text-[#C68A00] font-label-caps text-[10px] font-bold uppercase tracking-wider">
-                  In Progress
-                </span>
+                  {t('portal.inProgress')}
+                                                  </span>
               </div>
-              <p className="text-sm text-[#6F5B47]">Your documents are being reviewed. We&apos;ll notify you within 24 to 48 hours.</p>
+              <p className="text-sm text-[#6F5B47]">{t('portal.verifyReviewDesc')}</p>
             </div>
           </div>
         </div>
@@ -111,17 +113,17 @@ export function PortalHomePage() {
                 <ShieldX className="h-6 w-6 text-[#C0392B]" />
               </div>
               <div>
-                <h2 className="font-display text-lg font-bold text-[#3E2B1F] mb-1">Verification Action Required</h2>
+                <h2 className="font-display text-lg font-bold text-[#3E2B1F] mb-1">{t('portal.verifyAction')}</h2>
                 <p className="text-sm text-[#6F5B47] max-w-lg leading-relaxed">
-                  Your previous submission was not accepted. Please re-upload clearer identity documents.
-                </p>
+                  {t('portal.verifyActionDesc')}
+                                                  </p>
               </div>
             </div>
             <Link
               to="/portal/verify"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#C0392B] text-white font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-all duration-250 shrink-0 shadow-sm hover:-translate-y-0.5"
             >
-              Resubmit <ArrowRight className="h-3.5 w-3.5" />
+              {t('portal.resubmit')} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>
@@ -132,17 +134,17 @@ export function PortalHomePage() {
           <div className="w-10 h-10 rounded-xl bg-[#2E7D32]/15 border border-[#2E7D32]/30 flex items-center justify-center shrink-0">
             <ShieldCheck className="h-5 w-5 text-[#2E7D32]" />
           </div>
-          <p className="text-sm text-[#2E7D32] font-bold">Identity Verified ✓ — You can now book and attend all sacred Yatras.</p>
+          <p className="text-sm text-[#2E7D32] font-bold">{t('portal.verifySuccess')}</p>
         </div>
       )}
 
       {/* ── Statistics Grid ──────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { label: 'Verification', value: verStatus === 'verified' ? 'Verified' : verStatus === 'submitted' ? 'Under Review' : 'Required', icon: ShieldCheck, sub: verStatus === 'verified' ? 'Identity confirmed ✓' : 'Required for booking' },
-          { label: 'Total Bookings', value: isLoading ? '—' : String(bookings?.length ?? 0), icon: BookOpen, sub: 'Sacred journey passes' },
-          { label: 'Upcoming Yatras', value: isLoading ? '—' : String(upcomingYatrasCount), icon: Map, sub: 'Confirmed pilgrimages' },
-          { label: 'Profile Status', value: profileCompletion, icon: User, sub: profileCompletion === '100%' ? 'Fully set up' : 'Finish setup' },
+          { label: t('portal.statsVerify'), value: verStatus === 'verified' ? 'Verified' : verStatus === 'submitted' ? 'Under Review' : 'Required', icon: ShieldCheck, sub: verStatus === 'verified' ? t('portal.statsVerifyDone') : t('portal.statsVerifyReq') },
+          { label: t('portal.statsBookings'), value: isLoading ? '—' : String(bookings?.length ?? 0), icon: BookOpen, sub: t('portal.statsBookingsSub') },
+          { label: t('portal.statsYatras'), value: isLoading ? '—' : String(upcomingYatrasCount), icon: Map, sub: t('portal.statsYatrasSub') },
+          { label: t('portal.statsProfile'), value: profileCompletion, icon: User, sub: profileCompletion === '100%' ? t('portal.statsProfileDone') : t('portal.statsProfileReq') },
         ].map((card) => (
           <div
             key={card.label}
@@ -164,13 +166,13 @@ export function PortalHomePage() {
 
       {/* ── Quick Actions ────────────────────────────────── */}
       <div>
-        <h2 className="font-display text-xl sm:text-2xl font-bold text-[#3E2B1F] mb-4">Quick Actions</h2>
+        <h2 className="font-display text-xl sm:text-2xl font-bold text-[#3E2B1F] mb-4">{t('portal.quickActions')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
-            { to: '/yatras', icon: Map, title: 'Browse Yatras', desc: 'Explore upcoming pilgrimages & itineraries', cta: 'Explore' },
-            { to: '/portal/bookings', icon: BookOpen, title: 'My Bookings', desc: 'View pilgrimage passes & payment receipts', cta: 'View' },
-            { to: '/portal/profile', icon: User, title: 'My Profile', desc: 'Update personal information & contact info', cta: 'Edit' },
-            { to: '/contact', icon: LifeBuoy, title: 'Support', desc: 'Get assistance from Ashram administration', cta: 'Contact' },
+            { to: '/yatras', icon: Map, title: t('portal.actionBrowse'), desc: t('portal.actionBrowseDesc'), cta: t('portal.actionBrowseCta') },
+            { to: '/portal/bookings', icon: BookOpen, title: t('portal.actionBookings'), desc: t('portal.actionBookingsDesc'), cta: t('portal.actionBookingsCta') },
+            { to: '/portal/profile', icon: User, title: t('portal.actionProfile'), desc: t('portal.actionProfileDesc'), cta: t('portal.actionProfileCta') },
+            { to: '/contact', icon: LifeBuoy, title: t('portal.actionSupport'), desc: t('portal.actionSupportDesc'), cta: t('portal.actionSupportCta') },
           ].map((action) => (
             <Link
               key={action.to}
@@ -200,24 +202,24 @@ export function PortalHomePage() {
           <div className="flex items-center justify-between mb-5 pb-3 border-b border-[#E9DCC5]">
             <div className="flex items-center gap-2.5">
               <Clock className="h-4 w-4 text-[#B8860B]" />
-              <h3 className="font-display text-lg font-bold text-[#3E2B1F]">Recent Activity</h3>
+              <h3 className="font-display text-lg font-bold text-[#3E2B1F]">{t('portal.recentActivity')}</h3>
             </div>
             {bookings && bookings.length > 0 && (
               <Link to="/portal/bookings" className="font-label-caps text-[11px] font-bold text-[#B8860B] hover:text-[#D4AF37] uppercase tracking-wider inline-flex items-center gap-1 transition-colors">
-                View All <ChevronRight className="h-3.5 w-3.5" />
+                {t('portal.viewAll')} <ChevronRight className="h-3.5 w-3.5" />
               </Link>
             )}
           </div>
 
           {isLoading ? (
-            <div className="py-12 text-center text-sm text-[#6F5B47]">Loading your records...</div>
+            <div className="py-12 text-center text-sm text-[#6F5B47]">{t('portal.loadingRecords')}</div>
           ) : !bookings || bookings.length === 0 ? (
             <div className="py-12 text-center space-y-2 border border-dashed border-[#E9DCC5] rounded-2xl bg-[#F5EFE4]/30 my-auto">
               <Calendar className="h-8 w-8 text-[#B8860B]/70 mx-auto mb-2" />
-              <p className="font-display text-base font-bold text-[#3E2B1F]">No recent activity</p>
+              <p className="font-display text-base font-bold text-[#3E2B1F]">{t('portal.noActivity')}</p>
               <p className="text-xs text-[#6F5B47] max-w-xs mx-auto leading-relaxed">
-                Your pilgrimage reservations and boarding passes will appear here once booked.
-              </p>
+                {t('portal.noActivityDesc')}
+                                                </p>
             </div>
           ) : (
             <div className="space-y-3 my-auto">
@@ -228,10 +230,10 @@ export function PortalHomePage() {
                 >
                   <div className="min-w-0 flex-1">
                     <p className="font-display text-sm font-bold text-[#3E2B1F] truncate">
-                      {booking.booking_reference ? `Yatra #${booking.booking_reference}` : 'Pilgrimage Reservation'}
+                      {booking.booking_reference ? `${t('portal.yatraHash')}${booking.booking_reference}` : t('portal.pilgrimageRes')}
                     </p>
                     <p className="text-[12px] text-[#6F5B47] mt-0.5 flex items-center gap-2">
-                      <span>{booking.traveler_count} traveler(s)</span>
+                      <span>{booking.traveler_count} {t('portal.travelerS')}</span>
                       <span className="text-[#E9DCC5]">•</span>
                       <span className="font-semibold text-[#3E2B1F]">₹{booking.total_amount.toLocaleString('en-IN')}</span>
                     </p>
@@ -245,7 +247,7 @@ export function PortalHomePage() {
                         : 'bg-[#C68A00]/15 text-[#C68A00] border-[#C68A00]/30'
                     }`}
                   >
-                    {booking.status === 'paid' ? 'Confirmed' : booking.status === 'cancelled' ? 'Cancelled' : 'Pending'}
+                    {booking.status === 'paid' ? t('portal.confirmed') : booking.status === 'cancelled' ? t('portal.cancelled') : t('portal.pending')}
                   </span>
                 </div>
               ))}
@@ -262,18 +264,18 @@ export function PortalHomePage() {
           </div>
 
           <h3 className="font-display text-lg font-bold text-[#B8860B] tracking-wide mb-3 relative z-10">
-            ॥ श्रद्धावान् लभते ज्ञानम् ॥
+            {t('portal.quoteHeader')}
           </h3>
 
           <div className="h-px w-20 bg-[#E9DCC5] mb-4" />
 
           <blockquote className="text-sm text-[#3E2B1F] font-serif italic leading-relaxed max-w-sm relative z-10">
-            &ldquo;He who has faith attains true spiritual knowledge and divine peace.&rdquo;
-          </blockquote>
+            {t('portal.quoteText')}
+                                </blockquote>
 
           <span className="font-label-caps text-[10px] font-bold uppercase tracking-[0.18em] text-[#B8860B] mt-5 relative z-10 bg-[#F5EFE4] border border-[#E9DCC5] px-3.5 py-1 rounded-full">
-            Ashram Wisdom
-          </span>
+            {t('portal.ashramWisdom')}
+                                </span>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { BookOpen, AlertCircle } from 'lucide-react'
-import { useAuth } from '@/context/AuthContext'
+
 import { useMyBookings } from '@/hooks/useBookings'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { BookingCard } from '@/components/portal/BookingCard'
@@ -21,7 +21,7 @@ type FilterKey = typeof filterTabs[number]['key']
 
 export function BookingsPage() {
   usePageTitle('My Bookings')
-  const { userProfile } = useAuth()
+
   const [filter, setFilter] = useState<FilterKey>('all')
 
   const { data: rawBookings, isLoading, error, refetch } = useMyBookings()

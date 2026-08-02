@@ -41,8 +41,10 @@ import { AdminNewPackagePage } from './pages/admin/AdminNewPackagePage'
 import { AdminEditPackagePage } from './pages/admin/AdminEditPackagePage'
 import { AdminSevaPackagesPage } from './pages/admin/AdminSevaPackagesPage'
 import { AdminReportsPage } from './pages/admin/AdminReportsPage'
+import { useTranslation } from "react-i18next";
 
 function NotFoundPage() {
+    const { t } = useTranslation();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4 bg-[#0a0908]">
       <div className="text-6xl mb-4">🪷</div>
@@ -59,6 +61,7 @@ function NotFoundPage() {
 }
 
 export default function App() {
+    const { t } = useTranslation();
   return (
     <Routes>
       {/* ── Public pages ─────────────────────────────────────── */}

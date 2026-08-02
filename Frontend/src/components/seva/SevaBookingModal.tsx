@@ -3,6 +3,7 @@ import { X, Calendar, User, Phone, CheckCircle2, ShieldCheck, CreditCard, Sparkl
 import type { SevaPackage } from '@/types/travel'
 import apiClient from '@/lib/apiClient'
 import { formatCurrency, loadRazorpayScript } from '@/lib/utils'
+import { useTranslation } from "react-i18next";
 
 interface SevaBookingModalProps {
   isOpen: boolean
@@ -11,6 +12,7 @@ interface SevaBookingModalProps {
 }
 
 export function SevaBookingModal({ isOpen, onClose, sevaPackage }: SevaBookingModalProps) {
+    const { t } = useTranslation();
   const [step, setStep] = useState<'form' | 'review' | 'success'>('form')
   const [sevaDate, setSevaDate] = useState('')
   const [fullName, setFullName] = useState('')
@@ -282,7 +284,7 @@ export function SevaBookingModal({ isOpen, onClose, sevaPackage }: SevaBookingMo
                 <span>{phoneNumber}</span>
               </div>
               <div className="flex justify-between border-t border-amber-900/20 pt-2 font-bold text-base">
-                <span>Total Amount</span>
+                <span>{"Total Amount"}</span>
                 <span className="text-amber-400">{formatCurrency(sevaPackage.price)}</span>
               </div>
             </div>
@@ -299,8 +301,9 @@ export function SevaBookingModal({ isOpen, onClose, sevaPackage }: SevaBookingMo
                 disabled={loading}
                 className="w-1/3 py-3 rounded-xl bg-black/40 border border-amber-900/30 font-medium text-[#f2f0eb]/70 hover:text-white"
               >
-                Back
-              </button>
+                
+                                              {"Back"}
+                                            </button>
               <button
                 type="button"
                 onClick={handleCreateOrderAndPay}

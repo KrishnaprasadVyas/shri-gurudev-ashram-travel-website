@@ -1,44 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Sparkles, Flame, BookOpen, Music, ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 export const DailySchedule: React.FC = () => {
+    const { t } = useTranslation();
   const scheduleItems = [
     {
-      title: 'Morning Darshan',
+      title: t('public.contact.schedule.morningDarshan'),
       time: '6:00 AM – 12:00 PM',
       icon: Sun,
-      desc: 'Begin your day with peaceful darshan and silent meditation in the main temple hall.',
+      desc: t('public.contact.schedule.morningDarshanDesc'),
     },
     {
-      title: 'Kakda Aarti',
+      title: t('public.contact.schedule.kakdaAarti'),
       time: '5:30 AM',
       icon: Sparkles,
-      desc: 'The traditional early morning waking aarti filled with divine chants and cymbals.',
+      desc: t('public.contact.schedule.kakdaAartiDesc'),
     },
     {
-      title: 'Daily Morning Aarti',
+      title: t('public.contact.schedule.morningAarti'),
       time: '7:30 AM',
       icon: Flame,
-      desc: 'Sacred invocation offering light and gratitude to Param Pujya Shri Gurudev.',
+      desc: t('public.contact.schedule.morningAartiDesc'),
     },
     {
-      title: 'Haripath',
+      title: t('public.contact.schedule.haripath'),
       time: '4:30 PM',
       icon: Music,
-      desc: 'Melodious congregational singing of Saint Dnyaneshwar Maharaj’s sacred abhangs.',
+      desc: t('public.contact.schedule.haripathDesc'),
     },
     {
-      title: 'Gita Path',
+      title: t('public.contact.schedule.gitaPath'),
       time: '6:00 PM',
       icon: BookOpen,
-      desc: 'Daily recitation and reflection upon the timeless verses of the Shrimad Bhagavad Gita.',
+      desc: t('public.contact.schedule.gitaPathDesc'),
     },
     {
-      title: 'Evening Darshan',
+      title: t('public.contact.schedule.eveningDarshan'),
       time: '4:00 PM – 8:30 PM',
       icon: Moon,
-      desc: 'Serene evening atmosphere concluding with Mangal Aarti and spiritual discourse.',
+      desc: t('public.contact.schedule.eveningDarshanDesc'),
     },
   ];
 
@@ -57,10 +59,10 @@ export const DailySchedule: React.FC = () => {
       <div className="max-w-6xl mx-auto space-y-16">
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="font-label-caps text-xs md:text-sm text-secondary uppercase tracking-[0.25em] block font-semibold">
-            Ashram Daily Rhythm
+            {t('public.contact.scheduleTitle')}
           </span>
           <h2 className="font-display-lg text-3xl sm:text-4xl md:text-5xl text-primary font-bold tracking-tight">
-            Darshan & Daily Schedule
+            {t('public.contact.darshanSchedule')}
           </h2>
           <div className="flex items-center justify-center gap-4 pt-2">
             <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#C98B1A]" />
@@ -123,12 +125,12 @@ export const DailySchedule: React.FC = () => {
             {isExpanded ? (
               <>
                 <ChevronUp className="w-5 h-5" />
-                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('contact.showLess')}</span>
               </>
             ) : (
               <>
                 <ChevronDown className="w-5 h-5" />
-                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View Full Schedule</span>
+                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('public.contact.viewFullSchedule')}</span>
               </>
             )}
           </motion.button>

@@ -2,8 +2,10 @@ import React, { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Footer } from './Footer';
 import { Navbar } from './Navbar';
+import { useTranslation } from "react-i18next";
 
 export const PublicLayout: React.FC = () => {
+    const { t } = useTranslation();
   const { pathname } = useLocation();
 
   // Scroll to top on route change

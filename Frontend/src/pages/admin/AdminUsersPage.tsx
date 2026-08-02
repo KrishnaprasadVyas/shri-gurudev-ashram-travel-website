@@ -16,6 +16,7 @@ import apiClient from '@/lib/apiClient'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { useDebounce } from '@/hooks/useDebounce'
 import type { AdminUser } from '@/types/admin'
+import { useTranslation } from "react-i18next";
 
 const statusStyles: Record<string, { badge: string; label: string; icon: string }> = {
   verified: {
@@ -50,6 +51,7 @@ const roleStyles: Record<string, string> = {
 const PAGE_SIZE = 20
 
 export function AdminUsersPage() {
+    const { t } = useTranslation();
   usePageTitle('Users Management')
   const navigate = useNavigate()
   const [page, setPage] = useState(1)

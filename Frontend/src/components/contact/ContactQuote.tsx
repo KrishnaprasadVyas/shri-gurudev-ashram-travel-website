@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from "react-i18next";
 
 // Ornamental Divider SVG matching FAQ / Home Quote
 const OrnamentalDivider = () => (
@@ -34,6 +35,7 @@ const BottomOrnament = () => (
 );
 
 export const ContactQuote = () => {
+    const { t } = useTranslation();
   return (
     <section className="py-20 md:py-28 bg-[#fffdf8] flex flex-col items-center justify-center text-center px-4 sm:px-6 relative overflow-hidden border-t border-outline-variant/30 min-h-[55vh]">
       {/* Signature Sacred Background Reserved Exclusively Here */}
@@ -74,7 +76,7 @@ export const ContactQuote = () => {
 
         {/* Transliteration */}
         <p className="font-label-caps text-xs md:text-sm tracking-[0.4em] uppercase text-[#b88636] mt-10 mb-14 font-semibold">
-          SARVE BHAVANTU SUKHINAH SARVE SANTU NIRĀMAYĀḤ
+          {t('public.contact.quote1')}
         </p>
 
         {/* English Translation with Side Lotuses */}
@@ -82,7 +84,7 @@ export const ContactQuote = () => {
           <LotusOutline className="hidden md:block w-12 h-12" />
 
           <p className="font-display-lg text-xl md:text-2xl lg:text-3xl text-[#3b3228] italic max-w-2xl mx-auto leading-relaxed">
-            "May all beings be happy.<br />May all beings be free from suffering."
+            {t('public.contact.quote2')}<br />{t('public.contact.quote3')}
           </p>
 
           <LotusOutline className="hidden md:block w-12 h-12 -scale-x-100" />

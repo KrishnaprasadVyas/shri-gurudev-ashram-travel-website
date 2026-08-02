@@ -1,44 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Menu, X, Sparkles } from 'lucide-react'
 import { AdminSidebar } from './AdminSidebar'
 
-const routeHeaders: Record<string, { title: string; subtitle: string }> = {
-  '/admin': {
-    title: 'Dashboard',
-    subtitle: 'Manage pilgrims, yatras, bookings and the Ashram ecosystem.',
-  },
-  '/admin/users': {
-    title: 'Users Management',
-    subtitle: 'View and manage registered devotees across all spiritual programs.',
-  },
-  '/admin/verifications': {
-    title: 'Verification Queue',
-    subtitle: 'Review identity documents submitted by seekers before confirming pilgrimage registrations.',
-  },
-  '/admin/bookings': {
-    title: 'Bookings & Reservations',
-    subtitle: 'Track and manage all sacred pilgrimage reservations and financial ledgers.',
-  },
-  '/admin/packages/new': {
-    title: 'Configure New Yatra',
-    subtitle: 'Define package itinerary, pricing, duration and sacred destination highlights.',
-  },
-  '/admin/packages': {
-    title: 'Pilgrimage Packages',
-    subtitle: 'Create, edit and manage sacred yatra travel catalogs for devotees.',
-  },
-  '/admin/seva-packages': {
-    title: 'Seva Catalog Management',
-    subtitle: 'Configure dynamic Seva offerings, pricing, daily caps and ritual availability.',
-  },
-  '/admin/reports': {
-    title: 'Reports & Manifest Exports',
-    subtitle: 'Export passenger manifests and financial ledgers in CSV format for Ashram staff.',
-  },
-}
-
 export function AdminLayout() {
+  const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
 
@@ -59,10 +26,45 @@ export function AdminLayout() {
     setMobileOpen(false)
   }, [location.pathname])
 
+  const routeHeaders: Record<string, { title: string; subtitle: string }> = {
+    '/admin': {
+      title: t('admin.layout.dashboardTitle'),
+      subtitle: t('admin.layout.dashboardSubtitle'),
+    },
+    '/admin/users': {
+      title: t('admin.layout.usersTitle'),
+      subtitle: t('admin.layout.usersSubtitle'),
+    },
+    '/admin/verifications': {
+      title: t('admin.layout.verificationsTitle'),
+      subtitle: t('admin.layout.verificationsSubtitle'),
+    },
+    '/admin/bookings': {
+      title: t('admin.layout.bookingsTitle'),
+      subtitle: t('admin.layout.bookingsSubtitle'),
+    },
+    '/admin/packages/new': {
+      title: t('admin.layout.newPackageTitle'),
+      subtitle: t('admin.layout.newPackageSubtitle'),
+    },
+    '/admin/packages': {
+      title: t('admin.layout.packagesTitle'),
+      subtitle: t('admin.layout.packagesSubtitle'),
+    },
+    '/admin/seva-packages': {
+      title: t('admin.layout.sevaTitle'),
+      subtitle: t('admin.layout.sevaSubtitle'),
+    },
+    '/admin/reports': {
+      title: t('admin.layout.reportsTitle'),
+      subtitle: t('admin.layout.reportsSubtitle'),
+    },
+  }
+
   // Determine dynamic title and subtitle depending on current path
   let headerInfo = {
-    title: 'Administration Portal',
-    subtitle: 'Manage माँ वैष्णवी टूरिज़्म sacred operations and devotee services.',
+    title: t('admin.layout.defaultTitle'),
+    subtitle: t('admin.layout.defaultSubtitle'),
   }
 
   // Exact match first
@@ -70,18 +72,18 @@ export function AdminLayout() {
     headerInfo = routeHeaders[location.pathname]
   } else if (location.pathname.startsWith('/admin/bookings/')) {
     headerInfo = {
-      title: 'Booking Details & Ledger',
-      subtitle: 'Review reservation specifics, traveler credentials and payment receipts.',
+      title: t('admin.layout.bookingDetailsTitle'),
+      subtitle: t('admin.layout.bookingDetailsSubtitle'),
     }
   } else if (location.pathname.startsWith('/admin/users/')) {
     headerInfo = {
-      title: 'Devotee Dossier',
-      subtitle: 'Review seeker profile, verification timeline and historical pilgrimage attendance.',
+      title: t('admin.layout.devoteeDossierTitle'),
+      subtitle: t('admin.layout.devoteeDossierSubtitle'),
     }
   } else if (location.pathname.startsWith('/admin/packages/') && location.pathname.includes('/edit')) {
     headerInfo = {
-      title: 'Modify Yatra Package',
-      subtitle: 'Update schedule details, seat quotas and visual presentation.',
+      title: t('admin.layout.modifyPackageTitle'),
+      subtitle: t('admin.layout.modifyPackageSubtitle'),
     }
   } else {
     const matchedKey = Object.keys(routeHeaders)
@@ -142,7 +144,7 @@ export function AdminLayout() {
           <div className="flex items-center gap-3 shrink-0">
             <span className="inline-flex items-center gap-1.5 font-label-caps text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] text-[#B8860B] bg-[#F5EFE4] border border-[#E9DCC5] px-3.5 py-1.5 rounded-full shadow-2xs">
               <Sparkles className="h-3 w-3 text-[#B8860B]" />
-              <span>Sacred Administration</span>
+              <span>{t('admin.layout.sacredAdministration')}</span>
             </span>
           </div>
         </header>

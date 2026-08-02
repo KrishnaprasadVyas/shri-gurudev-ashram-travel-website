@@ -3,8 +3,10 @@ import { MapPin, Phone, Mail, Clock, Send, ChevronDown, ChevronUp } from 'lucide
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
+import { useTranslation } from "react-i18next";
 
 export const ContactSection: React.FC = () => {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     fullName: '',
     mobileNumber: '',
@@ -35,10 +37,10 @@ export const ContactSection: React.FC = () => {
     });
     setSending(false);
     if (error) {
-      toast.error('Failed to send message. Please try again or contact us directly.');
+      toast.error(t('contact.form.errorMsg'));
       return;
     }
-    toast.success("Thank you! We'll be in touch soon. 🙏");
+    toast.success(t('contact.form.successMsg'));
     setForm({
       fullName: '',
       mobileNumber: '',
@@ -51,7 +53,7 @@ export const ContactSection: React.FC = () => {
   const contactCards = [
     {
       icon: MapPin,
-      title: 'Ashram Address',
+      title: t('contact.cards.address'),
       content: (
         <>
           माँ वैष्णवी टूरिज़्म<br />
@@ -64,7 +66,7 @@ export const ContactSection: React.FC = () => {
     },
     {
       icon: Phone,
-      title: 'Phone',
+      title: t('contact.cards.phone'),
       content: (
         <div className="space-y-1.5">
           <a href="tel:+919158740007" className="block hover:text-secondary transition-colors">+91 9158740007</a>
@@ -74,7 +76,7 @@ export const ContactSection: React.FC = () => {
     },
     {
       icon: Mail,
-      title: 'Email',
+      title: t('contact.cards.email'),
       content: (
         <div className="space-y-1.5">
           <a href="mailto:info@shrigurudevashram.org" className="block hover:text-secondary transition-colors break-all">info@shrigurudevashram.org</a>
@@ -84,16 +86,16 @@ export const ContactSection: React.FC = () => {
     },
     {
       icon: Clock,
-      title: 'Office Hours',
+      title: t('contact.cards.officeHours'),
       content: (
         <div className="space-y-2">
-          <p className="font-medium text-primary">Monday – Sunday</p>
+          <p className="font-medium text-primary">{t('contact.cards.mondaySunday')}</p>
           <div>
-            <span className="text-xs uppercase tracking-wider text-secondary block font-semibold">Morning</span>
+            <span className="text-xs uppercase tracking-wider text-secondary block font-semibold">{t('contact.cards.morning')}</span>
             <span>6:00 AM – 1:00 PM</span>
           </div>
           <div>
-            <span className="text-xs uppercase tracking-wider text-secondary block font-semibold">Evening</span>
+            <span className="text-xs uppercase tracking-wider text-secondary block font-semibold">{t('contact.cards.evening')}</span>
             <span>4:00 PM – 8:30 PM</span>
           </div>
         </div>
@@ -119,9 +121,9 @@ export const ContactSection: React.FC = () => {
                   initial={!isDesktop && idx >= 1 ? { opacity: 0, y: 30 } : false}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
-                  transition={{ 
-                    duration: 0.5, 
-                    delay: !isDesktop && idx >= 1 ? (idx - 1) * 0.1 : 0 
+                  transition={{
+                    duration: 0.5,
+                    delay: !isDesktop && idx >= 1 ? (idx - 1) * 0.1 : 0
                   }}
                   className="rounded-2xl bg-surface-container-lowest p-6 md:p-8 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start group"
                 >
@@ -150,12 +152,12 @@ export const ContactSection: React.FC = () => {
               {isExpanded ? (
                 <>
                   <ChevronUp className="w-5 h-5" />
-                  <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+                  <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('contact.showLess')}</span>
                 </>
               ) : (
                 <>
                   <ChevronDown className="w-5 h-5" />
-                  <span className="font-label-caps text-xs tracking-wider uppercase font-bold">View More Details</span>
+                  <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('contact.viewMore')}</span>
                 </>
               )}
             </motion.button>
@@ -167,39 +169,39 @@ export const ContactSection: React.FC = () => {
           <div className="rounded-3xl bg-surface-container-lowest p-8 md:p-12 border border-outline-variant/30 shadow-xl relative overflow-hidden">
             {/* Subtle top golden accent */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-primary opacity-80"></div>
-            
+
             <h2 className="font-headline-sm text-2xl md:text-3xl font-bold text-primary mb-2">
-              Send us a Message
+              {t('contact.form.title')}
             </h2>
             <p className="font-body-md text-sm md:text-base text-on-surface-variant mb-8 font-light">
-              Have questions about Yatras or Ashram darshan? Reach out to us below.
+              {t('contact.form.desc')}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs uppercase tracking-wider font-semibold text-secondary mb-2">
-                    Full Name
+                    {t('contact.form.fullName')}
                   </label>
                   <input
                     type="text"
                     required
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                    placeholder="Your full name"
+                    placeholder={t('contact.form.fullNamePlaceholder')}
                     className="w-full px-5 py-3.5 rounded-xl bg-surface border border-outline-variant/50 text-on-surface placeholder:text-outline/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner text-sm md:text-base focus-ring"
                   />
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-wider font-semibold text-secondary mb-2">
-                    Mobile Number
+                    {t('contact.form.mobile')}
                   </label>
                   <input
                     type="tel"
                     required
                     value={form.mobileNumber}
                     onChange={(e) => setForm({ ...form, mobileNumber: e.target.value })}
-                    placeholder="10-digit mobile number"
+                    placeholder={t('contact.form.mobilePlaceholder')}
                     className="w-full px-5 py-3.5 rounded-xl bg-surface border border-outline-variant/50 text-on-surface placeholder:text-outline/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner text-sm md:text-base focus-ring"
                   />
                 </div>
@@ -208,27 +210,27 @@ export const ContactSection: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs uppercase tracking-wider font-semibold text-secondary mb-2">
-                    Email Address
+                    {t('contact.form.email')}
                   </label>
                   <input
                     type="email"
                     required
                     value={form.emailAddress}
                     onChange={(e) => setForm({ ...form, emailAddress: e.target.value })}
-                    placeholder="your@email.com"
+                    placeholder={t('contact.form.emailPlaceholder')}
                     className="w-full px-5 py-3.5 rounded-xl bg-surface border border-outline-variant/50 text-on-surface placeholder:text-outline/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner text-sm md:text-base focus-ring"
                   />
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-wider font-semibold text-secondary mb-2">
-                    Subject
+                    {t('contact.form.subject')}
                   </label>
                   <input
                     type="text"
                     required
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    placeholder="Subject of inquiry"
+                    placeholder={t('contact.form.subjectPlaceholder')}
                     className="w-full px-5 py-3.5 rounded-xl bg-surface border border-outline-variant/50 text-on-surface placeholder:text-outline/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner text-sm md:text-base focus-ring"
                   />
                 </div>
@@ -236,14 +238,14 @@ export const ContactSection: React.FC = () => {
 
               <div>
                 <label className="block text-xs uppercase tracking-wider font-semibold text-secondary mb-2">
-                  Message
+                  {t('contact.form.message')}
                 </label>
                 <textarea
                   required
                   rows={5}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  placeholder="How can we assist your spiritual journey..."
+                  placeholder={t('contact.form.messagePlaceholder')}
                   className="w-full px-5 py-3.5 rounded-xl bg-surface border border-outline-variant/50 text-on-surface placeholder:text-outline/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner text-sm md:text-base resize-none focus-ring"
                 />
               </div>
@@ -256,12 +258,12 @@ export const ContactSection: React.FC = () => {
                 {sending ? (
                   <span className="flex items-center gap-2">
                     <span className="w-4 h-4 border-2 border-on-primary/30 border-t-on-primary rounded-full animate-spin" aria-hidden="true" />
-                    Sending...
+                    {t('contact.form.sending')}
                   </span>
                 ) : (
                   <>
                     <Send className="h-4 w-4" aria-hidden="true" />
-                    Send Message
+                    {t('contact.form.sendBtn')}
                   </>
                 )}
               </button>

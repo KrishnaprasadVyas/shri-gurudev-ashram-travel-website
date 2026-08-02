@@ -5,7 +5,10 @@ interface AuthSplitLayoutProps {
   children: React.ReactNode;
 }
 
+import { useTranslation } from "react-i18next";
+
 export const AuthSplitLayout: React.FC<AuthSplitLayoutProps> = ({ children }) => {
+  const { t } = useTranslation();
   return (
     <div className="min-h-[100dvh] w-full flex flex-col lg:flex-row bg-[#FAF8F5] font-body-md text-on-surface overflow-x-hidden">
       {/* Left Panel (~45%): Editorial Spiritual Panel */}
@@ -71,22 +74,21 @@ export const AuthSplitLayout: React.FC<AuthSplitLayoutProps> = ({ children }) =>
           <div className="space-y-4 w-full">
             {/* 1. Eyebrow */}
             <span className="font-label-caps text-xs tracking-[0.32em] uppercase text-[#E8A338] font-bold block">
-              🙏 Sacred Portal
+              {t('auth.layout.eyebrow')}
             </span>
 
             {/* 2. Primary heading */}
             <div className="flex flex-col items-center justify-center text-center">
               <span className="font-display-lg text-2xl md:text-3xl font-medium text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-                Welcome to
+                {t('auth.layout.welcomeTo')}
               </span>
               <h1 className="font-display-lg text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-wide mt-2 pb-1 drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)]">
-                माँ वैष्णवी टूरिज़्म
+                {t('public.common.maaVaishnaviTourism')}
               </h1>
             </div>
 
-            {/* 3. Supporting description */}
             <p className="font-body-lg text-sm sm:text-base text-white/85 leading-relaxed font-light max-w-sm mx-auto lg:max-w-none">
-              Continue your spiritual journey through Sacred Yatras, Seva, and Ashram activities under the divine blessings of Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj.
+              {t('auth.layout.desc', { defaultValue: 'Continue your spiritual journey through Sacred Yatras, Seva, and Ashram activities under the divine blessings of Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj.' })}
             </p>
           </div>
         </div>
@@ -97,10 +99,10 @@ export const AuthSplitLayout: React.FC<AuthSplitLayoutProps> = ({ children }) =>
             ॥ श्रद्धावान् लभते ज्ञानम् ॥
           </p>
           <p className="font-label-caps text-[10px] sm:text-xs tracking-[0.35em] uppercase text-[#E8A338] font-semibold mb-2">
-            ŚRADDHĀVĀN LABHATE JÑĀNAM
+            {t('public.faq.quoteTitle', { defaultValue: 'ŚRADDHĀVĀN LABHATE JÑĀNAM' })}
           </p>
           <p className="font-body-md text-xs sm:text-sm text-white/75 italic font-light">
-            "He who has faith attains true knowledge."
+            {t('auth.layout.verseTranslation')}
           </p>
         </div>
       </div>

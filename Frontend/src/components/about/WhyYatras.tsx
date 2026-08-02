@@ -1,8 +1,10 @@
 import React from 'react';
 import { Footprints, Users, Leaf } from 'lucide-react';
 import { ReadMore } from '../shared/ReadMore';
+import { useTranslation } from "react-i18next";
 
 export const WhyYatras: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <section className="bg-surface-container-low py-16 md:py-section-gap">
       <div className="px-4 md:px-margin-desktop max-w-container-max mx-auto">
@@ -11,14 +13,14 @@ export const WhyYatras: React.FC = () => {
             <img className="w-full h-full object-cover" alt="" src="/assets/TULSI MALA.jpg" loading="lazy" />
             <div className="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
           </div>
-          
+
           <div className="order-1 lg:order-2">
-            <span className="font-label-caps text-label-caps text-secondary mb-2 block tracking-widest">THE PURPOSE</span>
-            <h2 className="font-headline-md text-headline-md text-primary mb-6">Why We Organize Yatras</h2>
+            <span className="font-label-caps text-label-caps text-secondary mb-2 block tracking-widest">{t('about.whyYatras.eyebrow')}</span>
+            <h2 className="font-headline-md text-headline-md text-primary mb-6">{t('about.whyYatras.title')}</h2>
             <div className="space-y-6 text-on-surface-variant leading-relaxed font-body-md">
               <ReadMore>
                 <p>
-                  A Yatra is more than tourism; it is a moving meditation. In the scriptures, pilgrimage is described as 'Tirth Yatra'—the crossing over from the mundane to the divine.
+                  {t('about.whyYatras.desc')}
                 </p>
                 <ul className="space-y-6 mt-6">
                   <li className="flex gap-4 items-start">
@@ -26,8 +28,8 @@ export const WhyYatras: React.FC = () => {
                       <Footprints className="w-5 h-5" strokeWidth={1.5} />
                     </div>
                     <div>
-                      <strong className="text-on-surface block mb-1">Breaking the Routine</strong>
-                      <p className="text-sm">Stepping away from daily life breaks the habitual patterns of the mind, making it receptive to higher frequencies.</p>
+                      <strong className="text-on-surface block mb-1">{t('about.whyYatras.routine')}</strong>
+                      <p className="text-sm">{t('about.whyYatras.routineDesc')}</p>
                     </div>
                   </li>
                   <li className="flex gap-4 items-start">
@@ -35,8 +37,8 @@ export const WhyYatras: React.FC = () => {
                       <Users className="w-5 h-5" strokeWidth={1.5} />
                     </div>
                     <div>
-                      <strong className="text-on-surface block mb-1">Power of Sangha (Community)</strong>
-                      <p className="text-sm">Traveling with fellow devotees amplifies spiritual energy. The collective chants and shared silence create an uplifting atmosphere.</p>
+                      <strong className="text-on-surface block mb-1">{t('about.whyYatras.sangha')}</strong>
+                      <p className="text-sm">{t('about.whyYatras.sanghaDesc')}</p>
                     </div>
                   </li>
                   <li className="flex gap-4 items-start">
@@ -44,8 +46,8 @@ export const WhyYatras: React.FC = () => {
                       <Leaf className="w-5 h-5" strokeWidth={1.5} />
                     </div>
                     <div>
-                      <strong className="text-on-surface block mb-1">Sacred Geography</strong>
-                      <p className="text-sm">We visit energy centers consecrated by enlightened masters over millennia. These places have the power to instantly quiet the mind.</p>
+                      <strong className="text-on-surface block mb-1">{t('about.whyYatras.geography')}</strong>
+                      <p className="text-sm">{t('about.whyYatras.geographyDesc')}</p>
                     </div>
                   </li>
                 </ul>

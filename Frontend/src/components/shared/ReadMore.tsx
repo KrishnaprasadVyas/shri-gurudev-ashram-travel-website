@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 interface ReadMoreProps {
   text?: string;
@@ -13,6 +14,7 @@ export const ReadMore: React.FC<ReadMoreProps> = ({
   className = '',
   children,
 }) => {
+    const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const paragraphs = text ? text.split('\n\n') : [];
@@ -78,12 +80,12 @@ export const ReadMore: React.FC<ReadMoreProps> = ({
         {isExpanded ? (
           <>
             <ChevronUp className="w-5 h-5" />
-            <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Read Less</span>
+            <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('public.common.readLess')}</span>
           </>
         ) : (
           <>
             <ChevronDown className="w-5 h-5" />
-            <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Read More</span>
+            <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('public.common.readMore')}</span>
           </>
         )}
       </motion.button>
