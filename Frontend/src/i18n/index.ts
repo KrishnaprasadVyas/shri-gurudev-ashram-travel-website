@@ -16,14 +16,40 @@ i18n
       mr: { translation: mrCommon },
     },
     fallbackLng: 'en',
+    supportedLngs: ['en', 'hi', 'mr'],
+    load: 'languageOnly',
+    returnEmptyString: false,
+    returnNull: false,
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'],
       lookupLocalStorage: 'i18nextLng',
       caches: ['localStorage'],
     },
   });
+
+// Synchronize document.documentElement.lang
+const syncDocumentLang = (lng?: string) => {
+  const code = (lng || i18n.language || 'en').split('-')[0].toLowerCase();
+  const validLang = ['en', 'hi', 'mr'].includes(code) ? code : 'en';
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = validLang;
+  }
+};
+
+syncDocumentLang(i18n.language);
+
+i18n.on('languageChanged', (lng: string) => {
+  syncDocumentLang(lng);
+  try {
+    const code = lng.split('-')[0].toLowerCase();
+    const validLang = ['en', 'hi', 'mr'].includes(code) ? code : 'en';
+    localStorage.setItem('i18nextLng', validLang);
+  } catch {
+    // ignore storage exceptions in restricted environments
+  }
+});
 
 export default i18n;

@@ -62,11 +62,13 @@ export const Navbar: React.FC = () => {
   }, [lastScrollY]);
 
   const languages = [
-    { code: 'en', label: 'English 🇬🇧' },
-    { code: 'hi', label: 'हिन्दी 🇮🇳' },
-    { code: 'mr', label: 'मराठी 🇮🇳' },
+    { code: 'en', label: 'English' },
+    { code: 'hi', label: 'हिन्दी' },
+    { code: 'mr', label: 'मराठी' },
   ];
-  const selectedLang = languages.find(l => l.code === i18n.language)?.label || 'English 🇬🇧';
+  const currentLangCode = (i18n.language || 'en').split('-')[0].toLowerCase();
+  const currentLang = languages.find(l => l.code === currentLangCode) || languages[0];
+
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -176,32 +178,53 @@ export const Navbar: React.FC = () => {
             {/* Desktop Language Selector */}
             <div className="relative ml-2" ref={langDropdownRef}>
               <button
+                type="button"
+                aria-haspopup="true"
+                aria-expanded={langOpen}
+                aria-label="Select Language"
                 onClick={() => setLangOpen(!langOpen)}
-                className="flex items-center gap-2 text-[#4B3621] hover:text-[#B8860B] transition-colors font-display text-[17px] font-semibold"
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') setLangOpen(false);
+                }}
+                className="flex items-center gap-1.5 text-[#4B3621] hover:text-[#B8860B] px-3 py-1.5 rounded-full hover:bg-[#B8860B]/10 transition-colors font-display text-[16px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8860B]"
               >
-                <Globe className="w-5 h-5" />
-                <span>{selectedLang.split(' ')[0]}</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${langOpen ? 'rotate-180' : ''}`} />
+                <Globe className="w-4 h-4 text-[#B8860B] shrink-0" aria-hidden="true" />
+                <span>{currentLang.label}</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-[#6F5B47] transition-transform duration-300 ${langOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
               </button>
 
               {langOpen && (
-                <div className="absolute top-full right-0 mt-3 w-40 bg-[#F8F3EA] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#D6B36A]/30 overflow-hidden py-2 animate-fade-in-up">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => {
-                        i18n.changeLanguage(lang.code);
-                        setLangOpen(false);
-                      }}
-                      className="w-full text-left px-4 py-2.5 text-[#4B3621] hover:bg-[#D6B36A]/10 hover:text-[#B8860B] transition-colors font-display text-[16px] font-medium"
-                    >
-                      {lang.label}
-                    </button>
-                  ))}
+                <div
+                  role="menu"
+                  aria-orientation="vertical"
+                  className="absolute top-full right-0 mt-2 w-36 bg-[#FFFDF8] rounded-2xl shadow-[0_10px_35px_rgba(75,54,33,0.14)] border border-[#E8DDC7] overflow-hidden py-1.5 z-50 animate-fade-in-up"
+                >
+                  {languages.map((lang) => {
+                    const isActive = currentLangCode === lang.code;
+                    return (
+                      <button
+                        key={lang.code}
+                        role="menuitem"
+                        onClick={() => {
+                          i18n.changeLanguage(lang.code);
+                          setLangOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2.5 font-display text-[15px] transition-colors flex items-center justify-between ${
+                          isActive
+                            ? 'bg-[#B8860B]/10 text-[#B8860B] font-bold'
+                            : 'text-[#4B3621] hover:bg-[#FAF4EB] hover:text-[#B8860B] font-medium'
+                        }`}
+                      >
+                        <span>{lang.label}</span>
+                        {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]" />}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
           </div>
+
 
           {/* Mobile Hamburger Button */}
           <div className="flex flex-1 justify-end lg:hidden">
@@ -286,7 +309,7 @@ export const Navbar: React.FC = () => {
                           }`
                         }
                       >
-                        {link.name === 'Yatras' ? t('navbar.maaVaishnaviTourism') : t(`navbar.${link.name.toLowerCase()}`)}
+                        {t(`navbar.${link.name.toLowerCase()}`)}
                       </NavLink>
                     </motion.div>
                   ))}
@@ -334,34 +357,39 @@ export const Navbar: React.FC = () => {
                       >
                         {t('navbar.registerFree')}
                       </Link>
-
-                      {/* Mobile Language Selector */}
-                      <div className="mt-4 border-t border-[#D6B36A]/30 pt-6 pb-2">
-                        <div className="flex items-center gap-2 mb-3 px-4 text-[#4B3621] font-display text-[17px] font-semibold">
-                          <Globe className="w-5 h-5" />
-                          <span>{t('navbar.language')}</span>
-                        </div>
-                        <div className="flex flex-col gap-1 pl-4 pr-4">
-                          {languages.map((lang) => (
-                            <button
-                              key={lang.code}
-                              onClick={() => {
-                                i18n.changeLanguage(lang.code);
-                                closeMobile();
-                              }}
-                              className={`text-left py-3.5 px-4 rounded-xl font-display text-[16px] transition-colors min-h-[48px] flex items-center w-full ${selectedLang === lang.label
-                                ? 'text-[#B8860B] font-semibold bg-[#B8860B]/5'
-                                : 'text-[#4B3621] hover:text-[#B8860B] hover:bg-[#4B3621]/5'
-                                }`}
-                            >
-                              {lang.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
                     </>
                   )}
+
+                  {/* Mobile Language Selector (always accessible) */}
+                  <div className="mt-4 border-t border-[#E9DCC5] pt-5 pb-2">
+                    <div className="flex items-center gap-2 mb-3 px-1 text-[#4B3621] font-display text-[16px] font-semibold">
+                      <Globe className="w-4 h-4 text-[#B8860B]" />
+                      <span>{t('navbar.language', { defaultValue: 'Language' })}</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {languages.map((lang) => {
+                        const isActive = currentLangCode === lang.code;
+                        return (
+                          <button
+                            key={lang.code}
+                            onClick={() => {
+                              i18n.changeLanguage(lang.code);
+                              closeMobile();
+                            }}
+                            className={`py-2.5 px-2 rounded-xl font-display text-[15px] transition-all text-center min-h-[44px] flex items-center justify-center border ${
+                              isActive
+                                ? 'bg-[#B8860B] text-white font-bold border-[#B8860B] shadow-sm'
+                                : 'bg-[#FFFDF8] text-[#4B3621] hover:text-[#B8860B] border-[#E8DDC7] font-medium'
+                            }`}
+                          >
+                            {lang.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </motion.div>
+
               </div>
             </motion.div>
           </>

@@ -77,7 +77,11 @@
       "sadhanaTitle": "Sadhana",
       "sadhanaDesc": "Maintaining spiritual discipline, meditation, and silence even amidst the journey.",
       "sanskarTitle": "Sanskar",
-      "sanskarDesc": "Upholding righteous conduct, moral values, and traditional teachings in daily life."
+      "sanskarDesc": "Upholding righteous conduct, moral values, and traditional teachings in daily life.",
+      "bhakti": "Bhakti",
+      "seva": "Seva",
+      "sadhana": "Sadhana",
+      "sanskar": "Sanskar"
     },
     "whyTravelWithUs": {
       "eyebrow": "The Difference",
@@ -95,7 +99,15 @@
       "medicalTitle": "Medical Service",
       "medicalDesc": "Providing essential healthcare and free medical camps for rural and underserved communities.",
       "adiwasiTitle": "Adiwasi Seva",
-      "adiwasiDesc": "Uplifting tribal communities through dedicated social initiatives and continuous support."
+      "adiwasiDesc": "Uplifting tribal communities through dedicated social initiatives and continuous support.",
+      "satsang": "Daily Satsang",
+      "annadan": "Annadan",
+      "gurukul": "Gurukul",
+      "gaushala": "Gau Shala",
+      "gaushalaDesc": "Dedicated loving care and protection for sacred cows within the Ashram premises.",
+      "gau-shala": "Gau Shala",
+      "medical": "Medical Service",
+      "adiwasi": "Adiwasi Seva"
     },
     "whyYatras": {
       "eyebrow": "THE PURPOSE",
@@ -106,20 +118,30 @@
       "sanghaTitle": "Power of Sangha (Community)",
       "sanghaDesc": "Traveling with fellow devotees amplifies spiritual energy. The collective chants and shared silence create an uplifting atmosphere.",
       "sacredGeoTitle": "Sacred Geography",
-      "sacredGeoDesc": "We visit energy centers consecrated by enlightened masters over millennia. These places have the power to instantly quiet the mind."
+      "sacredGeoDesc": "We visit energy centers consecrated by enlightened masters over millennia. These places have the power to instantly quiet the mind.",
+      "desc": "A sacred pilgrimage is more than visiting holy places; it is an inward journey guided by devotion, discipline, and Gurudev's grace.",
+      "routine": "Disciplined Spiritual Routine",
+      "routineDesc": "Daily prayer, satsang, and meditation throughout the pilgrimage.",
+      "sangha": "Holy Company (Satsangha)",
+      "geography": "Sacred Geography",
+      "geographyDesc": "Visiting authentic, energized spiritual destinations with rich heritage."
     },
     "cta": {
       "title": "Begin Your Sacred Journey with माँ वैष्णवी टूरिज़्म",
       "desc": "Walk the timeless paths of Bharat under the blessings of Gurudev Ji. Join fellow devotees in a pilgrimage of faith, service, and inner transformation.",
       "btn": "Explore Yatras"
+    },
+    "gallery": {
+      "title": "Sacred Moments Gallery"
     }
   },
   "gallery": {
     "hero": {
-      "title": "Sacred Moments"
+      "title": "Sacred Moments Gallery"
     },
     "showLess": "Show Less",
-    "viewMore": "View More Photos"
+    "viewMore": "View More Photos",
+    "photoAlt": "Sacred Yatra moment {{index}}"
   },
   "faq": {
     "searchPlaceholder": "Search your question...",
@@ -161,7 +183,13 @@
     "q13q": "How can I volunteer for Ashram activities?",
     "q13a": "We warmly welcome volunteers for Annadan seva, Yatra support, administrative work, and social service activities. Please contact us via phone or email to express your interest. Volunteers from all backgrounds are accepted, and specific training or orientation will be provided based on the type of seva chosen.",
     "q14q": "How can I contact the Ashram for Yatra inquiries?",
-    "q14a": "You can reach us at +91 9158740007 or +91 9834151577. Email inquiries can be sent to info@shrigurudevashram.org or info@shantiashramtrust.org. Our office is open during Ashram visiting hours. You can also fill out the contact form on this website and we will respond within 24–48 hours."
+    "q14a": "You can reach us at +91 9158740007 or +91 9834151577. Email inquiries can be sent to info@shrigurudevashram.org or info@shantiashramtrust.org. Our office is open during Ashram visiting hours. You can also fill out the contact form on this website and we will respond within 24–48 hours.",
+    "q15q": "Will I receive a receipt for my donation?",
+    "q15a": "Yes. Official receipts are issued for all donations. For donations made via bank transfer, you will receive a digital receipt on your registered contact details. Tax exemption certificates under Section 80G are provided where applicable.",
+    "q16q": "How can I contact the Ashram for further queries?",
+    "q16a": "You can reach us at +91 9158740007 or +91 9834151577, or email us at info@shrigurudevashram.org. You may also visit the Ashram in person at Palaskhed Sapkal, Tehsil Chikhli, District Buldhana, Maharashtra – 443001.",
+    "q17q": "Does the Ashram have official social media channels?",
+    "q17a": "Yes. You can follow us on Facebook (Swami Harichaitanyanand S), YouTube (@shrigurudevashram), Instagram (@swami_harichaitanyaji_), and X/Twitter (@Harichaitanyaji). These channels share Ashram updates, satsang recordings, Yatra announcements, and spiritual discourses."
   },
   "contact": {
     "cards": {
@@ -198,7 +226,8 @@
     "layout": {
       "eyebrow": "🙏 Sacred Portal",
       "welcomeTo": "Welcome to",
-      "verseTranslation": "\"He who has faith attains true knowledge.\""
+      "verseTranslation": "\"He who has faith attains true knowledge.\"",
+      "desc": "Continue your spiritual journey through Sacred Yatras, Seva, and Ashram activities under the divine blessings of Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj."
     },
     "login": {
       "badge": "Devotee Portal",
@@ -755,7 +784,8 @@
       "viewDetailsUpper": "VIEW DETAILS",
       "totalSeats": "total seats",
       "base": "Base",
-      "attachedSeva": "Attached Seva"
+      "attachedSeva": "Attached Seva",
+      "maaVaishnaviTourism": "माँ वैष्णवी टूरिज़्म"
     },
     "about": {
       "milestones": {
@@ -775,18 +805,31 @@
       "destinations": {
         "title": "Our Sacred Destinations",
         "desc": "Discover the divine places where faith, history, and devotion come together.",
-        "viewMore": "View More Destinations"
+        "viewMore": "View More Destinations",
+        "kedarnath": "Kedarnath Dham",
+        "kedarnathDesc": "Sacred abode of Lord Shiva amidst the majestic Himalayas.",
+        "badrinath": "Badrinath Dham",
+        "badrinathDesc": "Holy shrine of Lord Badri Vishal on the banks of Alaknanda.",
+        "dwarka": "Dwarkadhish Temple",
+        "dwarkaDesc": "Golden kingdom of Lord Krishna by the sacred Arabian Sea.",
+        "exploreAll": "Explore All Destinations",
+        "sacredYatra": "Sacred Pilgrimage"
       },
       "gallery": {
         "title": "Sacred Moments",
         "desc": "Glimpses of stillness and devotion from our Ashram and Yatras.",
         "satsang": "Satsang",
-        "gurukulam": "Gurukulam"
+        "gurukulam": "Gurukulam",
+        "yatras": "Sacred Yatras"
       },
       "quote": {
         "line1": "Gaṅge Ca Yamune Caiva Godāvari Sarasvatī",
         "line2": "Narmade Sindhu Kāverī Jale'smin Sannidhiṁ Kuru",
-        "desc": "\"O sacred rivers—Ganga, Yamuna, Godavari, Saraswati, Narmada, Sindhu, and Kaveri—may your divine presence sanctify this place.\""
+        "desc": "\"O sacred rivers—Ganga, Yamuna, Godavari, Saraswati, Narmada, Sindhu, and Kaveri—may your divine presence sanctify this place.\"",
+        "sanskrit": "॥ न हि ज्ञानेन सदृशं पवित्रमिह विद्यते ॥",
+        "verseTitle": "॥ न हि ज्ञानेन सदृशं पवित्रमिह विद्यते ॥",
+        "verseTransliteration": "Na Hi Jnanena Sadrsham Pavitram Iha Vidyate",
+        "verseMeaning": "In this world, there is nothing as purifying as divine knowledge."
       },
       "swamijiFull": "Param Pujya Shri Swami Harichaitanyanand Saraswatiji Maharaj",
       "swamijiLine1": "Param Pujya Shri Swami",
@@ -874,12 +917,60 @@
       "waitData": "Please wait while we retrieve sacred data."
     },
     "yatras": {
-      "upcoming": "UPCOMING",
+      "upcoming": {
+        "divineJourneys": "Divine Journeys",
+        "title": "Upcoming Pilgrimages",
+        "desc": "Select a sacred pilgrimage and reserve your seat with Gurudev's grace.",
+        "seatsLeft": "seats left",
+        "fullyBooked": "Fully Booked",
+        "priceLabel": "Contribution",
+        "seatsLabel": "Availability",
+        "perPerson": "per devotee",
+        "bookNow": "Book Now",
+        "viewMore": "View More Pilgrimages"
+      },
       "pastJourneys": "PAST JOURNEYS",
       "sortBy": "SORT BY",
       "sortDateAsc": "Date: Soonest first",
       "sortPriceAsc": "Price: Low to High",
-      "sortDuration": "Duration"
+      "sortDuration": "Duration",
+      "cta": {
+        "title": "Begin Your Sacred Journey with माँ वैष्णवी टूरिज़्म",
+        "desc": "Join thousands of devotees on spiritually guided pilgrimages across India. Experience divine peace, sacred darshan, and unforgettable devotion.",
+        "contactAshram": "Contact the Ashram",
+        "exploreUpcoming": "Explore Upcoming Yatras",
+        "faith": "A Journey of Faith & Transformation",
+        "firstStep": "Take the First Step Towards Divinity"
+      },
+      "filters": {
+        "upcoming": "Upcoming Pilgrimages",
+        "pastJourneys": "Completed Pilgrimages",
+        "sortBy": "Sort By",
+        "sortDateAsc": "Date: Soonest First",
+        "sortPriceAsc": "Price: Low to High",
+        "sortDuration": "Duration"
+      },
+      "hero": {
+        "title": "Sacred Pilgrimages & Yatras",
+        "desc": "Embark on transformative spiritual journeys to sacred Dhams and temples across India under the divine blessings of Gurudev."
+      },
+      "timeline": {
+        "sacredProcess": "Sacred Process",
+        "title": "How Your Yatra Unfolds",
+        "stepNum": "Step 0{{num}}",
+        "viewFull": "View Full Timeline",
+        "steps": {
+          "inquiry": "Inquiry & Guidance",
+          "registration": "Registration & Booking",
+          "preparation": "Spiritual Preparation",
+          "departure": "Departure with Blessings",
+          "pilgrimage": "Sacred Darshan & Satsang",
+          "return": "Return with Transformation"
+        }
+      },
+      "yatraCard": {
+        "viewDetails": "VIEW DETAILS"
+      }
     },
     "hero": {
       "title": "Sacred Pilgrimages Under Gurudev's Blessings",
@@ -918,7 +1009,16 @@
       "estTotal": "Estimated Total Payable",
       "fullyBooked": "This Yatra is fully booked"
     },
-    "misc": {}
+    "misc": {},
+    "gurudev": {
+      "swamijiLine1": "Param Pujya Shri Swami",
+      "swamijiLine2": "Harichaitanyanand Saraswatiji Maharaj",
+      "blessings": "Under the Divine Blessings & Guidance of Gurudev",
+      "founder": "Founder and spiritual guide of",
+      "ashramLoc1": "Shri Gurudev Ashram (Palaskhed Sapkal, Chikhli, Buldhana)",
+      "ashramLoc2": "Swami Harichaitanya Shanti Ashram Trust (Datala, Malkapur)",
+      "gurudevDesc": "Gurudev Ji has guided thousands of seekers on the path of Bhakti, Gyan, and Nishkam Seva through daily Satsang, Annadan, Gaushala, and sacred pilgrimages across India."
+    }
   },
   "yatraDetail": {
     "backToYatras": "Back to Yatras",
@@ -982,5 +1082,12 @@
     "verifiedDesc": "Your identity has been verified by Ashram administration. You can now book all sacred Yatras.",
     "rejectedDesc": "Verification was rejected. Please re-upload clearer documents.",
     "resubmitDocs": "Resubmit Documents"
+  },
+  "common": {
+    "back": "Back",
+    "processing": "Processing..."
+  },
+  "booking": {
+    "totalAmount": "Total Amount"
   }
 }
