@@ -9,6 +9,7 @@ import apiClient from '@/lib/apiClient'
 import { toast } from 'sonner'
 import type { BookingRow } from '@/types/database.types'
 import { useTranslation } from "react-i18next";
+import { formatDate } from "@/lib/utils";
 
 type TravelPackageInfo = {
   title?: string | null
@@ -51,7 +52,7 @@ const statusConfig: Record<string, { label: string, description?: string, icon: 
 }
 
 export function BookingDetailPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>()
   const { data, isLoading, error } = useBooking(id)
   const { initiatePayment } = usePayment()
@@ -112,7 +113,7 @@ export function BookingDetailPage() {
               {booking.travel_packages.start_date && (
                 <span className="flex items-center gap-1.5 text-xs text-[#6F5B47] font-medium">
                   <MapPin className="h-3.5 w-3.5 text-[#B8860B]" />
-                  {t('portal.bookingDetail.departure')} {new Date(booking.travel_packages.start_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  {t('portal.bookingDetail.departure')} {formatDate(booking.travel_packages.start_date, i18n.language, { day: 'numeric', month: 'long', year: 'numeric' })}
                 </span>
               )}
               {booking.travel_packages.duration && (
@@ -269,7 +270,7 @@ export function BookingDetailPage() {
             ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
           </span>
         </div>
-        <InfoRow label={t('portal.bookingDetail.bookedOn')} value={new Date(booking.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })} />
+        <InfoRow label={t('portal.bookingDetail.bookedOn')} value={formatDate(booking.created_at, i18n.language, { day: 'numeric', month: 'long', year: 'numeric' })} />
       </div>
     </div>
   )

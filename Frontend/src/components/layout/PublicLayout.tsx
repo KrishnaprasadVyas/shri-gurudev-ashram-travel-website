@@ -14,7 +14,7 @@ export const PublicLayout: React.FC = () => {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface text-on-surface font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <div className="min-h-screen flex flex-col bg-surface text-on-surface font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden w-full relative">
       <Navbar />
       <main 
         className="flex-1"

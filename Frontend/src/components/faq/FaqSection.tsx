@@ -259,7 +259,7 @@ export const FaqSection: React.FC = () => {
       </div>
 
       {/* ── Category Filters ── */}
-      <div className="flex flex-wrap justify-center gap-2.5 sm:gap-3 mb-16">
+      <div className="flex overflow-x-auto no-scrollbar sm:flex-wrap justify-start sm:justify-center gap-2 sm:gap-3 mb-12 sm:mb-16 py-1 px-1 -mx-4 px-4 sm:mx-0 sm:px-0">
         {categories.map((cat) => (
           <button
             key={cat}

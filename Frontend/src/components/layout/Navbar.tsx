@@ -74,6 +74,7 @@ export const Navbar: React.FC = () => {
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Yatras', path: '/yatras' },
+    { name: 'My Trip', path: '/my-trip' },
     { name: 'Seva', path: '/seva' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'FAQ', path: '/faq' },
@@ -100,16 +101,16 @@ export const Navbar: React.FC = () => {
         ref={headerRef}
         className={`fixed top-0 z-[100] w-full bg-[#F8F3EA] border-b border-[#D6B36A] shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition-transform duration-300 ${isVisible || mobileOpen ? 'translate-y-0' : '-translate-y-full'}`}
       >
-        <nav className="flex justify-between items-center px-6 md:px-10 lg:px-16 py-1 md:py-1 max-w-[1600px] mx-auto w-full gap-4">
+        <nav className="flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-4 xl:px-8 2xl:px-12 py-1 max-w-[1600px] mx-auto w-full gap-2 xl:gap-4">
 
           {/* Left Side: Navigation Links (Desktop) */}
-          <div className="hidden lg:flex flex-1 items-center gap-8 xl:gap-10">
+          <div className="hidden lg:flex flex-1 items-center gap-2 xl:gap-6 2xl:gap-8">
             {navLinks.map((link) => (
               <NavLink
                 key={link.name}
                 to={link.path}
                 className={({ isActive }) =>
-                  `group relative font-display text-[17px] lg:text-[18px] font-semibold transition-colors duration-300 cursor-pointer whitespace-nowrap ${isActive
+                  `group relative font-display text-[13px] xl:text-[15px] 2xl:text-[17px] font-semibold transition-colors duration-300 cursor-pointer whitespace-nowrap ${isActive
                     ? 'text-[#B8860B]'
                     : 'text-[#4B3621] hover:text-[#B8860B]'
                   }`
@@ -117,7 +118,7 @@ export const Navbar: React.FC = () => {
               >
                 {({ isActive }) => (
                   <>
-                    {t(`navbar.${link.name.toLowerCase()}`)}
+                    {t(`navbar.${link.name.toLowerCase().replace(/\s+/g, '')}`, { defaultValue: link.name })}
                     <span className={`absolute -bottom-1.5 left-0 h-[2px] bg-[#D6B36A] transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
                   </>
                 )}
@@ -132,7 +133,7 @@ export const Navbar: React.FC = () => {
                 src={ashramlogo}
                 alt="Shri Gurudev Ashram Logo"
                 style={{ filter: 'brightness(1.1) contrast(1.15)' }}
-                className="h-[66px] md:h-[92px] w-auto object-contain drop-shadow-sm transition-transform group-hover:scale-105 duration-500"
+                className="h-[58px] sm:h-[66px] md:h-[90px] w-auto object-contain drop-shadow-sm transition-transform group-hover:scale-105 duration-500"
               />
               <div className="text-[#4B3621] font-bold text-[13px] md:text-[15px] leading-tight text-center mt-1 tracking-normal">
                 {t('navbar.maaVaishnaviTourism')}
@@ -141,20 +142,20 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Right Side: Actions (Desktop) */}
-          <div className="hidden lg:flex flex-1 justify-end items-center gap-4 shrink-0">
+          <div className="hidden lg:flex flex-1 justify-end items-center gap-2.5 xl:gap-4 shrink-0">
             {user ? (
               <>
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="font-label-caps text-xs xl:text-sm text-amber-600 hover:text-amber-500 border border-amber-600/40 px-5 py-2 rounded-full transition-colors whitespace-nowrap"
+                    className="font-label-caps text-xs xl:text-sm text-amber-600 hover:text-amber-500 border border-amber-600/40 px-3.5 xl:px-5 py-2 rounded-full transition-colors whitespace-nowrap"
                   >
                     {t('navbar.adminDashboard')}
                   </Link>
                 )}
                 <Link
                   to="/portal"
-                  className="bg-[#3E2B1F] text-[#FAF7F2] px-6 py-2.5 rounded-full font-label-caps text-xs xl:text-sm hover:bg-[#B8860B] transition-all duration-300 shadow-sm active:scale-95 whitespace-nowrap"
+                  className="bg-[#3E2B1F] text-[#FAF7F2] px-4 xl:px-6 py-2 xl:py-2.5 rounded-full font-label-caps text-xs xl:text-sm hover:bg-[#B8860B] transition-all duration-300 shadow-sm active:scale-95 whitespace-nowrap"
                 >
                   {t('navbar.myPortal')}
                 </Link>
@@ -163,13 +164,13 @@ export const Navbar: React.FC = () => {
               <>
                 <Link
                   to="/login"
-                  className="font-display text-[17px] lg:text-[18px] text-[#4B3621] hover:text-[#B8860B] transition-colors whitespace-nowrap px-4 font-semibold"
+                  className="font-display text-[15px] xl:text-[17px] text-[#4B3621] hover:text-[#B8860B] transition-colors whitespace-nowrap px-2.5 xl:px-4 font-semibold"
                 >
                   {t('navbar.login')}
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-[#D6B36A] hover:bg-[#B8860B] text-white h-[46px] px-8 rounded-full flex items-center justify-center font-display text-[17px] font-semibold transition-colors duration-300 whitespace-nowrap"
+                  className="bg-[#D6B36A] hover:bg-[#B8860B] text-white h-[38px] xl:h-[44px] px-3.5 xl:px-6 2xl:px-8 rounded-full flex items-center justify-center font-display text-[13px] xl:text-[15px] 2xl:text-[17px] font-semibold transition-colors duration-300 whitespace-nowrap"
                 >
                   {t('navbar.register')}
                 </Link>
@@ -181,12 +182,12 @@ export const Navbar: React.FC = () => {
                 type="button"
                 aria-haspopup="true"
                 aria-expanded={langOpen}
-                aria-label="Select Language"
+                aria-label={t('navbar.selectLanguage')}
                 onClick={() => setLangOpen(!langOpen)}
                 onKeyDown={(e) => {
                   if (e.key === 'Escape') setLangOpen(false);
                 }}
-                className="flex items-center gap-1.5 text-[#4B3621] hover:text-[#B8860B] px-3 py-1.5 rounded-full hover:bg-[#B8860B]/10 transition-colors font-display text-[16px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8860B]"
+                className="flex items-center gap-1.5 text-[#4B3621] hover:text-[#B8860B] px-2.5 xl:px-3 py-1.5 rounded-full hover:bg-[#B8860B]/10 transition-colors font-display text-[14px] xl:text-[16px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8860B]"
               >
                 <Globe className="w-4 h-4 text-[#B8860B] shrink-0" aria-hidden="true" />
                 <span>{currentLang.label}</span>
@@ -231,7 +232,7 @@ export const Navbar: React.FC = () => {
             <button
               className="text-[#3E2B1F] p-2 shrink-0 hover:bg-[#3E2B1F]/5 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               onClick={() => setMobileOpen((prev) => !prev)}
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-label={mobileOpen ? t('navbar.closeMenu') : t('navbar.openMenu')}
             >
               {mobileOpen ? (
                 <X className="w-6 h-6 sm:w-7 sm:h-7 transition-all duration-300" />
@@ -270,7 +271,7 @@ export const Navbar: React.FC = () => {
                 <button
                   className="text-[#3E2B1F] p-2 shrink-0 hover:bg-[#3E2B1F]/5 rounded-full transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
                   onClick={closeMobile}
-                  aria-label="Close menu"
+                  aria-label={t('navbar.closeMenu')}
                 >
                   <X className="w-6 h-6 sm:w-7 sm:h-7" />
                 </button>
@@ -309,7 +310,7 @@ export const Navbar: React.FC = () => {
                           }`
                         }
                       >
-                        {t(`navbar.${link.name.toLowerCase()}`)}
+                        {t(`navbar.${link.name.toLowerCase().replace(/\s+/g, '')}`, { defaultValue: link.name })}
                       </NavLink>
                     </motion.div>
                   ))}

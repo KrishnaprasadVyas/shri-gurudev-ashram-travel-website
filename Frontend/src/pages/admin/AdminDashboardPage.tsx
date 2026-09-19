@@ -12,6 +12,12 @@ import {
   Sparkles,
   PlusCircle,
   Clock,
+  Globe,
+  Smartphone,
+  Building2,
+  Wallet,
+  Landmark,
+  Receipt,
 } from 'lucide-react'
 import { StatsCard } from '@/components/admin/StatsCard'
 import { QUERY_KEYS } from '@/lib/queryKeys'
@@ -50,6 +56,15 @@ export function AdminDashboardPage() {
     queryKey: QUERY_KEYS.adminStats,
     queryFn: async () => {
       const { data } = await apiClient.get('/api/admin/stats')
+      return data
+    },
+    refetchInterval: 30_000,
+  })
+
+  const { data: collections } = useQuery({
+    queryKey: ['admin-collections'],
+    queryFn: async () => {
+      const { data } = await apiClient.get('/api/admin/collections')
       return data
     },
     refetchInterval: 30_000,
@@ -182,6 +197,218 @@ export function AdminDashboardPage() {
             icon={IndianRupee}
             footer="Total offerings"
           />
+        </div>
+
+        {/* Section 10 Collection Cards: AC Travel, Non-AC Travel, TOTAL */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#3E2B1F] flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-[#B8860B]" />
+              <span>Yatra Travel Collections & Balance</span>
+            </h2>
+            <button
+              onClick={() => navigate('/admin/pending-collection')}
+              className="text-xs font-bold text-[#B8860B] hover:text-[#8C6A0A] flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              <span>View All Pending Collections</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* AC Travel Card */}
+            <div className="p-6 rounded-[24px] bg-[#FFFFFF] border border-[#B8860B]/30 shadow-[0_4px_20px_rgba(184,134,11,0.06)] relative overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#FFF7E8] text-[#B8860B] border border-[#B8860B]/20 uppercase tracking-wider">
+                  AC Travel
+                </span>
+                <span className="text-xs font-bold text-[#6F5B47]">
+                  {collections?.ac?.passengers ?? 0} Passengers
+                </span>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#6F5B47]">Total Amount</span>
+                  <span className="font-bold text-[#3E2B1F]">₹{(collections?.ac?.totalAmount ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#6F5B47]">Received</span>
+                  <span className="font-bold text-[#2E7D32]">₹{(collections?.ac?.received ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div
+                  onClick={() => navigate('/admin/pending-collection')}
+                  className="flex justify-between items-center text-sm pt-2 border-t border-[#E9DCC5] cursor-pointer group"
+                >
+                  <span className="text-[#C0392B] font-semibold group-hover:underline flex items-center gap-1">
+                    Pending <ArrowRight className="h-3 w-3 inline transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                  <span className="font-bold text-[#C0392B] text-base">₹{(collections?.ac?.pending ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Non-AC Travel Card */}
+            <div className="p-6 rounded-[24px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_4px_20px_rgba(90,70,20,0.04)] relative overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#FAF7F2] text-[#6F5B47] border border-[#E9DCC5] uppercase tracking-wider">
+                  Non-AC Travel
+                </span>
+                <span className="text-xs font-bold text-[#6F5B47]">
+                  {collections?.nonAc?.passengers ?? 0} Passengers
+                </span>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#6F5B47]">Total Amount</span>
+                  <span className="font-bold text-[#3E2B1F]">₹{(collections?.nonAc?.totalAmount ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#6F5B47]">Received</span>
+                  <span className="font-bold text-[#2E7D32]">₹{(collections?.nonAc?.received ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div
+                  onClick={() => navigate('/admin/pending-collection')}
+                  className="flex justify-between items-center text-sm pt-2 border-t border-[#E9DCC5] cursor-pointer group"
+                >
+                  <span className="text-[#C0392B] font-semibold group-hover:underline flex items-center gap-1">
+                    Pending <ArrowRight className="h-3 w-3 inline transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                  <span className="font-bold text-[#C0392B] text-base">₹{(collections?.nonAc?.pending ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* TOTAL Card */}
+            <div className="p-6 rounded-[24px] bg-gradient-to-br from-[#FFFDF8] to-[#F5EFE4] border border-[#B8860B]/50 shadow-[0_6px_25px_rgba(184,134,11,0.1)] relative overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#B8860B] text-white uppercase tracking-wider">
+                  TOTAL
+                </span>
+                <span className="text-xs font-bold text-[#3E2B1F]">
+                  {collections?.total?.passengers ?? 0} Passengers
+                </span>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#6F5B47]">Total Amount</span>
+                  <span className="font-bold text-base text-[#3E2B1F]">₹{(collections?.total?.totalAmount ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#6F5B47]">Received</span>
+                  <span className="font-bold text-base text-[#2E7D32]">₹{(collections?.total?.received ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div
+                  onClick={() => navigate('/admin/pending-collection')}
+                  className="flex justify-between items-center text-sm pt-2 border-t border-[#B8860B]/30 cursor-pointer group"
+                >
+                  <span className="text-[#C0392B] font-bold group-hover:underline flex items-center gap-1">
+                    Pending Collection <ArrowRight className="h-3 w-3 inline transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                  <span className="font-bold text-[#C0392B] text-lg">₹{(collections?.total?.pending ?? 0).toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 11: Booking Channels & Payment Mode Breakdown */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Booking Channels Breakdown */}
+          <div className="lg:col-span-5 p-6 rounded-[24px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_4px_20px_rgba(90,70,20,0.04)] space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#F1E9D8]">
+              <h3 className="font-display text-lg font-bold text-[#3E2B1F] flex items-center gap-2">
+                <Globe className="h-5 w-5 text-[#B8860B]" />
+                <span>Booking Channels (Channel Metrics)</span>
+              </h3>
+              <span className="text-xs font-mono font-bold text-[#6F5B47]">
+                {(collections?.bookingChannels?.['Customer-Web'] ?? 0) + (collections?.bookingChannels?.['Customer-App'] ?? 0) + (collections?.bookingChannels?.['Admin-Panel'] ?? 0)} Total
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-[16px] bg-[#FAF7F2] border border-[#E9DCC5] text-center space-y-1">
+                <Globe className="h-5 w-5 text-[#2563EB] mx-auto" />
+                <p className="text-[11px] font-bold text-[#6F5B47] uppercase tracking-wider">Web Portal</p>
+                <p className="font-display text-xl font-bold text-[#3E2B1F]">
+                  {collections?.bookingChannels?.['Customer-Web'] ?? 0}
+                </p>
+                <span className="text-[10px] text-[#9A8A78]">Online</span>
+              </div>
+
+              <div className="p-3.5 rounded-[16px] bg-[#FAF7F2] border border-[#E9DCC5] text-center space-y-1">
+                <Smartphone className="h-5 w-5 text-[#2E7D32] mx-auto" />
+                <p className="text-[11px] font-bold text-[#6F5B47] uppercase tracking-wider">Mobile App</p>
+                <p className="font-display text-xl font-bold text-[#3E2B1F]">
+                  {collections?.bookingChannels?.['Customer-App'] ?? 0}
+                </p>
+                <span className="text-[10px] text-[#9A8A78]">Mobile</span>
+              </div>
+
+              <div className="p-3.5 rounded-[16px] bg-[#FAF7F2] border border-[#E9DCC5] text-center space-y-1">
+                <Building2 className="h-5 w-5 text-[#B8860B] mx-auto" />
+                <p className="text-[11px] font-bold text-[#6F5B47] uppercase tracking-wider">Admin Desk</p>
+                <p className="font-display text-xl font-bold text-[#3E2B1F]">
+                  {collections?.bookingChannels?.['Admin-Panel'] ?? 0}
+                </p>
+                <span className="text-[10px] text-[#9A8A78]">Desk</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment Mode Collection Breakdown */}
+          <div className="lg:col-span-7 p-6 rounded-[24px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_4px_20px_rgba(90,70,20,0.04)] space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#F1E9D8]">
+              <h3 className="font-display text-lg font-bold text-[#3E2B1F] flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-[#B8860B]" />
+                <span>Verified Payment Modes (Collection Breakdown)</span>
+              </h3>
+              <span className="text-xs font-mono font-bold text-[#2E7D32]">
+                ₹{((collections?.paymentModes?.cash ?? 0) + (collections?.paymentModes?.upi ?? 0) + (collections?.paymentModes?.bank_transfer ?? 0) + (collections?.paymentModes?.payment_gateway ?? 0) + (collections?.paymentModes?.other ?? 0)).toLocaleString('en-IN')}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="p-3 rounded-[16px] bg-[#FAF7F2] border border-[#E9DCC5] text-center space-y-0.5">
+                <Receipt className="h-4 w-4 text-[#2E7D32] mx-auto" />
+                <p className="text-[10px] font-bold text-[#6F5B47] uppercase">Cash Desk</p>
+                <p className="font-bold text-sm text-[#3E2B1F]">
+                  ₹{(collections?.paymentModes?.cash ?? 0).toLocaleString('en-IN')}
+                </p>
+              </div>
+
+              <div className="p-3 rounded-[16px] bg-[#FAF7F2] border border-[#E9DCC5] text-center space-y-0.5">
+                <Smartphone className="h-4 w-4 text-[#B8860B] mx-auto" />
+                <p className="text-[10px] font-bold text-[#6F5B47] uppercase">UPI / QR</p>
+                <p className="font-bold text-sm text-[#3E2B1F]">
+                  ₹{(collections?.paymentModes?.upi ?? 0).toLocaleString('en-IN')}
+                </p>
+              </div>
+
+              <div className="p-3 rounded-[16px] bg-[#FAF7F2] border border-[#E9DCC5] text-center space-y-0.5">
+                <Landmark className="h-4 w-4 text-[#2563EB] mx-auto" />
+                <p className="text-[10px] font-bold text-[#6F5B47] uppercase">Bank / NEFT</p>
+                <p className="font-bold text-sm text-[#3E2B1F]">
+                  ₹{(collections?.paymentModes?.bank_transfer ?? 0).toLocaleString('en-IN')}
+                </p>
+              </div>
+
+              <div className="p-3 rounded-[16px] bg-[#FAF7F2] border border-[#E9DCC5] text-center space-y-0.5">
+                <Wallet className="h-4 w-4 text-[#7C3AED] mx-auto" />
+                <p className="text-[10px] font-bold text-[#6F5B47] uppercase">Gateway</p>
+                <p className="font-bold text-sm text-[#3E2B1F]">
+                  ₹{(collections?.paymentModes?.payment_gateway ?? 0).toLocaleString('en-IN')}
+                </p>
+              </div>
+
+              <div className="p-3 rounded-[16px] bg-[#FAF7F2] border border-[#E9DCC5] text-center space-y-0.5 col-span-2 sm:col-span-1">
+                <span className="text-xs block text-center">🏷️</span>
+                <p className="text-[10px] font-bold text-[#6F5B47] uppercase">Other</p>
+                <p className="font-bold text-sm text-[#3E2B1F]">
+                  ₹{(collections?.paymentModes?.other ?? 0).toLocaleString('en-IN')}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* 7. Quick Actions */}

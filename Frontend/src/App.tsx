@@ -19,6 +19,7 @@ import { SevaPage } from './pages/public/SevaPage'
 import { GalleryPage } from './pages/public/GalleryPage'
 import { FaqPage } from './pages/public/FaqPage'
 import { ContactPage } from './pages/public/ContactPage'
+import { MyTripPage } from './pages/public/MyTripPage'
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage'
 
@@ -41,6 +42,17 @@ import { AdminNewPackagePage } from './pages/admin/AdminNewPackagePage'
 import { AdminEditPackagePage } from './pages/admin/AdminEditPackagePage'
 import { AdminSevaPackagesPage } from './pages/admin/AdminSevaPackagesPage'
 import { AdminReportsPage } from './pages/admin/AdminReportsPage'
+import { AdminGroupsPage } from './pages/admin/AdminGroupsPage'
+import { AdminGroupDetailPage } from './pages/admin/AdminGroupDetailPage'
+import { AdminPassengersPage } from './pages/admin/AdminPassengersPage'
+import { AdminPaymentsPage } from './pages/admin/AdminPaymentsPage'
+import { AdminPendingCollectionPage } from './pages/admin/AdminPendingCollectionPage'
+import { AdminTrainExportPage } from './pages/admin/AdminTrainExportPage'
+import { AdminTicketUploadPage } from './pages/admin/AdminTicketUploadPage'
+import { AdminRoomsPage } from './pages/admin/AdminRoomsPage'
+import { AdminRoomAllocationPage } from './pages/admin/AdminRoomAllocationPage'
+import { AdminAuditLogsPage } from './pages/admin/AdminAuditLogsPage'
+import { AdminSettingsPage } from './pages/admin/AdminSettingsPage'
 import { useTranslation } from "react-i18next";
 
 function NotFoundPage() {
@@ -48,8 +60,8 @@ function NotFoundPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4 bg-[#0a0908]">
       <div className="text-6xl mb-4">🪷</div>
-      <h1 className="font-display text-4xl font-bold text-gradient-saffron">Page Not Found</h1>
-      <p className="text-[#f2f0eb]/50">The page you're looking for doesn't exist.</p>
+      <h1 className="font-display text-4xl font-bold text-gradient-saffron">{t('notFound.title', { defaultValue: 'Page Not Found' })}</h1>
+      <p className="text-[#f2f0eb]/50">{t('notFound.desc', { defaultValue: "The page you're looking for doesn't exist." })}</p>
       <a
         href="/"
         className="mt-4 px-6 py-3 rounded-xl bg-amber-500 text-white font-medium hover:bg-amber-600 transition-colors"
@@ -61,7 +73,6 @@ function NotFoundPage() {
 }
 
 export default function App() {
-    const { t } = useTranslation();
   return (
     <Routes>
       {/* ── Public pages ─────────────────────────────────────── */}
@@ -74,6 +85,7 @@ export default function App() {
         <Route path="gallery" element={<GalleryPage />} />
         <Route path="faq" element={<FaqPage />} />
         <Route path="contact" element={<ContactPage />} />
+        <Route path="my-trip" element={<MyTripPage />} />
       </Route>
 
       {/* ── Auth pages (guests only — redirect if logged in) ── */}
@@ -109,6 +121,17 @@ export default function App() {
           <Route path="packages/:id/edit" element={<AdminEditPackagePage />} />
           <Route path="seva-packages" element={<AdminSevaPackagesPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="groups" element={<AdminGroupsPage />} />
+          <Route path="groups/:id" element={<AdminGroupDetailPage />} />
+          <Route path="passengers" element={<AdminPassengersPage />} />
+          <Route path="payments" element={<AdminPaymentsPage />} />
+          <Route path="pending-collection" element={<AdminPendingCollectionPage />} />
+          <Route path="train-export" element={<AdminTrainExportPage />} />
+          <Route path="ticket-upload" element={<AdminTicketUploadPage />} />
+          <Route path="rooms" element={<AdminRoomsPage />} />
+          <Route path="room-allocation" element={<AdminRoomAllocationPage />} />
+          <Route path="audit-logs" element={<AdminAuditLogsPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
       </Route>
 

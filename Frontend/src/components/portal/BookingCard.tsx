@@ -26,7 +26,7 @@ const statusConfig: Record<string, { label: string, className: string }> = {
 }
 
 export function BookingCard({ booking }: { booking: BookingWithTitle }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
   const status = statusConfig[booking.status] ?? statusConfig.payment_pending
 
   return (

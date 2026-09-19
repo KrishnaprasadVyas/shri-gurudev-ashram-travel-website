@@ -1,14 +1,24 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
-  Users,
-  ShieldCheck,
   BookOpen,
+  UsersRound,
+  UserCheck,
   Map,
+  CreditCard,
+  Clock,
+  Train,
+  Ticket,
+  BedDouble,
+  Key,
+  FileSpreadsheet,
+  Users,
+  History,
+  Settings,
+  ShieldCheck,
   LogOut,
   Bell,
   Sparkles,
-  FileSpreadsheet,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/context/AuthContext'
@@ -19,12 +29,20 @@ import type { AdminStats } from '@/types/admin'
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/admin/users', label: 'Users', icon: Users, end: false },
-  { to: '/admin/verifications', label: 'Verifications', icon: ShieldCheck, end: false },
   { to: '/admin/bookings', label: 'Bookings', icon: BookOpen, end: false },
+  { to: '/admin/groups', label: 'Groups', icon: UsersRound, end: false },
+  { to: '/admin/passengers', label: 'Passengers', icon: UserCheck, end: false },
   { to: '/admin/packages', label: 'Yatras', icon: Map, end: false },
-  { to: '/admin/seva-packages', label: 'Seva Catalog', icon: Sparkles, end: false },
+  { to: '/admin/payments', label: 'Payments', icon: CreditCard, end: false },
+  { to: '/admin/pending-collection', label: 'Pending Collection', icon: Clock, end: false },
+  { to: '/admin/train-export', label: 'Train Export', icon: Train, end: false },
+  { to: '/admin/ticket-upload', label: 'Ticket Upload & Mapping', icon: Ticket, end: false },
+  { to: '/admin/rooms', label: 'Rooms Master', icon: BedDouble, end: false },
+  { to: '/admin/room-allocation', label: 'Room Allocation', icon: Key, end: false },
   { to: '/admin/reports', label: 'Reports', icon: FileSpreadsheet, end: false },
+  { to: '/admin/users', label: 'Users & Roles', icon: Users, end: false },
+  { to: '/admin/audit-logs', label: 'Audit Logs', icon: History, end: false },
+  { to: '/admin/settings', label: 'Settings', icon: Settings, end: false },
 ]
 
 interface AdminSidebarProps {

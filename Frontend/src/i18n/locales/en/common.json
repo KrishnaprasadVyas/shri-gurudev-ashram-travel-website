@@ -14,7 +14,10 @@
     "myPortal": "MY PORTAL",
     "adminDashboard": "ADMIN DASHBOARD",
     "language": "Language",
-    "maaVaishnaviTourism": "Maa Vaishnavi Tourism"
+    "maaVaishnaviTourism": "Maa Vaishnavi Tourism",
+    "selectLanguage": "Select Language",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu"
   },
   "hero": {
     "eyebrow": "🙏 UNDER THE BLESSINGS OF GURUDEV",
@@ -141,7 +144,18 @@
     },
     "showLess": "Show Less",
     "viewMore": "View More Photos",
-    "photoAlt": "Sacred Yatra moment {{index}}"
+    "photoAlt": "Sacred Yatra moment {{index}}",
+    "close": "Close",
+    "prevPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "counter": "{{current}} / {{total}}",
+    "categories": {
+      "all": "All Photos",
+      "yatras": "Yatras",
+      "temples": "Temples",
+      "ashram": "Ashram Life",
+      "rituals": "Aarti & Rituals"
+    }
   },
   "faq": {
     "searchPlaceholder": "Search your question...",
@@ -249,7 +263,14 @@
       "resendTimer": "Resend OTP in {{sec}}s",
       "otpValidity": "OTP valid for 5 minutes.",
       "otpSent": "Verification code sent to your mobile number! 🙏",
-      "otpResent": "Verification code resent! 🙏"
+      "otpResent": "Verification code resent! 🙏",
+      "validPhone": "Mobile number must be exactly 10 digits",
+      "validOtp": "OTP must be exactly 6 digits",
+      "nameRequired": "Full name is required",
+      "otpVerifiedProfile": "OTP verified! Please complete your profile.",
+      "signedInSuccess": "Signed in successfully!",
+      "profileSuccess": "Profile completed successfully! Welcome to the portal. 🙏",
+      "updateProfileError": "Failed to update profile"
     }
   },
   "portal": {
@@ -712,7 +733,29 @@
     "instantReceiptTitle": "Instant Digital Receipt",
     "instantReceiptDesc": "Immediate payment confirmation via Razorpay with digital Seva reference number.",
     "sacredSankalpTitle": "Sacred Sankalp",
-    "sacredSankalpDesc": "Enter custom Sankalp requests to be recited during the holy rituals by Ashram priests."
+    "sacredSankalpDesc": "Enter custom Sankalp requests to be recited during the holy rituals by Ashram priests.",
+    "packages": {
+      "guruji_aarti": {
+        "title": "Guruji Aarti Seva",
+        "description": "Perform special Aarti seva and receive divine blessings."
+      },
+      "yajman": {
+        "title": "Yajman Seva",
+        "description": "Become a lead Yajman for sacred poojas and rituals."
+      },
+      "gau_seva": {
+        "title": "Gau Seva",
+        "description": "Support Ashram Gaushala with fodder and care for sacred cows."
+      },
+      "temple_seva": {
+        "title": "Temple Seva & Flower Alankar",
+        "description": "Offer fresh flower garlands and temple maintenance seva."
+      },
+      "annadan": {
+        "title": "Annadan Seva",
+        "description": "Support daily Mahaprasad and feeding devotees at Shri Gurudev Ashram."
+      }
+    }
   },
   "footer": {
     "tagline": "Dedicated to sacred yatras and spiritual pilgrimages. Seeking the Divine within through tradition, service, and devotion.",
@@ -909,7 +952,8 @@
       "bookingReference": "Your Seva booking reference is",
       "devoteeLabel": "Devotee:",
       "performanceDate": "Performance Date:",
-      "paymentId": "Payment ID:"
+      "paymentId": "Payment ID:",
+      "fillRequiredFields": "Please fill all required fields correctly (10-digit phone number)."
     },
     "loading": {
       "sanctuary": "Loading sanctuary...",
@@ -927,7 +971,8 @@
         "seatsLabel": "Availability",
         "perPerson": "per devotee",
         "bookNow": "Book Now",
-        "viewMore": "View More Pilgrimages"
+        "viewMore": "View More Pilgrimages",
+        "datesLabel": "Dates"
       },
       "pastJourneys": "PAST JOURNEYS",
       "sortBy": "SORT BY",
@@ -1089,5 +1134,10 @@
   },
   "booking": {
     "totalAmount": "Total Amount"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "desc": "The page you're looking for doesn't exist.",
+    "backHome": "Back to Home"
   }
 }

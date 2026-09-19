@@ -712,3 +712,12 @@
     100% { background-position: -200% 0; }
   }
 }
+
+/* Utility for horizontal pill scrolling on touch devices without visible scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

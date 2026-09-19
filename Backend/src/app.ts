@@ -15,6 +15,12 @@ import { usersRouter } from './routes/users.js'
 import { sevaRouter } from './routes/seva.js'
 import { sevaPackagesPublicRouter } from './routes/sevaPackagesPublic.js'
 import { sevaPackagesAdminRouter } from './routes/sevaPackagesAdmin.js'
+import { groupsRouter } from './routes/groups.js'
+import { trainJourneysRouter } from './routes/trainJourneys.js'
+import { roomsRouter } from './routes/rooms.js'
+import { myTripRouter } from './routes/myTrip.js'
+import { reportsRouter } from './routes/reports.js'
+import { whatsappRouter } from './routes/whatsapp.js'
 import { supabaseAdmin } from './services/supabaseAdmin.js'
 
 export const app = express()
@@ -68,12 +74,21 @@ app.use(express.urlencoded({ extended: true }))
 // Apply rate limiters & mount routes (supporting both /api/* and /* for Nginx reverse-proxy compatibility)
 app.use(['/api/users', '/users'], authLimiter, usersRouter)
 app.use(['/api/bookings', '/bookings'], bookingsRouter)
-app.use(['/api/bookings/:bookingId/passengers', '/bookings/:bookingId/passengers'], passengersRouter)
+app.use(['/api/bookings/:bookingId/passengers', '/bookings/:bookingId/passengers', '/api/passengers', '/passengers'], passengersRouter)
 app.use(['/api/payments', '/payments'], paymentLimiter, paymentsRouter)
+app.use(['/api/groups', '/groups'], groupsRouter)
+app.use(['/api/train-journeys', '/train-journeys', '/api/train-tickets', '/train-tickets'], trainJourneysRouter)
+app.use(['/api/rooms', '/rooms'], roomsRouter)
+app.use(['/api/my-trip', '/my-trip'], myTripRouter)
+app.use(['/api/reports', '/reports'], reportsRouter)
+app.use(['/api/whatsapp', '/whatsapp'], whatsappRouter)
 app.use(['/api/seva', '/seva'], sevaRouter)
 app.use(['/api/public/seva-packages', '/public/seva-packages'], sevaPackagesPublicRouter)
 app.use(['/api/admin/seva-packages', '/admin/seva-packages'], sevaPackagesAdminRouter)
 app.use(['/api/admin', '/admin'], adminRouter)
+app.get(['/api/health', '/health'], (_request: Request, response: Response) => {
+  response.json({ status: 'ok', service: 'mavt-backend', timestamp: new Date().toISOString() })
+})
 
 app.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
   const status = error instanceof HttpError ? error.status : 500

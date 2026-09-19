@@ -97,7 +97,7 @@ export const JourneyTimeline: React.FC = () => {
             {isExpanded ? (
               <>
                 <ChevronUp className="w-5 h-5" />
-                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">Show Less</span>
+                <span className="font-label-caps text-xs tracking-wider uppercase font-bold">{t('faq.showLess', { defaultValue: 'Show Less' })}</span>
               </>
             ) : (
               <>

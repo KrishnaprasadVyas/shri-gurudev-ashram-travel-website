@@ -55,6 +55,15 @@ export function SevaBookingModal({ isOpen, onClose, sevaPackage }: SevaBookingMo
   }, [isOpen, sevaPackage])
 
 
+  const getPackageTitle = (pkg: SevaPackage) => {
+    if (pkg.seva_type) {
+      const key = `seva.packages.${pkg.seva_type}.title`
+      const translated = t(key)
+      if (translated && translated !== key) return translated
+    }
+    return pkg.title
+  }
+
   if (!isOpen || !sevaPackage) return null
 
   const handleCreateOrderAndPay = async () => {
@@ -157,7 +166,7 @@ export function SevaBookingModal({ isOpen, onClose, sevaPackage }: SevaBookingMo
               </span>
               <div>
                 <h3 className="font-display text-xl sm:text-2xl font-bold text-[#3E2B1F]">
-                  {t('seva.bookSeva', { defaultValue: 'Book Seva' })}: {sevaPackage.title}
+                  {t('seva.bookSeva', { defaultValue: 'Book Seva' })}: {getPackageTitle(sevaPackage)}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#8C6A0A] font-semibold mt-0.5">
                   {formatCurrency(sevaPackage.price)} {t('yatraDetail.base', { defaultValue: 'base contribution' })}
@@ -175,7 +184,7 @@ export function SevaBookingModal({ isOpen, onClose, sevaPackage }: SevaBookingMo
               onSubmit={(e) => {
                 e.preventDefault()
                 if (!sevaDate || !fullName.trim() || phoneNumber.trim().length !== 10) {
-                  setErrorMsg('Please fill all required fields correctly (10-digit phone number).')
+                  setErrorMsg(t('public.seva.fillRequiredFields', { defaultValue: 'Please fill all required fields correctly (10-digit phone number).' }))
                   return
                 }
                 setErrorMsg('')
@@ -282,7 +291,7 @@ export function SevaBookingModal({ isOpen, onClose, sevaPackage }: SevaBookingMo
                 <span className="text-[#6F5B47] font-medium">
                   {t('public.seva.sevaPackage', { defaultValue: 'Seva Package' })}
                 </span>
-                <span className="font-bold text-[#B8860B]">{sevaPackage.title}</span>
+                <span className="font-bold text-[#B8860B]">{getPackageTitle(sevaPackage)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#6F5B47] font-medium">

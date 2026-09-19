@@ -21,8 +21,12 @@ type PassengerForm = {
   gender: string;
   dob: string;
   phone: string;
+  whatsapp_number: string;
   address: string;
   aadhaar_number: string;
+  travel_class: 'ac' | 'non_ac';
+  boarding_station: string;
+  destination_station: string;
 }
 
 type DocState = Record<number, Record<string, File>>
@@ -60,7 +64,7 @@ export function BookPage() {
   const [documents, setDocuments] = useState<DocState>({})
   
   const [preferences, setPreferences] = useState({
-    transportType: 'Flight',
+    transportType: 'Train',
     busType: '',
     roomType: 'AC Room',
     additionalSevaPackageId: '',
@@ -83,8 +87,12 @@ export function BookPage() {
           gender: '',
           dob: '',
           phone: i === 0 ? userProfile?.phone ?? '' : '',
+          whatsapp_number: i === 0 ? userProfile?.phone ?? '' : '',
           address: '',
           aadhaar_number: '',
+          travel_class: 'ac' as const,
+          boarding_station: 'NDLS',
+          destination_station: 'SVDK',
         }
       })
       setPassengers(newPassengers)
@@ -215,16 +223,13 @@ export function BookPage() {
       if (!p.gender) e[`${i}_gender`] = 'Required'
       if (!p.dob) e[`${i}_dob`] = 'Required'
       if (!/^\d{10}$/.test(p.phone)) e[`${i}_phone`] = '10 digits'
+      if (!p.whatsapp_number || !/^\d{10}$/.test(p.whatsapp_number)) e[`${i}_whatsapp`] = '10 digits'
       if (!p.address.trim()) e[`${i}_address`] = 'Required'
       if (!/^\d{12}$/.test(p.aadhaar_number)) e[`${i}_aadhaar`] = '12 digits'
     })
     setErrors(e)
     return Object.keys(e).length === 0
   }
-
-
-
-
 
   if (isLoading) return <LoadingState variant="detail" />
   if (!pkg) return null
@@ -233,17 +238,19 @@ export function BookPage() {
   
   const stepTitles = ['Travelers', 'Passenger Details', 'Documents', 'Review & Pay']
 
-  const flightSurcharge = preferences.transportType === 'Flight' ? (pkg.flight_price || 0) : 0
-  const trainAcSurcharge = (preferences.transportType === 'Train' && preferences.busType === 'AC Train') ? (pkg.train_ac_price || 0) : 0
-  const trainNonAcSurcharge = (preferences.transportType === 'Train' && preferences.busType === 'Non-AC Train') ? (pkg.train_non_ac_price || 0) : 0
+  const acTravelers = passengers.filter(p => p.travel_class === 'ac').length
+  const nonAcTravelers = passengers.filter(p => p.travel_class === 'non_ac').length
+
+  const flightSurcharge = preferences.transportType === 'Flight' ? (pkg.flight_price || 0) * travelerCount : 0
+  const trainAcSurcharge = preferences.transportType === 'Train' ? (pkg.train_ac_price || 0) * acTravelers : 0
+  const trainNonAcSurcharge = preferences.transportType === 'Train' ? (pkg.train_non_ac_price || 0) * nonAcTravelers : 0
   const transportSurcharge = flightSurcharge + trainAcSurcharge + trainNonAcSurcharge
   
-  const acRoomSurcharge = preferences.roomType === 'AC Room' ? (pkg.room_ac_price || 0) : 0
-  const nonAcRoomSurcharge = preferences.roomType === 'Non-AC Room' ? (pkg.room_non_ac_price || 0) : 0
+  const acRoomSurcharge = preferences.roomType === 'AC Room' ? (pkg.room_ac_price || 0) * travelerCount : 0
+  const nonAcRoomSurcharge = preferences.roomType === 'Non-AC Room' ? (pkg.room_non_ac_price || 0) * travelerCount : 0
   const roomSurcharge = acRoomSurcharge + nonAcRoomSurcharge
   
-  const pricePerPerson = pkg.price + transportSurcharge + roomSurcharge
-  const totalBasePrice = pricePerPerson * travelerCount
+  const totalBasePrice = (pkg.price * travelerCount) + transportSurcharge + roomSurcharge
   const sevaFee = selectedSeva ? Number(selectedSeva.price || 0) : 0
   const grandTotal = totalBasePrice + sevaFee
 
@@ -449,6 +456,29 @@ export function BookPage() {
                     {t('portal.book.passenger')} {i + 1} {p.is_primary && <span className="text-[10px] uppercase bg-[#E9DCC5] text-[#6F5B47] px-2 py-0.5 rounded-full">{t('portal.book.primary')}</span>}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Per-Passenger Travel Class (Req #10 & #16) */}
+                    <div className="sm:col-span-2 p-3 rounded-xl bg-[#FFFFFF] border border-[#E9DCC5]">
+                      <label className="block text-[10px] font-bold text-[#B8860B] uppercase tracking-wider mb-1.5">
+                        Train Travel Class (AC vs Non-AC)
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => handlePassengerChange(i, 'travel_class', 'ac')}
+                          className={`py-2 px-3 rounded-lg border text-xs font-bold transition-all ${p.travel_class === 'ac' ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B] ring-2 ring-[#B8860B]/20' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47]'}`}
+                        >
+                          AC Train {pkg.train_ac_price ? `(+₹${pkg.train_ac_price.toLocaleString('en-IN')})` : ''}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handlePassengerChange(i, 'travel_class', 'non_ac')}
+                          className={`py-2 px-3 rounded-lg border text-xs font-bold transition-all ${p.travel_class === 'non_ac' ? 'bg-[#FFF7E8] border-[#B8860B] text-[#B8860B] ring-2 ring-[#B8860B]/20' : 'bg-[#FAF7F2] border-[#E9DCC5] text-[#6F5B47]'}`}
+                        >
+                          Non-AC Train {pkg.train_non_ac_price ? `(+₹${pkg.train_non_ac_price.toLocaleString('en-IN')})` : ''}
+                        </button>
+                      </div>
+                    </div>
+
                     <div>
                       <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.fullName')}</label>
                       <input type="text" value={p.full_name} onChange={(e) => handlePassengerChange(i, 'full_name', e.target.value)} className={inputClass(errors[`${i}_name`])} />
@@ -475,9 +505,44 @@ export function BookPage() {
                       {errors[`${i}_phone`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_phone`]}</p>}
                     </div>
                     <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider">WhatsApp Number</label>
+                        <span className="text-[9px] text-[#9A8A78] italic">Record only</span>
+                      </div>
+                      <input
+                        type="tel"
+                        maxLength={10}
+                        placeholder="10-digit WhatsApp"
+                        value={p.whatsapp_number}
+                        onChange={(e) => handlePassengerChange(i, 'whatsapp_number', e.target.value.replace(/\D/g, ''))}
+                        className={inputClass(errors[`${i}_whatsapp`])}
+                      />
+                      {errors[`${i}_whatsapp`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_whatsapp`]}</p>}
+                    </div>
+                    <div>
                       <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.aadhaarNumber')}</label>
                       <input type="text" maxLength={12} value={p.aadhaar_number} onChange={(e) => handlePassengerChange(i, 'aadhaar_number', e.target.value.replace(/\D/g, ''))} className={inputClass(errors[`${i}_aadhaar`])} />
                       {errors[`${i}_aadhaar`] && <p className="text-[#C0392B] text-xs font-bold mt-1">{errors[`${i}_aadhaar`]}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Boarding Station</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. NDLS / New Delhi"
+                        value={p.boarding_station}
+                        onChange={(e) => handlePassengerChange(i, 'boarding_station', e.target.value)}
+                        className={inputClass()}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">Destination Station</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. SVDK / Katra"
+                        value={p.destination_station}
+                        onChange={(e) => handlePassengerChange(i, 'destination_station', e.target.value)}
+                        className={inputClass()}
+                      />
                     </div>
                     <div className="sm:col-span-2">
                       <label className="block text-[10px] font-bold text-[#6F5B47] uppercase tracking-wider mb-1">{t('portal.book.address')}</label>

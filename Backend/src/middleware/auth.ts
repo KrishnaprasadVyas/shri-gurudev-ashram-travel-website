@@ -38,7 +38,7 @@ export async function requireAuth(request: Request, _response: Response, next: N
     // PATH 1 — Development mock token (DEMO_AUTH mode)
     // Format: dev-token-<userId>:<fullName>:<email>
     // -----------------------------------------------------------------------
-    if (process.env.NODE_ENV === 'development' && token.startsWith('dev-token-')) {
+    if ((process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') && token.startsWith('dev-token-')) {
       const tokenBody = token.substring('dev-token-'.length)
       const parts = tokenBody.split(':')
       const userId = parts[0]
@@ -48,10 +48,11 @@ export async function requireAuth(request: Request, _response: Response, next: N
 
       const fullName = parts[1] ? decodeURIComponent(parts[1]) : ''
       const email = parts[2] ? decodeURIComponent(parts[2]) : ''
+      const explicitRole = parts[3] ? decodeURIComponent(parts[3]) : ''
 
       const { data: existingUser, error: checkError } = await supabaseAdmin
         .from('users')
-        .select('id')
+        .select('id, role')
         .eq('id', userId)
         .maybeSingle()
 
@@ -62,7 +63,7 @@ export async function requireAuth(request: Request, _response: Response, next: N
       if (!existingUser) {
         const phoneMatch = userId.match(/^00000000-0000-0000-0000-(\d{10})00$/)
         const phone = phoneMatch ? phoneMatch[1] : '9999999999'
-        const role = phone === '9000000000' ? 'admin' : 'user'
+        const role = explicitRole || (phone === '9000000000' ? 'admin' : 'user')
         const insertData = {
           id: userId,
           full_name: fullName || `Test User ${phone}`,
@@ -76,6 +77,8 @@ export async function requireAuth(request: Request, _response: Response, next: N
         if (insertError) {
           throw new HttpError(500, `Failed to create mock user: ${insertError.message}`)
         }
+      } else if (explicitRole && (existingUser as any).role !== explicitRole) {
+        await supabaseAdmin.from('users').update({ role: explicitRole }).eq('id', userId)
       }
 
       ;(request as AuthenticatedRequest).userId = userId

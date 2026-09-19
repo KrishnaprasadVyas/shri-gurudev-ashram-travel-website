@@ -14,6 +14,12 @@ import {
   Loader2,
   CheckCircle,
   XCircle,
+  Train,
+  Building,
+  Receipt,
+  Send,
+  Smartphone,
+  ExternalLink,
 } from 'lucide-react'
 import { QUERY_KEYS } from '@/lib/queryKeys'
 import apiClient from '@/lib/apiClient'
@@ -22,6 +28,9 @@ import { LoadingState } from '@/components/shared/States'
 import { toast } from 'sonner'
 import type { BookingRow, UserRow, TravelPackageRow, PaymentRow } from '@/types/database.types'
 import { useTranslation } from "react-i18next";
+import { WhatsAppTripDetailsModal } from '@/components/admin/WhatsAppTripDetailsModal'
+import { TrainDetailsModal } from '@/components/admin/TrainDetailsModal'
+import { CashReceiptModal } from '@/components/admin/CashReceiptModal'
 
 function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
     const { t } = useTranslation();
@@ -140,6 +149,10 @@ export function AdminBookingDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false)
+  const [isTrainModalOpen, setIsTrainModalOpen] = useState(false)
+  const [selectedPaymentReceiptId, setSelectedPaymentReceiptId] = useState<string | null>(null)
+
   const { data, isLoading } = useQuery<{
     booking: BookingRow
     user: UserRow
@@ -234,6 +247,65 @@ export function AdminBookingDetailPage() {
               ₹{(booking.payable_amount ?? booking.total_amount).toLocaleString('en-IN')}
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* Command & Automation Actions Bar */}
+      <div className="p-4 sm:p-5 rounded-[20px] bg-[#FFFFFF] border border-[#E9DCC5] shadow-[0_4px_20px_rgba(90,70,20,0.04)] flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Channel Badge */}
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#FAF7F2] border border-[#E9DCC5] text-[#6F5B47] flex items-center gap-1.5">
+            <Smartphone className="h-3.5 w-3.5 text-[#B8860B]" />
+            <span>Channel: {booking.booking_channel || 'Customer-Web'}</span>
+          </span>
+
+          {/* Service Option Badge */}
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#FFF7E8] border border-[#B8860B]/30 text-[#B8860B] flex items-center gap-1.5">
+            <Building className="h-3.5 w-3.5 text-[#B8860B]" />
+            <span>
+              Service: {booking.service_option === 'only_room' ? 'Room Only Guest' : booking.service_option === 'yatra_room_train_self' ? 'Tourism + Self Train + Room' : 'Tourism + Train + Room'}
+            </span>
+          </span>
+
+          {booking.train_arrangement && (
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#FAF7F2] border border-[#E9DCC5] text-[#6F5B47] flex items-center gap-1.5">
+              <Train className="h-3.5 w-3.5 text-[#2563EB]" />
+              <span>{booking.train_arrangement === 'customer_self_arranged' ? 'Self-Arranged Train' : 'MAVT Arranged Train'}</span>
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Train Journey Management Button */}
+          <button
+            type="button"
+            onClick={() => setIsTrainModalOpen(true)}
+            className="px-4 py-2 rounded-full bg-[#FFFFFF] border border-[#B8860B] hover:bg-[#B8860B]/10 text-[#B8860B] text-xs font-bold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+          >
+            <Train className="h-3.5 w-3.5" />
+            <span>Train Journey Allocation</span>
+          </button>
+
+          {/* Ticket PDF Download Button */}
+          <a
+            href={`/api/bookings/${booking.id}/ticket-pdf`}
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 rounded-full bg-[#FAF7F2] border border-[#E9DCC5] hover:border-[#B8860B] text-[#3E2B1F] text-xs font-bold flex items-center gap-1.5 transition-colors shadow-2xs"
+          >
+            <Download className="h-3.5 w-3.5 text-[#B8860B]" />
+            <span>Download Ticket PDF</span>
+          </a>
+
+          {/* WhatsApp Trip Details Trigger Button */}
+          <button
+            type="button"
+            onClick={() => setIsWhatsAppModalOpen(true)}
+            className="px-4 py-2 rounded-full bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md hover:scale-102 cursor-pointer"
+          >
+            <Send className="h-3.5 w-3.5" />
+            <span>📲 Send Trip Details on WhatsApp</span>
+          </button>
         </div>
       </div>
 
@@ -338,11 +410,45 @@ export function AdminBookingDetailPage() {
               <span>Logistics & Accommodation Preferences</span>
             </h2>
             <div className="divide-y divide-[#F1E9D8]">
-              <InfoRow label={"Transport Preference"} value={booking.transport_type} />
-              <InfoRow label={"Train / Bus Class"} value={booking.bus_type} />
-              <InfoRow label={"Room & Lodging Type"} value={booking.room_type} />
+              <InfoRow label={"Service Option"} value={booking.service_option || 'yatra_room_train'} />
+              <InfoRow label={"Booking Channel"} value={booking.booking_channel || 'Customer-Web'} />
+
+              {booking.service_option === 'only_room' ? (
+                <>
+                  <div className="py-2.5 px-3 rounded-xl bg-[#FFF7E8] border border-[#B8860B]/20 text-xs text-[#B8860B] font-semibold">
+                    🏨 Room-Only Guest: Train travel and PNR requirements are waived.
+                  </div>
+                  <InfoRow label={"Hotel / Ashram"} value={booking.hotel_name || 'Shri Gurudev Ashram Niwas'} />
+                  <InfoRow label={"Check-In Date"} value={booking.check_in_date} />
+                  <InfoRow label={"Check-Out Date"} value={booking.check_out_date} />
+                  <InfoRow label={"Room Rent"} value={booking.room_rent ? `₹${booking.room_rent.toLocaleString('en-IN')}` : null} />
+                  <InfoRow label={"Room Type"} value={booking.room_type_requested || booking.room_type} />
+                </>
+              ) : (
+                <>
+                  <InfoRow label={"Train Arrangement"} value={booking.train_arrangement === 'customer_self_arranged' ? 'Customer Self-Arranged' : 'MAVT Tourism Arranged'} />
+                  <InfoRow label={"Boarding Station"} value={(booking as any).boarding_station} />
+                  <InfoRow label={"Destination Station"} value={(booking as any).destination_station} />
+                  <InfoRow label={"Going Date"} value={(booking as any).going_date} />
+                  <InfoRow label={"Return Date"} value={(booking as any).return_date} />
+                  <InfoRow label={"Transport Preference"} value={booking.transport_type} />
+                  <InfoRow label={"Train / Bus Class"} value={booking.bus_type} />
+                  <InfoRow label={"Room & Lodging Type"} value={booking.room_type} />
+                </>
+              )}
+
               <InfoRow label={"Emergency Contact"} value={booking.emergency_contact_name ? `${booking.emergency_contact_name} (${booking.emergency_contact_relationship}) - ${booking.emergency_contact_phone}` : null} />
               <InfoRow label={"Special Requests / Notes"} value={booking.special_notes} />
+            </div>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setIsTrainModalOpen(true)}
+                className="w-full py-2 px-3 rounded-xl bg-[#FAF7F2] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Train className="h-3.5 w-3.5" />
+                <span>Update Train & Station Details</span>
+              </button>
             </div>
           </div>
         </div>
@@ -424,9 +530,14 @@ export function AdminBookingDetailPage() {
                       <span className="font-display font-bold text-base text-[#3E2B1F]">
                         ₹{p.amount.toLocaleString('en-IN')}
                       </span>
-                      <span className="px-2 py-0.5 rounded-full bg-[#2E7D32]/15 text-[#2E7D32] text-xs font-bold capitalize">
-                        {p.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-full bg-[#FAF7F2] border border-[#E9DCC5] text-[#6F5B47] text-[10px] font-mono font-bold uppercase">
+                          {p.payment_mode || p.payment_method || 'Payment'}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-[#2E7D32]/15 text-[#2E7D32] text-xs font-bold capitalize">
+                          {p.status}
+                        </span>
+                      </div>
                     </div>
                     {p.razorpay_payment_id && (
                       <div className="flex items-center justify-between text-xs text-[#6F5B47] font-mono pt-1 border-t border-[#E9DCC5]">
@@ -434,6 +545,19 @@ export function AdminBookingDetailPage() {
                         <span className="font-bold text-[#3E2B1F] truncate max-w-[160px]">{p.razorpay_payment_id}</span>
                       </div>
                     )}
+                    <div className="pt-2 border-t border-[#E9DCC5] flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedPaymentReceiptId(p.id)}
+                        className="px-3 py-1 rounded-full bg-[#FAF7F2] border border-[#E9DCC5] hover:border-[#B8860B] text-[#B8860B] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Receipt className="h-3 w-3" />
+                        <span>View / Print Cash Receipt</span>
+                      </button>
+                      <span className="text-[10px] font-mono text-[#9A8A78]">
+                        {new Date(p.created_at).toLocaleDateString('en-IN')}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -441,6 +565,33 @@ export function AdminBookingDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Admin Modals */}
+      <WhatsAppTripDetailsModal
+        bookingId={booking.id}
+        bookingCode={booking.booking_reference || (booking as any).booking_code || booking.id.slice(0, 8)}
+        defaultMobile={booking.whatsapp_number || booking.phone_number || (booking as any).mobile || ''}
+        isOpen={isWhatsAppModalOpen}
+        onClose={() => setIsWhatsAppModalOpen(false)}
+      />
+
+      <TrainDetailsModal
+        bookingId={booking.id}
+        bookingCode={booking.booking_reference || (booking as any).booking_code || booking.id.slice(0, 8)}
+        initialBoarding={(booking as any).boarding_station || ''}
+        initialDestination={(booking as any).destination_station || ''}
+        initialGoingDate={(booking as any).going_date || ''}
+        initialReturnDate={(booking as any).return_date || ''}
+        initialTrainArrangement={booking.train_arrangement || 'tourism_arranged'}
+        isOpen={isTrainModalOpen}
+        onClose={() => setIsTrainModalOpen(false)}
+      />
+
+      <CashReceiptModal
+        paymentId={selectedPaymentReceiptId}
+        isOpen={Boolean(selectedPaymentReceiptId)}
+        onClose={() => setSelectedPaymentReceiptId(null)}
+      />
     </div>
   )
 }

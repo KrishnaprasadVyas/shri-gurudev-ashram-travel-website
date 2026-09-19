@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Loader2, Phone, KeyRound, ChevronLeft, Sparkles, UserRound } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { AuthSplitLayout } from '@/components/auth/AuthSplitLayout'
 import { toast } from 'sonner'
 import apiClient from '@/lib/apiClient'
+import { useTranslation } from 'react-i18next'
 
 export function LoginPage() {
-  usePageTitle('Sign In')
+  const { t } = useTranslation()
+  usePageTitle(t('auth.login.welcomeBack'))
   const { sendOtp, verifyOtp, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -43,7 +45,7 @@ export function LoginPage() {
     setError('')
 
     if (!/^\d{10}$/.test(phone)) {
-      setError('Mobile number must be exactly 10 digits')
+      setError(t('auth.login.validPhone'))
       return
     }
 
@@ -57,7 +59,7 @@ export function LoginPage() {
       setStep(2)
       setTimer(60)
       setTimerActive(true)
-      toast.success('Verification code sent to your mobile number! 🙏')
+      toast.success(t('auth.login.otpSent'))
     }
   }
 
@@ -66,7 +68,7 @@ export function LoginPage() {
     setError('')
 
     if (!/^\d{6}$/.test(otp)) {
-      setError('OTP must be exactly 6 digits')
+      setError(t('auth.login.validOtp'))
       return
     }
 
@@ -84,14 +86,14 @@ export function LoginPage() {
       setLoading(false)
       if (!data.user.full_name || data.user.full_name.trim() === '') {
         setStep(3)
-        toast.success('OTP verified! Please complete your profile.')
+        toast.success(t('auth.login.otpVerifiedProfile'))
       } else {
-        toast.success('Signed in successfully!')
+        toast.success(t('auth.login.signedInSuccess'))
         navigate(from, { replace: true })
       }
-    } catch (err) {
+    } catch {
       setLoading(false)
-      toast.success('Signed in successfully!')
+      toast.success(t('auth.login.signedInSuccess'))
       navigate(from, { replace: true })
     }
   }
@@ -101,7 +103,7 @@ export function LoginPage() {
     setError('')
 
     if (!fullName.trim()) {
-      setError('Full name is required')
+      setError(t('auth.login.nameRequired'))
       return
     }
 
@@ -109,10 +111,11 @@ export function LoginPage() {
     try {
       await apiClient.put('/api/users/profile', { full_name: fullName.trim(), phone })
       await refreshProfile()
-      toast.success('Profile completed successfully! Welcome to the portal. 🙏')
+      toast.success(t('auth.login.profileSuccess'))
       navigate(from, { replace: true })
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to update profile')
+    } catch (err: unknown) {
+      const apiError = err as { response?: { data?: { error?: string } }; message?: string }
+      setError(apiError.response?.data?.error || apiError.message || t('auth.login.updateProfileError'))
     } finally {
       setLoading(false)
     }
@@ -130,7 +133,7 @@ export function LoginPage() {
     } else {
       setTimer(60)
       setTimerActive(true)
-      toast.success('Verification code resent! 🙏')
+      toast.success(t('auth.login.otpResent'))
     }
   }
 
@@ -139,15 +142,15 @@ export function LoginPage() {
       <div className="mb-8 text-center sm:text-left space-y-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFFFF] border border-[#E9DCC5] text-[#B8860B] font-label-caps text-[11px] font-bold uppercase tracking-[0.2em] shadow-2xs">
           <Sparkles className="h-3 w-3" />
-          <span>Devotee Portal</span>
+          <span>{t('auth.login.badge')}</span>
         </div>
         <h2 className="font-display text-3xl sm:text-4xl text-[#3E2B1F] font-bold tracking-tight">
-          {step === 3 ? 'Complete Profile' : 'Welcome Back'}
+          {step === 3 ? t('auth.login.completeProfile') : t('auth.login.welcomeBack')}
         </h2>
         <p className="font-body-md text-sm sm:text-base text-[#6F5B47] font-normal leading-relaxed">
           {step === 3
-            ? 'Please provide your full name to complete your registration.'
-            : 'Sign in using your registered 10-digit mobile number to access your pilgrimage account and administration dashboard.'
+            ? t('auth.login.descComplete')
+            : t('auth.login.descDefault')
           }
         </p>
       </div>
@@ -156,7 +159,7 @@ export function LoginPage() {
         <form onSubmit={handleSendOtp} className="space-y-6">
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Registered Mobile Number *
+              {t('auth.login.mobileLabel')}
             </label>
             <div className="relative">
               <input
@@ -165,7 +168,7 @@ export function LoginPage() {
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                placeholder="Enter 10-digit mobile number"
+                placeholder={t('auth.login.mobilePlaceholder')}
                 className="w-full px-5 py-4 pl-12 rounded-[14px] bg-[#FFFFFF] border border-[#E9DCC5] text-[#3E2B1F] placeholder-[#9A8A78] focus:outline-none focus:border-[#B8860B] focus:ring-2 focus:ring-[#B8860B]/20 transition-all duration-200 shadow-2xs text-sm sm:text-base font-medium"
               />
               <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#B8860B]" />
@@ -185,7 +188,7 @@ export function LoginPage() {
             disabled={loading || phone.length !== 10}
             className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-full bg-[#B8860B] hover:bg-[#6F5200] text-[#FFFFFF] font-label-caps text-xs sm:text-sm tracking-[0.2em] uppercase font-bold shadow-[0_8px_24px_rgba(140,106,10,0.25)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Request OTP Code'}
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : t('auth.login.requestOtp')}
           </button>
         </form>
       )}
@@ -199,23 +202,23 @@ export function LoginPage() {
               setError('')
               setOtp('')
             }}
-            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6F5B47] hover:text-[#B8860B] transition-colors mb-2 focus:outline-none"
+            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6F5B47] hover:text-[#B8860B] transition-colors mb-2 focus:outline-none cursor-pointer"
           >
-            <ChevronLeft className="h-4 w-4" /> Change Mobile Number ({phone})
+            <ChevronLeft className="h-4 w-4" /> {t('auth.login.changeMobile')} ({phone})
           </button>
 
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B]">
-                Verification Code (OTP) *
+                {t('auth.login.otpLabel')}
               </label>
               <button
                 type="button"
                 onClick={handleResendOtp}
                 disabled={timerActive || loading}
-                className="text-xs font-bold uppercase tracking-wider text-[#B8860B] hover:text-[#6F5200] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="text-xs font-bold uppercase tracking-wider text-[#B8860B] hover:text-[#6F5200] transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
-                {timerActive ? `Resend OTP in ${timer}s` : 'Resend OTP Now'}
+                {timerActive ? t('auth.login.resendTimer', { sec: timer }) : t('auth.login.resendOtp')}
               </button>
             </div>
             <div className="relative">
@@ -225,7 +228,7 @@ export function LoginPage() {
                 required
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="Enter 6-digit verification code"
+                placeholder={t('auth.login.otpPlaceholder')}
                 className="w-full px-5 py-4 pl-12 rounded-[14px] bg-[#FFFFFF] border border-[#E9DCC5] text-[#3E2B1F] placeholder-[#9A8A78] focus:outline-none focus:border-[#B8860B] focus:ring-2 focus:ring-[#B8860B]/20 transition-all duration-200 shadow-2xs text-sm sm:text-base font-mono font-bold tracking-widest"
               />
               <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#B8860B]" />
@@ -245,7 +248,7 @@ export function LoginPage() {
             disabled={loading || otp.length !== 6}
             className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-full bg-[#B8860B] hover:bg-[#6F5200] text-[#FFFFFF] font-label-caps text-xs sm:text-sm tracking-[0.2em] uppercase font-bold shadow-[0_8px_24px_rgba(140,106,10,0.25)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Verify OTP'}
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : t('auth.login.verifyOtp')}
           </button>
         </form>
       )}
@@ -254,7 +257,7 @@ export function LoginPage() {
         <form onSubmit={handleProfileSubmit} className="space-y-6 animate-in fade-in duration-300">
           <div>
             <label className="block text-xs font-label-caps font-bold uppercase tracking-[0.15em] text-[#B8860B] mb-2">
-              Full Name *
+              {t('auth.login.fullNameLabel')}
             </label>
             <div className="relative">
               <input
@@ -263,7 +266,7 @@ export function LoginPage() {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Enter your full name"
+                placeholder={t('auth.login.fullNamePlaceholder')}
                 className="w-full px-5 py-4 pl-12 rounded-[14px] bg-[#FFFFFF] border border-[#E9DCC5] text-[#3E2B1F] placeholder-[#9A8A78] focus:outline-none focus:border-[#B8860B] focus:ring-2 focus:ring-[#B8860B]/20 transition-all duration-200 shadow-2xs text-sm sm:text-base font-medium"
               />
               <UserRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#B8860B]" />
@@ -283,7 +286,7 @@ export function LoginPage() {
             disabled={loading || fullName.trim().length === 0}
             className="w-full flex items-center justify-center gap-2.5 py-4 px-8 rounded-full bg-[#B8860B] hover:bg-[#6F5200] text-[#FFFFFF] font-label-caps text-xs sm:text-sm tracking-[0.2em] uppercase font-bold shadow-[0_8px_24px_rgba(140,106,10,0.25)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Complete Profile & Enter Portal'}
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : t('auth.login.completeBtn')}
           </button>
         </form>
       )}
@@ -291,7 +294,7 @@ export function LoginPage() {
       {step === 1 && (
         <div className="mt-8 pt-6 border-t border-[#E9DCC5] text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <span className="text-sm text-[#6F5B47] font-normal">
-            OTP valid for 5 minutes.
+            {t('auth.login.otpValidity')}
           </span>
         </div>
       )}

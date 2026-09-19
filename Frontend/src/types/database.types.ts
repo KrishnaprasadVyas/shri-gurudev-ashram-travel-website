@@ -94,6 +94,17 @@ export interface BookingRow {
   additional_seva_amount: number | null
   subtotal_amount: number | null
   additional_seva_package_id: string | null
+  booking_channel?: string | null
+  service_option?: 'yatra_room_train' | 'yatra_room_train_self' | 'only_room' | 'other' | string | null
+  train_arrangement?: 'mavt_arranged' | 'customer_self_arranged' | string | null
+  hotel_name?: string | null
+  check_in_date?: string | null
+  check_out_date?: string | null
+  room_rent?: number | null
+  room_type_requested?: string | null
+  booking_code?: string | null
+  lead_passenger_name?: string | null
+  mobile?: string | null
 }
 
 export interface BookingPassengerRow {
@@ -128,6 +139,10 @@ export interface PaymentRow {
   booking_id: string
   amount: number
   payment_method: string
+  payment_mode?: string | null
+  payment_code?: string | null
+  utr?: string | null
+  admin_notes?: string | null
   razorpay_order_id: string | null
   razorpay_payment_id: string | null
   razorpay_signature: string | null

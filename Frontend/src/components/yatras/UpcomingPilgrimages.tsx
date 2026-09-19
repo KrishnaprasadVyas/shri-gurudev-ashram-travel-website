@@ -5,11 +5,12 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { usePackages } from '@/hooks/usePackages';
 import { kedarnath, varanasi, thanjavur, desert } from '@/assets/images';
 import { useTranslation } from "react-i18next";
+import { formatDateRange, getLocaleCode } from '@/lib/utils';
 
 const fallbackImages = [kedarnath, varanasi, thanjavur, desert];
 
 export const UpcomingPilgrimages: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
   const { data: packages, isLoading, error } = usePackages();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
@@ -91,7 +92,7 @@ export const UpcomingPilgrimages: React.FC = () => {
                     className="group bg-surface rounded-2xl overflow-hidden border border-outline-variant/30 hover:border-[#C98B1A]/50 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col h-full"
                   >
                     {/* Identical Image Height */}
-                    <div className="relative h-72 w-full shrink-0 overflow-hidden bg-surface-container-low">
+                    <div className="relative h-60 sm:h-64 md:h-72 w-full shrink-0 overflow-hidden bg-surface-container-low">
                       <img
                         className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                         alt={pkg.title}
@@ -107,7 +108,7 @@ export const UpcomingPilgrimages: React.FC = () => {
                     </div>
 
                     {/* Card Body with Equal Height Flex Grow */}
-                    <div className="p-8 flex-grow flex flex-col justify-between bg-surface">
+                    <div className="p-5 sm:p-6 md:p-8 flex-grow flex flex-col justify-between bg-surface">
                       <div>
                         {/* Temple Name */}
                         <h3 className="font-display-lg text-xl md:text-2xl font-bold text-[#3a2d00] group-hover:text-[#C98B1A] transition-colors duration-300 mb-3 leading-snug">
@@ -120,14 +121,20 @@ export const UpcomingPilgrimages: React.FC = () => {
                         </p>
 
                         {/* Information Rows */}
-                        <div className="space-y-2.5 py-4 my-4 border-y border-outline-variant/30 text-xs text-on-surface-variant bg-[#f5efe4]/40 -mx-8 px-8">
+                        <div className="space-y-2.5 py-4 my-4 border-y border-outline-variant/30 text-xs text-on-surface-variant bg-[#f5efe4]/40 -mx-5 px-5 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8">
                           <div className="flex justify-between items-center">
                             <span className="font-semibold tracking-wider text-secondary uppercase text-[11px]">{t('public.yatras.filters.sortDuration')}</span>
                             <span className="font-medium text-on-surface">{pkg.duration}</span>
                           </div>
+                          {(pkg.start_date || pkg.end_date) && (
+                            <div className="flex justify-between items-center">
+                              <span className="font-semibold tracking-wider text-secondary uppercase text-[11px]">{t('public.yatras.upcoming.datesLabel', { defaultValue: 'Dates' })}</span>
+                              <span className="font-medium text-on-surface">{formatDateRange(pkg.start_date, pkg.end_date, i18n.language)}</span>
+                            </div>
+                          )}
                           <div className="flex justify-between items-center">
                             <span className="font-semibold tracking-wider text-secondary uppercase text-[11px]">{t('public.yatras.upcoming.priceLabel')}</span>
-                            <span className="font-medium text-on-surface">₹{pkg.price.toLocaleString('en-IN')}</span>
+                            <span className="font-medium text-on-surface">₹{pkg.price.toLocaleString(getLocaleCode(i18n.language))}</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="font-semibold tracking-wider text-secondary uppercase text-[11px]">{t('public.yatras.upcoming.seatsLabel')}</span>
@@ -139,7 +146,7 @@ export const UpcomingPilgrimages: React.FC = () => {
                       {/* Card Footer: Aligned at bottom */}
                       <div className="mt-auto pt-5 border-t border-outline-variant/30 flex items-center justify-between gap-3">
                         <span className="text-[#C98B1A] font-semibold text-xs sm:text-sm tracking-wide">
-                          ₹{pkg.price.toLocaleString('en-IN')} {t('public.yatras.upcoming.perPerson')}
+                          ₹{pkg.price.toLocaleString(getLocaleCode(i18n.language))} {t('public.yatras.upcoming.perPerson')}
                         </span>
                         
                         <Link

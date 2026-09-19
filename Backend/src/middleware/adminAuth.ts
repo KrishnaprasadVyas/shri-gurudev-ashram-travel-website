@@ -30,7 +30,7 @@ export async function requireAdmin(
       throw new HttpError(403, 'Admin access required')
     }
 
-    if (user.role !== 'admin') {
+    if (user.role !== 'admin' && user.role !== 'super_admin') {
       throw new HttpError(403, 'Admin access required')
     }
 

@@ -6,7 +6,7 @@ const LOG = import.meta.env.DEV
 const getApiBaseUrl = (): string => {
   const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL
   if (!envUrl || envUrl.trim() === '') {
-    return ''
+    return 'http://localhost:3001'
   }
   return envUrl.trim().replace(/\/+$/, '')
 }
@@ -23,10 +23,8 @@ const apiClient = axios.create({
 // ---------------------------------------------------------------------------
 apiClient.interceptors.request.use(async (config) => {
   const baseUrl = getApiBaseUrl()
-  if (!baseUrl && !config.url?.startsWith('http://') && !config.url?.startsWith('https://')) {
-    const errorMsg = '[API Client Error] Backend API URL is not configured. Please define VITE_API_BASE_URL or VITE_API_URL in your environment variables.'
-    console.error(errorMsg)
-    throw new Error(errorMsg)
+  if (!config.baseURL && baseUrl) {
+    config.baseURL = baseUrl
   }
 
   // Prevent double /api/api/ if baseUrl already ends with /api and config.url starts with /api

@@ -3,7 +3,9 @@ import { Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useTranslation } from "react-i18next";
 
-/** Requires user to be an admin. Redirects to /portal if not admin. */
+const ADMIN_ROLES = ['admin', 'super_admin', 'booking_staff', 'payment_staff', 'train_ticket_staff', 'room_staff']
+
+/** Requires user to have an administrative or operational staff role. Redirects to /portal if not authorized. */
 export function AdminRoute() {
     const { t } = useTranslation();
   const { user, userProfile, loading } = useAuth()
@@ -20,7 +22,7 @@ export function AdminRoute() {
     return <Navigate to="/login" replace />
   }
 
-  if (userProfile && userProfile.role !== 'admin') {
+  if (userProfile && !ADMIN_ROLES.includes(userProfile.role)) {
     return <Navigate to="/portal" replace />
   }
 

@@ -25,6 +25,19 @@ build/
 *.suo
 *.ntvs*
 *.njsproj
-*.sln                                                                                       
+*.sln
 *.sw?
 .DS_Store
+
+# Databases, Backups & Test Artifacts
+*.sqlite
+*.sqlite3
+*.db
+Backend/data/*.sqlite
+Backend/backups/
+test-results/
+**/test-results/
+playwright-report/
+**/playwright-report/
+coverage/
+**/coverage/

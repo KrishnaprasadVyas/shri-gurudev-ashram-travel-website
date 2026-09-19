@@ -5,19 +5,24 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 import { GalleryHero } from '@/components/gallery/GalleryHero'
 import { useTranslation } from 'react-i18next'
 
-const photos = [
-  'photo-1544620347-c4fd4a3d5957', // temple
-  'photo-1506905925346-21bda4d32df4', // mountains
-  'photo-1470071459604-3b5ec3a7fe05', // spiritual landscape
-  'photo-1518181835702-6eef8b4b2113', // temple ritual
-  'photo-1561361513-2d000a50f0dc', // indian temple
-  'photo-1609137144813-7d9921338f24', // sacred aarti / diya
-  'photo-1582719478250-c89cae4dc85b', // holy river
-  'photo-1544717305-2782549b5136', // spiritual ritual
-  'photo-1582510003544-4d00b7f74220', // temple architecture
-  'photo-1596402184320-417e7178b2cd', // spiritual devotion
-  'photo-1602216056096-3b40cc0c9944', // sacred pilgrimage
-  'photo-1514222134-b57cbb8ce073', // sacred peaks
+interface GalleryItem {
+  id: string
+  category: 'all' | 'yatras' | 'temples' | 'ashram' | 'rituals'
+}
+
+const photoItems: GalleryItem[] = [
+  { id: 'photo-1544620347-c4fd4a3d5957', category: 'temples' },
+  { id: 'photo-1506905925346-21bda4d32df4', category: 'yatras' },
+  { id: 'photo-1470071459604-3b5ec3a7fe05', category: 'yatras' },
+  { id: 'photo-1518181835702-6eef8b4b2113', category: 'rituals' },
+  { id: 'photo-1561361513-2d000a50f0dc', category: 'temples' },
+  { id: 'photo-1609137144813-7d9921338f24', category: 'rituals' },
+  { id: 'photo-1582719478250-c89cae4dc85b', category: 'ashram' },
+  { id: 'photo-1544717305-2782549b5136', category: 'rituals' },
+  { id: 'photo-1582510003544-4d00b7f74220', category: 'temples' },
+  { id: 'photo-1596402184320-417e7178b2cd', category: 'ashram' },
+  { id: 'photo-1602216056096-3b40cc0c9944', category: 'yatras' },
+  { id: 'photo-1514222134-b57cbb8ce073', category: 'yatras' },
 ]
 
 interface LightboxProps {
@@ -31,9 +36,21 @@ interface LightboxProps {
 }
 
 function Lightbox({ index, onClose, onNext, onPrev, total, src, alt }: LightboxProps) {
+  const { t } = useTranslation()
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') onPrev()
+      if (e.key === 'ArrowRight') onNext()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onClose, onNext, onPrev])
+
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 select-none"
       onClick={onClose}
     >
       <button
@@ -41,14 +58,14 @@ function Lightbox({ index, onClose, onNext, onPrev, total, src, alt }: LightboxP
           e.stopPropagation()
           onPrev()
         }}
-        aria-label="Previous photo"
-        className="absolute left-4 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none"
+        aria-label={t('gallery.prevPhoto', { defaultValue: 'Previous photo' })}
+        className="absolute left-2 sm:left-4 z-10 p-2.5 sm:p-3.5 rounded-full bg-black/60 sm:bg-white/10 text-white hover:bg-white/20 transition-all focus:outline-none focus-ring shadow-lg"
       >
-        <ChevronLeft className="h-6 w-6" />
+        <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
       </button>
 
       <div
-        className="max-w-4xl max-h-[85vh] relative"
+        className="max-w-[92vw] sm:max-w-4xl max-h-[80vh] sm:max-h-[85vh] relative flex items-center justify-center"
         onClick={(e) => e.stopPropagation()}
       >
         <img
@@ -57,10 +74,10 @@ function Lightbox({ index, onClose, onNext, onPrev, total, src, alt }: LightboxP
           onError={(e) => {
             (e.currentTarget as HTMLImageElement).src = '/assets/temple_sunrise_bg.png'
           }}
-          className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-2xl"
+          className="max-w-full max-h-[75vh] sm:max-h-[85vh] rounded-xl sm:rounded-2xl object-contain shadow-2xl"
         />
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-white/80 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs">
-          {index + 1} / {total}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-white/90 bg-black/70 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-medium tracking-wider shadow">
+          {t('gallery.counter', { current: index + 1, total, defaultValue: `${index + 1} / ${total}` })}
         </div>
       </div>
 
@@ -69,16 +86,16 @@ function Lightbox({ index, onClose, onNext, onPrev, total, src, alt }: LightboxP
           e.stopPropagation()
           onNext()
         }}
-        aria-label="Next photo"
-        className="absolute right-4 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none"
+        aria-label={t('gallery.nextPhoto', { defaultValue: 'Next photo' })}
+        className="absolute right-2 sm:right-4 z-10 p-2.5 sm:p-3.5 rounded-full bg-black/60 sm:bg-white/10 text-white hover:bg-white/20 transition-all focus:outline-none focus-ring shadow-lg"
       >
-        <ChevronRight className="h-6 w-6" />
+        <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
       </button>
 
       <button
         onClick={onClose}
-        aria-label="Close"
-        className="absolute top-4 right-4 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none"
+        aria-label={t('gallery.close', { defaultValue: 'Close' })}
+        className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 p-2.5 sm:p-3 rounded-full bg-black/60 sm:bg-white/10 text-white hover:bg-white/20 transition-all focus:outline-none focus-ring shadow-lg"
       >
         <X className="h-5 w-5" />
       </button>
@@ -91,6 +108,7 @@ const heights = ['h-64', 'h-48', 'h-72', 'h-56', 'h-64', 'h-52', 'h-72', 'h-48',
 export function GalleryPage() {
   const { t } = useTranslation()
   usePageTitle(t('footer.gallery', { defaultValue: 'Gallery' }))
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'yatras' | 'temples' | 'ashram' | 'rituals'>('all')
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   const [isDesktop, setIsDesktop] = useState(true)
@@ -102,20 +120,52 @@ export function GalleryPage() {
     return () => window.removeEventListener('resize', checkDesktop)
   }, [])
 
-  const photoUrls = photos.map(
-    (id) => `https://images.unsplash.com/${id}?w=800&q=80&fit=crop`,
+  const filteredPhotos = photoItems.filter(
+    (item) => selectedCategory === 'all' || item.category === selectedCategory
+  )
+
+  const photoUrls = filteredPhotos.map(
+    (item) => `https://images.unsplash.com/${item.id}?w=800&q=80&fit=crop`
   )
 
   const openLightbox = (i: number) => setLightbox(i)
   const closeLightbox = () => setLightbox(null)
-  const next = () => setLightbox((i) => (i !== null ? (i + 1) % photos.length : 0))
-  const prev = () => setLightbox((i) => (i !== null ? (i - 1 + photos.length) % photos.length : 0))
+  const next = () => setLightbox((i) => (i !== null ? (i + 1) % photoUrls.length : 0))
+  const prev = () => setLightbox((i) => (i !== null ? (i - 1 + photoUrls.length) % photoUrls.length : 0))
+
+  const categories = [
+    { id: 'all' as const, label: t('gallery.categories.all', { defaultValue: 'All Photos' }) },
+    { id: 'yatras' as const, label: t('gallery.categories.yatras', { defaultValue: 'Yatras' }) },
+    { id: 'temples' as const, label: t('gallery.categories.temples', { defaultValue: 'Temples' }) },
+    { id: 'ashram' as const, label: t('gallery.categories.ashram', { defaultValue: 'Ashram Life' }) },
+    { id: 'rituals' as const, label: t('gallery.categories.rituals', { defaultValue: 'Aarti & Rituals' }) },
+  ]
 
   return (
     <>
       <GalleryHero />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 md:pt-8 pb-16 md:pb-24">
-        {/* Masonry grid */}
+        {/* Category Filter Pills - Scroll smoothly without awkward wrapping on mobile */}
+        <div className="flex items-center overflow-x-auto no-scrollbar sm:flex-wrap justify-start sm:justify-center gap-2 sm:gap-3 py-2 px-1 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => {
+                setSelectedCategory(cat.id)
+                setIsExpanded(false)
+              }}
+              className={`whitespace-nowrap shrink-0 min-h-[40px] px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold tracking-wider transition-all duration-300 focus-ring cursor-pointer ${
+                selectedCategory === cat.id
+                  ? 'bg-primary text-on-primary shadow-md scale-105'
+                  : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-primary'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Masonry grid with responsive aspect ratios for mobile */}
         <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
           <AnimatePresence mode="popLayout">
             {photoUrls.map((src, i) => {
@@ -129,13 +179,13 @@ export function GalleryPage() {
 
               return (
                 <motion.div
-                  key={i}
+                  key={src}
                   layout
                   initial={!isDesktop && i >= 4 ? { opacity: 0, y: 30 } : false}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.5, delay: !isDesktop && i >= 4 ? (i - 4) * 0.05 : 0 }}
-                  className={`relative ${heights[i % heights.length]} rounded-2xl cursor-pointer group break-inside-avoid overflow-hidden bg-[#FAF4EB] border border-[#E8DDC7]/60 shadow-sm hover:shadow-md transition-shadow`}
+                  className={`relative w-full aspect-[4/3] sm:aspect-auto ${heights[i % heights.length]} rounded-xl sm:rounded-2xl cursor-pointer group break-inside-avoid overflow-hidden bg-[#FAF4EB] border border-[#E8DDC7]/60 shadow-sm hover:shadow-md transition-shadow`}
                   style={{ marginBottom: '1rem' }}
                   onClick={() => openLightbox(i)}
                 >
@@ -148,7 +198,7 @@ export function GalleryPage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-2xl" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-xl sm:rounded-2xl" />
                 </motion.div>
               )
             })}
@@ -189,7 +239,7 @@ export function GalleryPage() {
               defaultValue: `Sacred Yatra moment ${lightbox + 1}`,
               index: lightbox + 1,
             })}
-            total={photos.length}
+            total={photoUrls.length}
             onClose={closeLightbox}
             onNext={next}
             onPrev={prev}

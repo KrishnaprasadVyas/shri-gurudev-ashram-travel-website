@@ -6,6 +6,7 @@ import { Router } from 'express'
 import { HttpError } from '../errors.js'
 import { AuthenticatedRequest, requireAuth } from '../middleware/auth.js'
 import { requireAdmin } from '../middleware/adminAuth.js'
+import { requireRole, requireSuperAdmin } from '../middleware/rbac.js'
 import { supabaseAdmin } from '../services/supabaseAdmin.js'
 import { SIGNED_URL_SECRET } from '../config.js'
 
@@ -841,3 +842,305 @@ adminRouter.get('/passengers/:passengerId/document-url', ...protect, async (req,
     next(error)
   }
 })
+
+// ─── GET /api/admin/collections ──────────────────────────────────────────────
+// Req #10 & Section 11: AC/Non-AC cards, Booking Channels, Payment Modes, and Total Metrics
+adminRouter.get('/collections', ...protect, async (req, res, next) => {
+  try {
+    const { data: bookings } = await supabaseAdmin
+      .from('bookings')
+      .select('id, total_amount, total_paid, pending_balance, traveler_count, booking_channel, package_id, travel_packages(price, train_ac_price, train_non_ac_price, room_ac_price, room_non_ac_price)')
+
+    const { data: passengers } = await supabaseAdmin
+      .from('passengers')
+      .select('id, travel_class, booking_id')
+
+    const { data: groups } = await supabaseAdmin
+      .from('groups')
+      .select('id')
+
+    const { data: payments } = await supabaseAdmin
+      .from('payments')
+      .select('amount, payment_mode, verification_status')
+      .eq('verification_status', 'verified')
+
+    const passList = passengers || []
+    const bookList = bookings || []
+    const totalGroups = (groups || []).length
+
+    const acPass = passList.filter((p: any) => (p.travel_class || '').toLowerCase() === 'ac')
+    const nonAcPass = passList.filter((p: any) => (p.travel_class || '').toLowerCase() !== 'ac')
+
+    const totalPassengers = passList.length
+    const acPassengersCount = acPass.length
+    const nonAcPassengersCount = nonAcPass.length
+
+    const totalAmount = bookList.reduce((sum: number, b: any) => sum + Number(b.total_amount || 0), 0)
+    const totalReceived = bookList.reduce((sum: number, b: any) => sum + Number(b.total_paid || 0), 0)
+    const totalPending = Math.max(0, totalAmount - totalReceived)
+
+    // Booking channel counts (Section 11)
+    const channels = {
+      'Customer-Web': bookList.filter((b: any) => (b.booking_channel || 'Customer-Web') === 'Customer-Web').length,
+      'Customer-App': bookList.filter((b: any) => b.booking_channel === 'Customer-App').length,
+      'Admin-Panel': bookList.filter((b: any) => b.booking_channel === 'Admin-Panel').length,
+    }
+
+    // Payment mode collection breakdown (Section 11)
+    const paymentModes = {
+      cash: (payments || []).filter((p: any) => (p.payment_mode || '').toLowerCase() === 'cash').reduce((s: number, p: any) => s + Number(p.amount || 0), 0),
+      upi: (payments || []).filter((p: any) => (p.payment_mode || '').toLowerCase() === 'upi').reduce((s: number, p: any) => s + Number(p.amount || 0), 0),
+      bank_transfer: (payments || []).filter((p: any) => ['bank_transfer', 'bank'].includes((p.payment_mode || '').toLowerCase())).reduce((s: number, p: any) => s + Number(p.amount || 0), 0),
+      payment_gateway: (payments || []).filter((p: any) => ['payment_gateway', 'gateway', 'online'].includes((p.payment_mode || '').toLowerCase())).reduce((s: number, p: any) => s + Number(p.amount || 0), 0),
+      other: (payments || []).filter((p: any) => !['cash', 'upi', 'bank_transfer', 'bank', 'payment_gateway', 'gateway', 'online'].includes((p.payment_mode || '').toLowerCase())).reduce((s: number, p: any) => s + Number(p.amount || 0), 0),
+    }
+
+    // Calculate approximate proportion based on passenger count if mixed
+    const acRatio = totalPassengers > 0 ? acPassengersCount / totalPassengers : 0.5
+    const nonAcRatio = 1 - acRatio
+
+    res.json({
+      ac: {
+        passengers: acPassengersCount,
+        totalAmount: Math.round(totalAmount * acRatio),
+        received: Math.round(totalReceived * acRatio),
+        pending: Math.round(totalPending * acRatio),
+      },
+      nonAc: {
+        passengers: nonAcPassengersCount,
+        totalAmount: Math.round(totalAmount * nonAcRatio),
+        received: Math.round(totalReceived * nonAcRatio),
+        pending: Math.round(totalPending * nonAcRatio),
+      },
+      total: {
+        passengers: totalPassengers,
+        totalPassengers,
+        bookings: bookList.length,
+        groups: totalGroups,
+        totalAmount,
+        received: totalReceived,
+        totalReceived,
+        pending: totalPending,
+        totalPending,
+      },
+      bookingChannels: channels,
+      paymentModes,
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── GET /api/admin/payments/:id/cash-receipt ────────────────────────────────
+// Section 10: Cash Payment receipt data with printable format & cashier attribution
+adminRouter.get('/payments/:id/cash-receipt', ...protect, async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { data: payment, error } = await supabaseAdmin
+      .from('payments')
+      .select('*, bookings(booking_code, lead_passenger_name, mobile, total_amount, total_paid, pending_balance)')
+      .eq('id', id)
+      .single()
+
+    if (error || !payment) {
+      throw new HttpError(404, 'Payment receipt not found')
+    }
+
+    res.json({
+      receiptNumber: `RCP-${payment.payment_code || payment.id.slice(0, 8).toUpperCase()}`,
+      paymentId: payment.id,
+      bookingCode: (payment.bookings as any)?.booking_code,
+      passengerName: (payment.bookings as any)?.lead_passenger_name,
+      mobile: (payment.bookings as any)?.mobile,
+      amount: Number(payment.amount),
+      paymentMode: payment.payment_mode || 'cash',
+      utr: payment.utr,
+      receivedBy: payment.admin_notes || 'Desk Cashier',
+      timestamp: payment.created_at,
+      status: payment.verification_status,
+      remarks: payment.admin_notes || 'Cash payment received at booking desk',
+    })
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ─── GET /api/admin/pending-collections ───────────────────────────────────────
+// Req #14: Outstanding balance queue ordered by highest pending balance
+adminRouter.get('/pending-collections', requireAuth, requireRole('super_admin', 'admin', 'payment_staff', 'booking_staff'), async (_req, res, next) => {
+  try {
+    const { data: bookings, error } = await supabaseAdmin
+      .from('bookings')
+      .select('id, booking_code, lead_passenger_name, mobile, traveler_count, total_amount, total_paid, pending_balance, payment_status, groups(group_code, name)')
+      .gt('pending_balance', 0)
+      .order('pending_balance', { ascending: false })
+
+    if (error) throw dbError(error, 'Failed to fetch pending collections')
+
+    res.json({
+      pendingList: bookings || [],
+      totalPending: (bookings || []).reduce((sum: number, b: any) => sum + Number(b.pending_balance || 0), 0),
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── GET /api/admin/global-search ─────────────────────────────────────────────
+// Req #19 & #23: Fast global search across Group, Booking, Passenger, Mobile, PNR, UTR, Room, Train
+adminRouter.get('/global-search', ...protect, async (req, res, next) => {
+  try {
+    const q = String(req.query.q || '').trim()
+    if (!q) {
+      return res.json({ results: { groups: [], bookings: [], passengers: [], payments: [], rooms: [] } })
+    }
+
+    const [groupsRes, bookingsRes, passengersRes, paymentsRes, roomsRes] = await Promise.all([
+      supabaseAdmin.from('groups').select('*').or(`group_code.ilike.%${q}%,name.ilike.%${q}%,lead_mobile.ilike.%${q}%`).limit(10),
+      supabaseAdmin.from('bookings').select('*').or(`booking_code.ilike.%${q}%,mobile.ilike.%${q}%,lead_passenger_name.ilike.%${q}%`).limit(10),
+      supabaseAdmin.from('passengers').select('*, bookings(booking_code)').or(`passenger_code.ilike.%${q}%,full_name.ilike.%${q}%,mobile.ilike.%${q}%`).limit(10),
+      supabaseAdmin.from('payments').select('*, bookings(booking_code)').or(`payment_code.ilike.%${q}%,utr_number.ilike.%${q}%`).limit(10),
+      supabaseAdmin.from('rooms').select('*').ilike('room_number', `%${q}%`).limit(10),
+    ])
+
+    res.json({
+      results: {
+        groups: groupsRes.data || [],
+        bookings: bookingsRes.data || [],
+        passengers: passengersRes.data || [],
+        payments: paymentsRes.data || [],
+        rooms: roomsRes.data || [],
+      },
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── GET /api/admin/audit-logs ────────────────────────────────────────────────
+// Req #23 & #30: Audit trail viewer (strictly immutable)
+adminRouter.all('/audit-logs/:id?', (req, res, next) => {
+  if (['DELETE', 'PUT', 'PATCH', 'POST'].includes(req.method)) {
+    return res.status(405).json({
+      error: 'Method Not Allowed: Audit logs are immutable records and cannot be modified or deleted.',
+    })
+  }
+  next()
+})
+
+adminRouter.get('/audit-logs', ...protect, async (req, res, next) => {
+  try {
+    const entityType = req.query.entityType as string | undefined
+    const limit = Math.min(100, Number(req.query.limit || 50))
+
+    let query = supabaseAdmin.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(limit)
+    if (entityType) query = query.eq('entity_type', entityType)
+
+    const { data: logs, error } = await query
+    if (error) throw dbError(error, 'Failed to fetch audit logs')
+
+    res.json({ logs: logs || [] })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── GET /api/admin/passengers ────────────────────────────────────────────────
+// Section 37: Admin Passenger Directory with search, group, travel class filters
+adminRouter.get('/passengers', ...protect, async (req, res, next) => {
+  try {
+    const search = String(req.query.search || '').trim()
+    const travelClass = req.query.travelClass as string | undefined
+    const groupId = req.query.groupId as string | undefined
+    const bookingId = req.query.bookingId as string | undefined
+    const page = Math.max(1, Number(req.query.page || 1))
+    const limit = Math.min(100, Number(req.query.limit || 50))
+    const offset = (page - 1) * limit
+
+    let query = supabaseAdmin
+      .from('passengers')
+      .select('*, bookings(id, booking_code, lead_passenger_name, mobile, status), groups(id, group_code, name)', { count: 'exact' })
+      .order('passenger_code', { ascending: true })
+
+    if (search) {
+      query = query.or(`passenger_code.ilike.%${search}%,full_name.ilike.%${search}%,phone.ilike.%${search}%,aadhaar_number.ilike.%${search}%`)
+    }
+    if (travelClass) {
+      query = query.eq('travel_class', travelClass.toLowerCase())
+    }
+    if (groupId) {
+      query = query.eq('group_id', groupId)
+    }
+    if (bookingId) {
+      query = query.eq('booking_id', bookingId)
+    }
+
+    const { data: passengers, error, count } = await query.range(offset, offset + limit - 1)
+    if (error) throw dbError(error, 'Failed to fetch passengers')
+
+    // Enrich with train seat & room allocation if available
+    const passIds = (passengers || []).map((p: any) => p.id)
+    let trainAllocMap: Record<string, { going?: any; return?: any }> = {}
+    let roomAllocMap: Record<string, any> = {}
+
+    if (passIds.length > 0) {
+      const [trainRes, roomRes] = await Promise.all([
+        supabaseAdmin.from('train_allocations').select('*, train_journeys(journey_type, train_number, pnr)').in('passenger_id', passIds),
+        supabaseAdmin.from('room_allocations').select('*, rooms(room_number, building_name, room_type)').in('passenger_id', passIds),
+      ])
+
+      for (const t of trainRes.data || []) {
+        if (!trainAllocMap[t.passenger_id]) trainAllocMap[t.passenger_id] = {}
+        const jType = t.train_journeys?.journey_type || 'going'
+        if (jType === 'return') trainAllocMap[t.passenger_id].return = t
+        else trainAllocMap[t.passenger_id].going = t
+      }
+
+      for (const r of roomRes.data || []) {
+        roomAllocMap[r.passenger_id] = r
+      }
+    }
+
+    const enriched = (passengers || []).map((p: any) => ({
+      ...p,
+      goingSeat: trainAllocMap[p.id]?.going?.seat_number ? `${trainAllocMap[p.id]?.going?.coach || ''} ${trainAllocMap[p.id]?.going?.seat_number}`.trim() : null,
+      returnSeat: trainAllocMap[p.id]?.return?.seat_number ? `${trainAllocMap[p.id]?.return?.coach || ''} ${trainAllocMap[p.id]?.return?.seat_number}`.trim() : null,
+      roomNumber: roomAllocMap[p.id]?.rooms?.room_number || null,
+    }))
+
+    res.json({ passengers: enriched, total: count || 0, page, limit })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── GET /api/admin/settings ────────────────────────────────────────────────
+// Req #38: Super Admin System Configuration Settings
+adminRouter.get('/settings', requireAuth, requireSuperAdmin, async (_req, res, next) => {
+  try {
+    const { data: settings, error } = await supabaseAdmin.from('app_settings').select('*')
+    if (error) throw dbError(error, 'Failed to fetch settings')
+    res.json({ settings: settings || [] })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ─── PATCH /api/admin/settings/:key ─────────────────────────────────────────
+adminRouter.patch('/settings/:key', requireAuth, requireSuperAdmin, async (req, res, next) => {
+  try {
+    const { key } = req.params
+    const { value, description } = req.body
+    const { data: updated, error } = await supabaseAdmin
+      .from('app_settings')
+      .upsert({ setting_key: key, setting_value: value, description, updated_at: new Date().toISOString() })
+      .select('*')
+      .single()
+    if (error) throw dbError(error, 'Failed to update setting')
+    res.json({ setting: updated })
+  } catch (error) {
+    next(error)
+  }
+})
+
+

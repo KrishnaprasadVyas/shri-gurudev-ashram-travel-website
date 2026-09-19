@@ -133,6 +133,24 @@ export function SevaPage() {
   }, [])
 
 
+  const getPackageTitle = (pkg: SevaPackage) => {
+    if (pkg.seva_type) {
+      const key = `seva.packages.${pkg.seva_type}.title`
+      const translated = t(key)
+      if (translated && translated !== key) return translated
+    }
+    return pkg.title
+  }
+
+  const getPackageDesc = (pkg: SevaPackage) => {
+    if (pkg.seva_type) {
+      const key = `seva.packages.${pkg.seva_type}.description`
+      const translated = t(key)
+      if (translated && translated !== key) return translated
+    }
+    return pkg.description || t('seva.defaultDesc', { defaultValue: 'Devotional seva offering at Shri Gurudev Ashram.' })
+  }
+
   const handleOpenBooking = (pkg: SevaPackage) => {
     setSelectedPackage(pkg)
     setIsModalOpen(true)
@@ -210,13 +228,10 @@ export function SevaPage() {
                 <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
                     <h2 className="font-display text-lg sm:text-xl font-bold text-[#3E2B1F] group-hover:text-[#B8860B] transition-colors leading-snug">
-                      {pkg.title}
+                      {getPackageTitle(pkg)}
                     </h2>
                     <p className="text-xs sm:text-sm text-[#6F5B47] mt-2 line-clamp-3 leading-relaxed">
-                      {pkg.description ||
-                        t('seva.defaultDesc', {
-                          defaultValue: 'Devotional seva offering at Shri Gurudev Ashram.',
-                        })}
+                      {getPackageDesc(pkg)}
                     </p>
                   </div>
 
