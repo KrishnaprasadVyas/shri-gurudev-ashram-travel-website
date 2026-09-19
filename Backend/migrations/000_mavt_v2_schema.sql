@@ -5,6 +5,52 @@
 -- Centralized Flow: Group -> Booking -> Passenger -> Payment -> Train -> PDF -> Room -> Reports
 -- ============================================================================
 
+-- ============================================================================
+-- TEST DATABASE RESET
+-- ============================================================================
+-- This database contains an older/testing schema. The V2 schema below is the
+-- source of truth, so remove only the application's public-schema objects
+-- before recreating them. The Supabase auth schema is not touched.
+--
+-- WARNING: this deletes all data in the listed public tables. Remove this
+-- block before using the migration against a live database.
+DO $$
+DECLARE
+  object_record RECORD;
+BEGIN
+  FOR object_record IN
+    SELECT n.nspname AS schema_name,
+           c.relname AS object_name,
+           c.relkind AS object_kind
+      FROM pg_class c
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+     WHERE n.nspname = 'public'
+       AND c.relname IN (
+         'users', 'groups', 'travel_packages', 'bookings', 'booking_passengers',
+         'passengers', 'payments', 'notifications', 'passenger_documents',
+         'razorpay_webhook_events', 'seva_bookings', 'seva_packages',
+         'train_journeys', 'ticket_pdfs', 'ticket_passenger_mappings',
+         'rooms', 'room_allocations', 'audit_logs', 'whatsapp_messages'
+       )
+  LOOP
+    IF object_record.object_kind = 'v' THEN
+      EXECUTE format(
+        'DROP VIEW IF EXISTS %I.%I CASCADE',
+        object_record.schema_name,
+        object_record.object_name
+      );
+    ELSE
+      EXECUTE format(
+        'DROP TABLE IF EXISTS %I.%I CASCADE',
+        object_record.schema_name,
+        object_record.object_name
+      );
+    END IF;
+  END LOOP;
+END $$;
+
+DROP FUNCTION IF EXISTS public.recalculate_booking_payment_balance() CASCADE;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
