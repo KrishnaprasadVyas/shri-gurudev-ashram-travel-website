@@ -16,7 +16,10 @@ function getRequiredEnv(name: string, fallback?: string) {
   return value
 }
 
-const supabaseUrl = getRequiredEnv('SUPABASE_URL', process.env.NODE_ENV === 'test' ? 'https://mock.supabase.co' : undefined)
+const supabaseUrl = process.env.SUPABASE_URL ?? process.env.EXPO_PUBLIC_SUPABASE_URL ?? (process.env.NODE_ENV === 'test' ? 'https://mock.supabase.co' : undefined)
+if (!supabaseUrl) {
+  throw new Error('Missing required environment variable: SUPABASE_URL')
+}
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SERVICE_ROLE_KEY ?? (process.env.NODE_ENV === 'test' ? 'mock-service-role-key' : undefined)
 
 if (!serviceRoleKey) {

@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: '/', // G.2: explicit base for consistent asset paths in production
   plugins: [react(), tailwindcss()],
+  envPrefix: ['VITE_', 'EXPO_PUBLIC_'],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
